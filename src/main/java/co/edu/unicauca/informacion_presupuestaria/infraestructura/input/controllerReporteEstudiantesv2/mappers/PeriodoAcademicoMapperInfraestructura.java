@@ -1,0 +1,11 @@
+package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantesv2.mappers;
+
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantesv2.DTOAnswer.PeriodoAcademicoDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantesv2.DTOPeticion.PeriodoAcademicoDTOPeticion;
+
+public interface PeriodoAcademicoMapperInfraestructura {
+    PeriodoAcademico mappearDePeticionAPeriodoAcademico(PeriodoAcademicoDTOPeticion periodo);
+    PeriodoAcademicoDTORespuesta mappearDePeriodoAcademicoARespuesta(PeriodoAcademico periodo);
+}
+

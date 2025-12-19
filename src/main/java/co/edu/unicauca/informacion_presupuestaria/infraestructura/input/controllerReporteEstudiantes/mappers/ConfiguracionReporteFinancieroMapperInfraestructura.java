@@ -1,0 +1,11 @@
+package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.mappers;
+
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteFinanciero;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOAnswer.ConfiguracionReporteFinancieroDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOPeticion.ConfiguracionReporteFinancieroDTOPeticion;
+
+public interface ConfiguracionReporteFinancieroMapperInfraestructura {
+    ConfiguracionReporteFinanciero mappearDePeticionAConfiguracionReporteFinanciero(ConfiguracionReporteFinancieroDTOPeticion configuracion);
+    ConfiguracionReporteFinancieroDTORespuesta mappearDeConfiguracionReporteFinancieroARespuesta(ConfiguracionReporteFinanciero configuracion);
+}
+

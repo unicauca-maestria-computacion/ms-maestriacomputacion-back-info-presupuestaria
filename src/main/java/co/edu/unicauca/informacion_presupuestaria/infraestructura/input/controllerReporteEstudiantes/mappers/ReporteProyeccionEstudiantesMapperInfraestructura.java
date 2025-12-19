@@ -1,0 +1,11 @@
+package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.mappers;
+
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteProyeccionEstudiantes;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOAnswer.ReporteProyeccionEstudiantesDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOPeticion.ReporteProyeccionEstudiantesDTOPeticion;
+
+public interface ReporteProyeccionEstudiantesMapperInfraestructura {
+    ReporteProyeccionEstudiantes mappearDePeticionAReporteProyeccionEstudiantes(ReporteProyeccionEstudiantesDTOPeticion reporte);
+    ReporteProyeccionEstudiantesDTORespuesta mappearDeReporteProyeccionEstudiantesARespuesta(ReporteProyeccionEstudiantes reporte);
+}
+
