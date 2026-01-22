@@ -1,7 +1,7 @@
 package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 
 public class PorcentajeGrupo {
-private String nombreGrupo;
+    private String nombreGrupo;
     private Float porcentaje;
 
     public PorcentajeGrupo() {

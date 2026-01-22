@@ -3,20 +3,40 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 import java.util.List;
 
 public class ReporteProyeccionEstudiantes {
-    private List<ProyeccionEstudiantes> proyecciones;
+    private List<ProyeccionEstudiante> estudiantes;
+    private ConfiguracionReporteFinanciero objConfiguracion;
+    private PeriodoAcademico periodo;
 
     public ReporteProyeccionEstudiantes() {
     }
 
-    public ReporteProyeccionEstudiantes(List<ProyeccionEstudiantes> proyecciones) {
-        this.proyecciones = proyecciones;
+    public ReporteProyeccionEstudiantes(List<ProyeccionEstudiante> estudiantes, ConfiguracionReporteFinanciero objConfiguracion, PeriodoAcademico periodo) {
+        this.estudiantes = estudiantes;
+        this.objConfiguracion = objConfiguracion;
+        this.periodo = periodo;
     }
 
-    public List<ProyeccionEstudiantes> getProyecciones() {
-        return proyecciones;
+    public List<ProyeccionEstudiante> getEstudiantes() {
+        return estudiantes;
     }
 
-    public void setProyecciones(List<ProyeccionEstudiantes> proyecciones) {
-        this.proyecciones = proyecciones;
+    public void setEstudiantes(List<ProyeccionEstudiante> estudiantes) {
+        this.estudiantes = estudiantes;
+    }
+
+    public ConfiguracionReporteFinanciero getObjConfiguracion() {
+        return objConfiguracion;
+    }
+
+    public void setObjConfiguracion(ConfiguracionReporteFinanciero objConfiguracion) {
+        this.objConfiguracion = objConfiguracion;
+    }
+
+    public PeriodoAcademico getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(PeriodoAcademico periodo) {
+        this.periodo = periodo;
     }
 }

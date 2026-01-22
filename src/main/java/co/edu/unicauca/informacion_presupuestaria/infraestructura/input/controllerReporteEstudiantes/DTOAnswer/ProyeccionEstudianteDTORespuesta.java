@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProyeccionEstudianteDTORespuesta {
     private String codigoEstudiante;
+    private String nombre;
+    private Integer identificacion;
+    private String apellido;
     private Boolean estaPago;
     private Float porcentajeVotacion;
     private Float porcentajeBeca;
+    private String grupoInvestigacion;
     private Float porcentajeEgresado;
 }
 

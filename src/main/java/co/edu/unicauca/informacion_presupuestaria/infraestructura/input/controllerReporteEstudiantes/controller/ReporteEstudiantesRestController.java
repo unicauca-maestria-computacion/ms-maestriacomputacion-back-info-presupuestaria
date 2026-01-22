@@ -3,7 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.control
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.input.GestionarReporteEstudiantesCUIntPort;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteFinanciero;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
-import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiantes;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiante;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteEstudiantes;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteProyeccionEstudiantes;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOAnswer.ConfiguracionReporteFinancieroDTORespuesta;
@@ -65,7 +65,7 @@ public class ReporteEstudiantesRestController {
     public ResponseEntity<ReporteProyeccionEstudiantesDTORespuesta> actualizarProyeccionEstudiante(
             @RequestBody ProyeccionEstudianteDTOPeticion proyeccion) {
         try {
-            ProyeccionEstudiantes proyeccionDomain = 
+            ProyeccionEstudiante proyeccionDomain = 
                 objMapperProyeccionEstudiante.mappearDePeticionAProyeccionEstudiante(proyeccion);
             ReporteProyeccionEstudiantes reporte = 
                 objGestionarReporteEstudiantesCUInt.actualizarProyeccionEstudiante(proyeccionDomain);

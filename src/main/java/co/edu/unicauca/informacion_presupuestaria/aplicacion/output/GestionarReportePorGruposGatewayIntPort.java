@@ -19,4 +19,5 @@ public interface GestionarReportePorGruposGatewayIntPort {
     ReportePorGrupos actualizarPorcentajeItem2(Float nuevoValor);
     ReportePorGrupos actualizarPorcentajeImprevistos(Float nuevoValor);
     ReportePorGrupos actualizarPorcentajeVigenciasAnterioresGrupo(String nombreGrupo, Float nuevoValor);
+    Boolean finalizarReporteGrupos();
 }

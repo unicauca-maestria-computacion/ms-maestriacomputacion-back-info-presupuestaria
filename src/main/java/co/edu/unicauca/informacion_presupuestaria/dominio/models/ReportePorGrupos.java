@@ -3,7 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 import java.util.List;
 
 public class ReportePorGrupos {
-private Float totalNeto;
+    private Float totalNeto;
     private Float aportePrimerSemestre;
     private Float aporteSegundoSemestre;
     private Float participacionPrimerSemestre;

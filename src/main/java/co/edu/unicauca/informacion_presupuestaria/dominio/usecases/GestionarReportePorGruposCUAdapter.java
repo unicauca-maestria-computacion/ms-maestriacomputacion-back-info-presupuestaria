@@ -177,4 +177,9 @@ public class GestionarReportePorGruposCUAdapter implements GestionarReportePorGr
         
         return reporte;
     }
+
+    @Override
+    public Boolean finalizarReporteGrupos() {
+        return objGestionarReportePorGrupos.finalizarReporteGrupos();
+    }
 }

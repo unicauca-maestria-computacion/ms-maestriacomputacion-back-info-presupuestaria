@@ -4,7 +4,7 @@ import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.GestionarRep
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteFinanciero;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.MatriculaFinanciera;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
-import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiantes;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiante;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.PeriodoAcademicoEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.mappers.ConfiguracionReporteFinancieroMapperPersistencia;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.mappers.MatriculaFinancieraMapperPersistencia;
@@ -51,7 +51,7 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
     }
     
     @Override
-    public ProyeccionEstudiantes guardarProyeccionEstudiante(ProyeccionEstudiantes proyeccion) {
+    public ProyeccionEstudiante guardarProyeccionEstudiante(ProyeccionEstudiante proyeccion) {
         var entity = objMapperProyeccionEstudiante.mappearProyeccionEstudianteAEntity(proyeccion);
         var savedEntity = objProyeccionEstudiante.save(entity);
         return objMapperProyeccionEstudiante.mappearDeEntityAProyeccionEstudiante(savedEntity);
@@ -97,6 +97,13 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
         
         var matriculas = objMatriculaFinanciera.findByObjPeriodoAcademicoId(periodoEntity.get().getId());
         return objMatriculaFinancieraMapper.mappearListaEntityAMatriculaFinanciera(matriculas);
+    }
+
+    @Override
+    public Boolean finalizarProyeccion() {
+        //implementar logica para finalizar la proyeccion
+        //todo falta implementar esta parte en la logica de la aplicacion
+       return true;
     }
 }
 

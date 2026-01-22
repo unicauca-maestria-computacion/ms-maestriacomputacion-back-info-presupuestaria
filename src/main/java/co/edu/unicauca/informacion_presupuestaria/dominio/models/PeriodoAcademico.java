@@ -3,12 +3,12 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 import java.util.List;
 
 public class PeriodoAcademico {
-private Integer periodo;
+    private Integer periodo;
     private Integer año;
     private List<MatriculaFinanciera> matriculasFinancieras;
     private ConfiguracionReporteFinanciero objConfiguracionReporteFinanciero;
     private ConfiguracionReporteGrupos objConfiguracionReporteGrupo;
-    private ProyeccionEstudiantes objProyeccionEstudiante;
+    private ProyeccionEstudiante objProyeccionEstudiante;
 
     public PeriodoAcademico() {
     }
@@ -58,11 +58,11 @@ private Integer periodo;
         this.objConfiguracionReporteGrupo = objConfiguracionReporteGrupo;
     }
 
-    public ProyeccionEstudiantes getObjProyeccionEstudiante() {
+    public ProyeccionEstudiante getObjProyeccionEstudiante() {
         return objProyeccionEstudiante;
     }
 
-    public void setObjProyeccionEstudiante(ProyeccionEstudiantes objProyeccionEstudiante) {
+    public void setObjProyeccionEstudiante(ProyeccionEstudiante objProyeccionEstudiante) {
         this.objProyeccionEstudiante = objProyeccionEstudiante;
     }
 }

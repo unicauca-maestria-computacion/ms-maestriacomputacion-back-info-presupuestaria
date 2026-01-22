@@ -10,7 +10,7 @@ import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.FormateadorR
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.GestionarReporteEstudiantesGatewayIntPort;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteFinanciero;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
-import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiantes;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiante;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteEstudiantes;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteProyeccionEstudiantes;
 
@@ -43,7 +43,7 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
     }
     
     @Override
-    public ReporteProyeccionEstudiantes actualizarProyeccionEstudiante(ProyeccionEstudiantes proyeccion) {
+    public ReporteProyeccionEstudiantes actualizarProyeccionEstudiante(ProyeccionEstudiante proyeccion) {
         if (proyeccion == null || proyeccion.getCodigoEstudiante() == null) {
             objFormateadorResultados.errorEntidadNoExiste("La proyección o el código de estudiante no pueden ser nulos");
             return null;
@@ -54,11 +54,17 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
             return null;
         }
         
-        ProyeccionEstudiantes proyeccionGuardada = objGestionarReporteEstudiantes.guardarProyeccionEstudiante(proyeccion);
-        List<ProyeccionEstudiantes> proyecciones = new ArrayList<>();
-        proyecciones.add(proyeccionGuardada);
+        ProyeccionEstudiante proyeccionGuardada = objGestionarReporteEstudiantes.guardarProyeccionEstudiante(proyeccion);
+        List<ProyeccionEstudiante> estudiantes = new ArrayList<>();
+        estudiantes.add(proyeccionGuardada);
         
-        return new ReporteProyeccionEstudiantes(proyecciones);
+        PeriodoAcademico periodo = proyeccionGuardada.getObjPeriodoAcademico();
+        ConfiguracionReporteFinanciero configuracion = null;
+        if (periodo != null) {
+            configuracion = objGestionarReporteEstudiantes.obtenerConfiguracionReporteFinanciero(periodo);
+        }
+        
+        return new ReporteProyeccionEstudiantes(estudiantes, configuracion, periodo);
     }
     
     @Override
@@ -76,7 +82,7 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
         ConfiguracionReporteFinanciero configuracion = 
             objGestionarReporteEstudiantes.obtenerConfiguracionReporteFinanciero(periodo);
         
-        List<ProyeccionEstudiantes> estudiantes = new ArrayList<>();
+        List<ProyeccionEstudiante> estudiantes = new ArrayList<>();
         // Aquí se debería obtener la lista de proyecciones de estudiantes del período
         
         return new ReporteEstudiantes(estudiantes, configuracion, periodo);
@@ -85,7 +91,7 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
     @Override
     public ReporteProyeccionEstudiantes obtenerProyeccionEstudiantes() {
         // Implementación para obtener todas las proyecciones
-        List<ProyeccionEstudiantes> proyecciones = new ArrayList<>();
-        return new ReporteProyeccionEstudiantes(proyecciones);
+        List<ProyeccionEstudiante> estudiantes = new ArrayList<>();
+        return new ReporteProyeccionEstudiantes(estudiantes, null, null);
     }
 }

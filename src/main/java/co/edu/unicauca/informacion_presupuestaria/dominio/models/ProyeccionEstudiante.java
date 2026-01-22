@@ -1,24 +1,33 @@
 package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 
-public class ProyeccionEstudiantes {
+public class ProyeccionEstudiante {
 
     private String codigoEstudiante;
+    private Integer identificacion;
+    private String apellido;
+    private String nombre;
     private Boolean estaPago;
     private Float porcentajeVotacion;
     private Float porcentajeBeca;
     private Float porcentajeEgresado;
+    private String grupoInvestigacion;
     private PeriodoAcademico objPeriodoAcademico;
 
-    public ProyeccionEstudiantes() {
+    public ProyeccionEstudiante() {
     }
 
-    public ProyeccionEstudiantes(String codigoEstudiante, Boolean estaPago, Float porcentajeVotacion,
-                               Float porcentajeBeca, Float porcentajeEgresado, PeriodoAcademico objPeriodoAcademico) {
+    public ProyeccionEstudiante(String codigoEstudiante, Integer identificacion, String apellido, String nombre,
+                               Boolean estaPago, Float porcentajeVotacion, Float porcentajeBeca, 
+                               Float porcentajeEgresado, String grupoInvestigacion, PeriodoAcademico objPeriodoAcademico) {
         this.codigoEstudiante = codigoEstudiante;
+        this.identificacion = identificacion;
+        this.apellido = apellido;
+        this.nombre = nombre;
         this.estaPago = estaPago;
         this.porcentajeVotacion = porcentajeVotacion;
         this.porcentajeBeca = porcentajeBeca;
         this.porcentajeEgresado = porcentajeEgresado;
+        this.grupoInvestigacion = grupoInvestigacion;
         this.objPeriodoAcademico = objPeriodoAcademico;
     }
 
@@ -28,6 +37,30 @@ public class ProyeccionEstudiantes {
 
     public void setCodigoEstudiante(String codigoEstudiante) {
         this.codigoEstudiante = codigoEstudiante;
+    }
+
+    public Integer getIdentificacion() {
+        return identificacion;
+    }
+
+    public void setIdentificacion(Integer identificacion) {
+        this.identificacion = identificacion;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public Boolean getEstaPago() {
@@ -60,6 +93,14 @@ public class ProyeccionEstudiantes {
 
     public void setPorcentajeEgresado(Float porcentajeEgresado) {
         this.porcentajeEgresado = porcentajeEgresado;
+    }
+
+    public String getGrupoInvestigacion() {
+        return grupoInvestigacion;
+    }
+
+    public void setGrupoInvestigacion(String grupoInvestigacion) {
+        this.grupoInvestigacion = grupoInvestigacion;
     }
 
     public PeriodoAcademico getObjPeriodoAcademico() {

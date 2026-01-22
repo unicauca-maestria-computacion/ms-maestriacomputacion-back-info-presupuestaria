@@ -2,7 +2,7 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 
 import java.util.List;
 
-public class Estudiante {
+public class Estudiante extends Personas {
     
     private Integer codigo;
     private String cohorte;
@@ -13,9 +13,12 @@ public class Estudiante {
     private List<Becas> becas;
 
     public Estudiante() {
+        super();
     }
 
-    public Estudiante(Integer codigo, String cohorte, String periodoIngreso, Integer semestreFinanciero) {
+    public Estudiante(Integer id, Integer identificacion, String apellido, String nombre, 
+                      Integer codigo, String cohorte, String periodoIngreso, Integer semestreFinanciero) {
+        super(id, identificacion, apellido, nombre);
         this.codigo = codigo;
         this.cohorte = cohorte;
         this.periodoIngreso = periodoIngreso;

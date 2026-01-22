@@ -21,4 +21,5 @@ public interface GestionarReportePorGruposCUIntPort {
     ReportePorGrupos actualizarPorcentajeItems(Items items);
     ReportePorGrupos actualizarPorcentajeImprevistos(Float nuevoValor);
     ReportePorGrupos actualizarValorVigenciasAnteriores(List<ValorGrupo> valoresGrupo);
+    Boolean finalizarReporteGrupos();
 }

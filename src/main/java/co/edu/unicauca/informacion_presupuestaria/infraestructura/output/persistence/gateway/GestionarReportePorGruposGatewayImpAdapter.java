@@ -24,9 +24,8 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     private final PeriodoAcademicoRepositoryInt objPeriodoAcademico;
     private final GastoGeneralRepositoryInt objGastoGeneral;
     private final GrupoRepositoryInt objGrupoRepository;
-    private final PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper;
     private final GastoGeneralMapperPersistencia objGastoGeneralMapper;
-    private final ReportePorGruposMapperPersistencia objReportePorGruposMapper;
+    private final ReportePorGruposMapperPersistencia objReportePorGrupos;
     
     public GestionarReportePorGruposGatewayImpAdapter(
             ReportePorGruposRepositoryInt objProyeccionEstudiante,
@@ -35,14 +34,13 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             GrupoRepositoryInt objGrupoRepository,
             PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper,
             GastoGeneralMapperPersistencia objGastoGeneralMapper,
-            ReportePorGruposMapperPersistencia objReportePorGruposMapper) {
+            ReportePorGruposMapperPersistencia objReportePorGrupos) {
         this.objProyeccionEstudiante = objProyeccionEstudiante;
         this.objPeriodoAcademico = objPeriodoAcademico;
         this.objGastoGeneral = objGastoGeneral;
-        this.objGrupoRepository = objGrupoRepository;
-        this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
+        this.objGrupoRepository = objGrupoRepository;      
         this.objGastoGeneralMapper = objGastoGeneralMapper;
-        this.objReportePorGruposMapper = objReportePorGruposMapper;
+        this.objReportePorGrupos = objReportePorGrupos;
     }
     
     @Override
@@ -63,7 +61,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             ReportePorGruposEntity reporte = reporteOpt.get();
             reporte.setParticipacionPrimerSemestre(nuevoValor);
             ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
-            return objReportePorGruposMapper.mappearDeEntityAReportePorGrupos(saved);
+            return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
         }
         return null;
     }
@@ -80,7 +78,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             ReportePorGruposEntity reporte = reporteOpt.get();
             reporte.setParticipacionSegundoSemestre(nuevoValor);
             ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
-            return objReportePorGruposMapper.mappearDeEntityAReportePorGrupos(saved);
+            return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
         }
         return null;
     }
@@ -154,9 +152,15 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             ReportePorGruposEntity reporte = reporteOpt.get();
             reporte.setVigenciasAnteriores(nuevoValor);
             ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
-            return objReportePorGruposMapper.mappearDeEntityAReportePorGrupos(saved);
+            return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
         }
         return null;
+    }
+
+    @Override
+    public Boolean finalizarReporteGrupos() {
+        // Implementación pendiente
+        return false;
     }
 }
 

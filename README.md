@@ -395,6 +395,27 @@ GET /api/reportes-grupos/obtener?periodo=1&anio=2024
 - **GastoGeneral**: Gastos generales del sistema
 - **ValorGrupo**: Valores asociados a grupos
 
+### DTOs de Respuesta (DTOAnswer)
+
+Los DTOs de respuesta se encuentran en `infraestructura/input/controllerReporteEstudiantes/DTOAnswer/`:
+
+- **ProyeccionEstudianteDTORespuesta**: DTO que representa la información de proyección de un estudiante individual. Contiene:
+  - `codigoEstudiante`: Código único del estudiante
+  - `nombre`: Nombre del estudiante
+  - `identificacion`: Número de identificación
+  - `apellido`: Apellido del estudiante
+  - `estaPago`: Estado de pago (true/false)
+  - `porcentajeVotacion`: Porcentaje de votación
+  - `porcentajeBeca`: Porcentaje de beca aplicado
+  - `grupoInvestigacion`: Grupo de investigación al que pertenece
+  - `porcentajeEgresado`: Porcentaje de egresado
+
+- **ReporteProyeccionEstudiantesDTORespuesta**: Contiene una lista de `ProyeccionEstudianteDTORespuesta`, configuración financiera y período académico
+
+- **ReporteEstudiantesDTORespuesta**: Similar a `ReporteProyeccionEstudiantesDTORespuesta`, contiene lista de estudiantes con configuración y período
+
+- **ConfiguracionReporteFinancieroDTORespuesta**: Configuración financiera del reporte (valores de matrícula, descuentos, ingresos, etc.)
+
 ## 🔧 Configuración de Beans
 
 El proyecto utiliza configuración manual de beans en `BeanConfigurations.java` para inyectar los casos de uso:

@@ -1,7 +1,8 @@
 package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 
 public class ValorGrupo {
-private String nombreGrupo;
+    
+    private String nombreGrupo;
     private Float valor;
 
     public ValorGrupo() {
