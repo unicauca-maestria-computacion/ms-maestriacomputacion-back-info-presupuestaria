@@ -1,7 +1,7 @@
-package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantesv2.mappers;
+package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.mappers;
 
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ValorGrupo;
-import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantesv2.DTOPeticion.ValorGrupoDTOPeticion;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOPeticion.ValorGrupoDTOPeticion;
 
 import java.util.List;
 

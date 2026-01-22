@@ -1,0 +1,11 @@
+package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.mappers;
+
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ReportePorGruposDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOPeticion.ReportePorGruposDTOPeticion;
+
+public interface ReportePorGruposMapperInfraestructura {
+    ReportePorGrupos mappearDePeticionAReportePorGrupos(ReportePorGruposDTOPeticion reporte);
+    ReportePorGruposDTORespuesta mappearDeReportePorGruposARespuesta(ReportePorGrupos reporte);
+}
+

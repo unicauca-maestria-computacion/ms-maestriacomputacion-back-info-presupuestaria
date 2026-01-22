@@ -28,7 +28,7 @@ src/main/java/co/edu/unicauca/informacion_presupuestaria/
 └── infraestructura/                 # Capa de infraestructura
     ├── input/                       # Adaptadores de entrada (controladores REST)
     │   ├── controllerReporteEstudiantes/
-    │   └── controllerReporteEstudiantesv2/
+    │   └── controllerReportePorGrupos/
     └── output/                      # Adaptadores de salida
         ├── persistence/             # Persistencia (JPA, Repositorios)
         └── exceptionsController/    # Manejo de excepciones

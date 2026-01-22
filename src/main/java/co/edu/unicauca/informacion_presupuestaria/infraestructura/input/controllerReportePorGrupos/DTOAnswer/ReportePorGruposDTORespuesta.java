@@ -1,4 +1,4 @@
-package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantesv2.DTOAnswer;
+package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

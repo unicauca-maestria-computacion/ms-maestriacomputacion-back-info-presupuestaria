@@ -1,0 +1,496 @@
+{
+	"info": {
+		"_postman_id": "informacion-presupuestaria-api",
+		"name": "Información Presupuestaria API",
+		"description": "Colección completa de endpoints para el microservicio de Información Presupuestaria de la Maestría en Computación - Universidad del Cauca",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Reportes de Estudiantes",
+			"description": "Endpoints para gestionar reportes y proyecciones de estudiantes",
+			"item": [
+				{
+					"name": "Obtener Proyección de Estudiantes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reportes-estudiantes/proyeccion",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-estudiantes",
+								"proyeccion"
+							]
+						},
+						"description": "Obtiene la proyección completa de estudiantes con su configuración financiera y período académico asociado.\n\n**Respuesta exitosa (200):**\n- Retorna un objeto `ReporteProyeccionEstudiantesDTORespuesta` con la lista de estudiantes proyectados, configuración financiera y período académico."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Reporte Financiero",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"periodo\": 1,\n  \"año\": 2024\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-estudiantes/financiero",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-estudiantes",
+								"financiero"
+							]
+						},
+						"description": "Obtiene el reporte financiero completo de estudiantes para un período académico específico.\n\n**Parámetros del Body:**\n- `periodo` (Integer): Número del período académico (1 o 2)\n- `año` (Integer): Año del período académico\n\n**Respuesta exitosa (200):**\n- Retorna un objeto `ReporteEstudiantesDTORespuesta` con la lista de estudiantes, configuración financiera y período académico."
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Configuración de Proyección",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"biblioteca\": 0.05,\n  \"recursosComputacionales\": 0.03,\n  \"valorMatricula\": 5000000,\n  \"valorSMLV\": 1300000,\n  \"totalNeto\": 6000000,\n  \"totalDescuentos\": 500000,\n  \"totalIngresos\": 5500000,\n  \"objPeriodoAcademico\": {\n    \"periodo\": 1,\n    \"año\": 2024\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-estudiantes/configuracion-proyeccion",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-estudiantes",
+								"configuracion-proyeccion"
+							]
+						},
+						"description": "Actualiza la configuración financiera para la proyección de estudiantes. Esta configuración incluye porcentajes de biblioteca, recursos computacionales, valores de matrícula, SMLV, y totales.\n\n**Parámetros del Body:**\n- `biblioteca` (Float): Porcentaje asignado a biblioteca\n- `recursosComputacionales` (Float): Porcentaje asignado a recursos computacionales\n- `valorMatricula` (Float): Valor de la matrícula\n- `valorSMLV` (Float): Valor del Salario Mínimo Legal Vigente\n- `totalNeto` (Float): Total neto calculado\n- `totalDescuentos` (Float): Total de descuentos aplicados\n- `totalIngresos` (Float): Total de ingresos\n- `objPeriodoAcademico` (Object): Período académico asociado\n  - `periodo` (Integer): Número del período (1 o 2)\n  - `año` (Integer): Año del período\n\n**Respuesta exitosa (200):**\n- Retorna `ConfiguracionReporteFinancieroDTORespuesta` con la configuración actualizada.\n\n**Errores posibles:**\n- 400: Si el período académico no existe\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Proyección de Estudiante",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoEstudiante\": \"123456\",\n  \"estaPago\": true,\n  \"porcentajeVotacion\": 0.05,\n  \"porcentajeBeca\": 0.20,\n  \"porcentajeEgresado\": 0.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-estudiantes/proyeccion-estudiante",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-estudiantes",
+								"proyeccion-estudiante"
+							]
+						},
+						"description": "Actualiza o crea la proyección financiera de un estudiante específico.\n\n**Parámetros del Body:**\n- `codigoEstudiante` (String): Código único del estudiante\n- `estaPago` (Boolean): Indica si el estudiante ha realizado el pago\n- `porcentajeVotacion` (Float): Porcentaje asignado para votación\n- `porcentajeBeca` (Float): Porcentaje de beca aplicado\n- `porcentajeEgresado` (Float): Porcentaje si es egresado\n\n**Respuesta exitosa (200):**\n- Retorna `ReporteProyeccionEstudiantesDTORespuesta` con la proyección actualizada del estudiante.\n\n**Errores posibles:**\n- 409: Si ya existe una proyección para este estudiante\n- 400: Si los datos son inválidos\n- 500: Error interno del servidor"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reportes por Grupos",
+			"description": "Endpoints para gestionar reportes financieros agrupados por categorías y grupos",
+			"item": [
+				{
+					"name": "Obtener Reporte por Grupos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/obtener?periodo=1&anio=2024",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"obtener"
+							],
+							"query": [
+								{
+									"key": "periodo",
+									"value": "1",
+									"description": "Número del período académico (1 o 2)"
+								},
+								{
+									"key": "anio",
+									"value": "2024",
+									"description": "Año del período académico"
+								}
+							]
+						},
+						"description": "Obtiene el reporte financiero agrupado por categorías para un período académico específico.\n\n**Parámetros Query:**\n- `periodo` (Integer): Número del período académico (1 o 2)\n- `anio` (Integer): Año del período académico\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con información agrupada por categorías, porcentajes, gastos generales, items, y vigencias anteriores.\n\n**Errores posibles:**\n- 400: Si el período no es válido\n- 404: Si no existe reporte para ese período\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Porcentaje Primer Semestre",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"nombreGrupo\": \"Grupo A\",\n    \"porcentaje\": 0.15\n  },\n  {\n    \"nombreGrupo\": \"Grupo B\",\n    \"porcentaje\": 0.20\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-porcentaje-primer-semestre",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-porcentaje-primer-semestre"
+							]
+						},
+						"description": "Actualiza los porcentajes de participación de los grupos para el primer semestre.\n\n**Parámetros del Body:**\n- Array de objetos `PorcentajeGrupoDTOPeticion`:\n  - `nombreGrupo` (String): Nombre del grupo\n  - `porcentaje` (Float): Porcentaje de participación (0.0 a 1.0)\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con los porcentajes actualizados.\n\n**Errores posibles:**\n- 400: Si los porcentajes no suman correctamente o son inválidos\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Porcentaje Segundo Semestre",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"nombreGrupo\": \"Grupo A\",\n    \"porcentaje\": 0.18\n  },\n  {\n    \"nombreGrupo\": \"Grupo B\",\n    \"porcentaje\": 0.22\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-porcentaje-segundo-semestre",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-porcentaje-segundo-semestre"
+							]
+						},
+						"description": "Actualiza los porcentajes de participación de los grupos para el segundo semestre.\n\n**Parámetros del Body:**\n- Array de objetos `PorcentajeGrupoDTOPeticion`:\n  - `nombreGrupo` (String): Nombre del grupo\n  - `porcentaje` (Float): Porcentaje de participación (0.0 a 1.0)\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con los porcentajes actualizados.\n\n**Errores posibles:**\n- 400: Si los porcentajes no suman correctamente o son inválidos\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Porcentaje AUI",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-porcentaje-aui?nuevoValor=0.05",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-porcentaje-aui"
+							],
+							"query": [
+								{
+									"key": "nuevoValor",
+									"value": "0.05",
+									"description": "Nuevo valor del porcentaje AUI (0.0 a 1.0)"
+								}
+							]
+						},
+						"description": "Actualiza el porcentaje AUI (Asignación Universitaria Interna) de la universidad.\n\n**Parámetros Query:**\n- `nuevoValor` (Float): Nuevo valor del porcentaje AUI (debe estar entre 0.0 y 1.0)\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con el porcentaje AUI actualizado.\n\n**Errores posibles:**\n- 400: Si el valor está fuera del rango permitido\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Excedentes Maestría",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-excedentes-maestria?nuevoValor=1000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-excedentes-maestria"
+							],
+							"query": [
+								{
+									"key": "nuevoValor",
+									"value": "1000000",
+									"description": "Nuevo valor de excedentes de maestría"
+								}
+							]
+						},
+						"description": "Actualiza el valor de los excedentes de la maestría.\n\n**Parámetros Query:**\n- `nuevoValor` (Float): Nuevo valor de excedentes en pesos colombianos\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con el valor de excedentes actualizado.\n\n**Errores posibles:**\n- 400: Si el valor es negativo o inválido\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Gasto General",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idGastoGeneral\": 1,\n  \"categoria\": \"Infraestructura\",\n  \"descripcion\": \"Mantenimiento de laboratorios\",\n  \"monto\": 500000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-gasto-general",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-gasto-general"
+							]
+						},
+						"description": "Actualiza un gasto general existente.\n\n**Parámetros del Body:**\n- `idGastoGeneral` (Integer): ID del gasto general a actualizar\n- `categoria` (String): Categoría del gasto\n- `descripcion` (String): Descripción detallada del gasto\n- `monto` (Float): Monto del gasto en pesos colombianos\n\n**Respuesta exitosa (200):**\n- Retorna `GastoGeneralDTORespuesta` con el gasto actualizado.\n\n**Errores posibles:**\n- 404: Si el gasto general no existe\n- 400: Si los datos son inválidos\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Gasto General",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoria\": \"Infraestructura\",\n  \"descripcion\": \"Adquisición de equipos\",\n  \"monto\": 2000000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/crear-gasto-general",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"crear-gasto-general"
+							]
+						},
+						"description": "Crea un nuevo gasto general en el sistema.\n\n**Parámetros del Body:**\n- `categoria` (String): Categoría del gasto (requerido)\n- `descripcion` (String): Descripción detallada del gasto (requerido)\n- `monto` (Float): Monto del gasto en pesos colombianos (requerido)\n- `idGastoGeneral` (Integer): Opcional, se genera automáticamente si no se proporciona\n\n**Respuesta exitosa (200):**\n- Retorna `GastoGeneralDTORespuesta` con el gasto creado incluyendo su ID.\n\n**Errores posibles:**\n- 400: Si faltan campos requeridos o los datos son inválidos\n- 409: Si ya existe un gasto con las mismas características\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Gasto General",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/eliminar-gasto-general/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"eliminar-gasto-general",
+								":idGastoGeneral"
+							],
+							"variable": [
+								{
+									"key": "idGastoGeneral",
+									"value": "1",
+									"description": "ID del gasto general a eliminar"
+								}
+							]
+						},
+						"description": "Elimina un gasto general del sistema por su ID.\n\n**Parámetros Path:**\n- `idGastoGeneral` (Integer): ID del gasto general a eliminar\n\n**Respuesta exitosa (200):**\n- Retorna `Boolean` (true si se eliminó correctamente, false en caso contrario).\n\n**Errores posibles:**\n- 404: Si el gasto general no existe\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Porcentaje Items",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"item1\": 0.10,\n  \"item2\": 0.15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-porcentaje-items",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-porcentaje-items"
+							]
+						},
+						"description": "Actualiza los porcentajes de los items del reporte.\n\n**Parámetros del Body:**\n- `item1` (Float): Porcentaje del primer item (0.0 a 1.0)\n- `item2` (Float): Porcentaje del segundo item (0.0 a 1.0)\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con los porcentajes de items actualizados.\n\n**Errores posibles:**\n- 400: Si los porcentajes están fuera del rango permitido\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Porcentaje Imprevistos",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-porcentaje-imprevistos?nuevoValor=0.10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-porcentaje-imprevistos"
+							],
+							"query": [
+								{
+									"key": "nuevoValor",
+									"value": "0.10",
+									"description": "Nuevo valor del porcentaje de imprevistos (0.0 a 1.0)"
+								}
+							]
+						},
+						"description": "Actualiza el porcentaje de imprevistos del reporte.\n\n**Parámetros Query:**\n- `nuevoValor` (Float): Nuevo valor del porcentaje de imprevistos (debe estar entre 0.0 y 1.0)\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con el porcentaje de imprevistos actualizado.\n\n**Errores posibles:**\n- 400: Si el valor está fuera del rango permitido\n- 500: Error interno del servidor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Vigencias Anteriores",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"nombreGrupo\": \"Grupo A\",\n    \"valor\": 500000\n  },\n  {\n    \"nombreGrupo\": \"Grupo B\",\n    \"valor\": 750000\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-grupos/actualizar-vigencias-anteriores",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-grupos",
+								"actualizar-vigencias-anteriores"
+							]
+						},
+						"description": "Actualiza los valores de vigencias anteriores por grupo.\n\n**Parámetros del Body:**\n- Array de objetos `ValorGrupoDTOPeticion`:\n  - `nombreGrupo` (String): Nombre del grupo\n  - `valor` (Float): Valor de la vigencia anterior en pesos colombianos\n\n**Respuesta exitosa (200):**\n- Retorna `ReportePorGruposDTORespuesta` con los valores de vigencias anteriores actualizados.\n\n**Errores posibles:**\n- 400: Si los datos son inválidos\n- 500: Error interno del servidor"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
