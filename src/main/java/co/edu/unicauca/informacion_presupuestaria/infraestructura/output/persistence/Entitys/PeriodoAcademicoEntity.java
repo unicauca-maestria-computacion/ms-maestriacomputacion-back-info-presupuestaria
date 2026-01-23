@@ -14,7 +14,7 @@ public class PeriodoAcademicoEntity {
     @Column(nullable = false)
     private Integer periodo;
     
-    @Column(nullable = false)
+    @Column(name = "anio", nullable = false)
     private Integer año;
     
     @OneToMany(mappedBy = "objPeriodoAcademico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

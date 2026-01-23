@@ -1,6 +1,5 @@
 package co.edu.unicauca.informacion_presupuestaria.dominio.usecases;
 
-import org.springframework.stereotype.Service;
 import java.util.List;
 
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.input.GestionarReportePorGruposCUIntPort;
@@ -13,7 +12,6 @@ import co.edu.unicauca.informacion_presupuestaria.dominio.models.PorcentajeGrupo
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ValorGrupo;
 
-@Service
 public class GestionarReportePorGruposCUAdapter implements GestionarReportePorGruposCUIntPort{
     private final GestionarReportePorGruposGatewayIntPort objGestionarReportePorGrupos;
     private final FormateadorResultadosIntPort objFormateadorResultados;

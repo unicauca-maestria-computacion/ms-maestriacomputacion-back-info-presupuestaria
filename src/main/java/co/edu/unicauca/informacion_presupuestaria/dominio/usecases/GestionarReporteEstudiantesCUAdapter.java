@@ -3,8 +3,6 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.usecases;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.input.GestionarReporteEstudiantesCUIntPort;
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.FormateadorResultadosIntPort;
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.GestionarReporteEstudiantesGatewayIntPort;
@@ -14,7 +12,6 @@ import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstud
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteEstudiantes;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteProyeccionEstudiantes;
 
-@Service
 public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEstudiantesCUIntPort{
     
     private final GestionarReporteEstudiantesGatewayIntPort objGestionarReporteEstudiantes;

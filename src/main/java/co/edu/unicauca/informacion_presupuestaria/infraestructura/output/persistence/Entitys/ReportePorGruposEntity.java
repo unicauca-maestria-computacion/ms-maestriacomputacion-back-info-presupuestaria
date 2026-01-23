@@ -25,7 +25,7 @@ public class ReportePorGruposEntity {
     @Column(name = "participacion_segundo_semestre")
     private Float participacionSegundoSemestre;
     
-    @Column(name = "participacion_por_año")
+    @Column(name = "participacion_por_anio")
     private Float participacionPorAño;
     
     @Column(name = "presupuesto_por_grupo_item1")
