@@ -2,15 +2,18 @@ package co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persis
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Entity
 @Table(name = "estudiante")
+@PrimaryKeyJoinColumn(name = "persona_id", referencedColumnName = "id")
 @Data
-public class EstudianteEntity {
-    @Id
-    @Column(name = "codigo")
+@EqualsAndHashCode(callSuper = true)
+public class EstudianteEntity extends PersonasEntity {
+    
+    @Column(name = "codigo", unique = true, nullable = false)
     private Integer codigo;
     
     private String cohorte;
@@ -21,13 +24,13 @@ public class EstudianteEntity {
     @Column(name = "semestre_financiero")
     private Integer semestreFinanciero;
     
-    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "objEstudiante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MatriculaFinancieraEntity> matriculasFinancieras;
     
-    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "objEstudiante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DescuentosEntity> descuentos;
     
-    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "objEstudiante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BecasEntity> becas;
 }
 

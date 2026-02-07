@@ -21,6 +21,7 @@ public class ConfiguracionReporteFinancieroMapperInfraestructuraImpl implements 
         }
         
         ConfiguracionReporteFinanciero config = new ConfiguracionReporteFinanciero();
+        // El ID se manejará en el caso de uso, no se mapea al modelo de dominio
         config.setBiblioteca(configuracion.getBiblioteca());
         config.setRecursosComputacionales(configuracion.getRecursosComputacionales());
         config.setValorMatricula(configuracion.getValorMatricula());

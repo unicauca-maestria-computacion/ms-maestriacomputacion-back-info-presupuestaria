@@ -8,15 +8,17 @@ public class MatriculaFinanciera {
     private Float valorMatricula;
     private Boolean pagada;
     private PeriodoAcademico objPeriodoAcademico;
+    private Estudiante objEstudiante;
 
     public MatriculaFinanciera() {
     }
 
-    public MatriculaFinanciera(Date fechaMatricula, Float valorMatricula, Boolean pagada, PeriodoAcademico objPeriodoAcademico) {
+    public MatriculaFinanciera(Date fechaMatricula, Float valorMatricula, Boolean pagada, PeriodoAcademico objPeriodoAcademico, Estudiante objEstudiante) {
         this.fechaMatricula = fechaMatricula;
         this.valorMatricula = valorMatricula;
         this.pagada = pagada;
         this.objPeriodoAcademico = objPeriodoAcademico;
+        this.objEstudiante = objEstudiante;
     }
 
     public Date getFechaMatricula() {
@@ -49,5 +51,13 @@ public class MatriculaFinanciera {
 
     public void setObjPeriodoAcademico(PeriodoAcademico objPeriodoAcademico) {
         this.objPeriodoAcademico = objPeriodoAcademico;
+    }
+
+    public Estudiante getObjEstudiante() {
+        return objEstudiante;
+    }
+
+    public void setObjEstudiante(Estudiante objEstudiante) {
+        this.objEstudiante = objEstudiante;
     }
 }

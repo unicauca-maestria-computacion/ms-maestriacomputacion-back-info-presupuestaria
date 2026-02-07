@@ -16,6 +16,7 @@ public class PeriodoAcademicoMapperPersistenciaImpl implements PeriodoAcademicoM
         PeriodoAcademico periodoAcademico = new PeriodoAcademico();
         periodoAcademico.setPeriodo(periodo.getPeriodo());
         periodoAcademico.setAño(periodo.getAño());
+        periodoAcademico.setActivo(periodo.getActivo());
         
         // No mapeamos las relaciones lazy para evitar problemas de carga
         // Si se necesitan, se deben cargar explícitamente
@@ -32,6 +33,7 @@ public class PeriodoAcademicoMapperPersistenciaImpl implements PeriodoAcademicoM
         PeriodoAcademicoEntity entity = new PeriodoAcademicoEntity();
         entity.setPeriodo(periodo.getPeriodo());
         entity.setAño(periodo.getAño());
+        entity.setActivo(periodo.getActivo());
         
         // No mapeamos las relaciones para evitar problemas de carga
         // Si se necesitan, se deben establecer explícitamente

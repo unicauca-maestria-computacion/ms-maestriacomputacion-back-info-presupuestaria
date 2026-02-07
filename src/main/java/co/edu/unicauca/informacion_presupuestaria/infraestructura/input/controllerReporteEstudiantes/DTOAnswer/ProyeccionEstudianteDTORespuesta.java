@@ -17,5 +17,7 @@ public class ProyeccionEstudianteDTORespuesta {
     private Float porcentajeBeca;
     private String grupoInvestigacion;
     private Float porcentajeEgresado;
+    /** Estado de la linea: PROYECCION (editable) o FINALIZADO (reporte final) */
+    private String estadoProyeccion;
 }
 

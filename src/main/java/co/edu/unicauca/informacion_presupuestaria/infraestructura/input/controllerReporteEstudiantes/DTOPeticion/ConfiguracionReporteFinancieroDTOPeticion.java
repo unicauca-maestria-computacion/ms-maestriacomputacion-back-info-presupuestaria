@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConfiguracionReporteFinancieroDTOPeticion {
+    private Long id;
     private Float biblioteca;
     private Float recursosComputacionales;
     private Float valorMatricula;

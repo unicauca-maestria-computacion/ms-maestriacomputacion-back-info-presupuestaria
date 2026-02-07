@@ -47,6 +47,7 @@ public class ProyeccionEstudianteMapperInfraestructuraImpl implements Proyeccion
         dto.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
         dto.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
         dto.setPorcentajeEgresado(proyeccion.getPorcentajeEgresado());
+        dto.setEstadoProyeccion(proyeccion.getEstadoProyeccion() != null ? proyeccion.getEstadoProyeccion().name() : null);
         
         return dto;
     }

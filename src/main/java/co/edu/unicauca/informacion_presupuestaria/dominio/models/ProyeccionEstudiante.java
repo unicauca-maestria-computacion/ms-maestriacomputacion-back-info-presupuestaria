@@ -11,6 +11,7 @@ public class ProyeccionEstudiante {
     private Float porcentajeBeca;
     private Float porcentajeEgresado;
     private String grupoInvestigacion;
+    private EstadoProyeccionEstudiante estadoProyeccion;
     private PeriodoAcademico objPeriodoAcademico;
 
     public ProyeccionEstudiante() {
@@ -101,6 +102,14 @@ public class ProyeccionEstudiante {
 
     public void setGrupoInvestigacion(String grupoInvestigacion) {
         this.grupoInvestigacion = grupoInvestigacion;
+    }
+
+    public EstadoProyeccionEstudiante getEstadoProyeccion() {
+        return estadoProyeccion;
+    }
+
+    public void setEstadoProyeccion(EstadoProyeccionEstudiante estadoProyeccion) {
+        this.estadoProyeccion = estadoProyeccion;
     }
 
     public PeriodoAcademico getObjPeriodoAcademico() {

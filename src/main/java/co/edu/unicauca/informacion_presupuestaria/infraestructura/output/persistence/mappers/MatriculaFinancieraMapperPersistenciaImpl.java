@@ -11,9 +11,13 @@ import java.util.stream.Collectors;
 public class MatriculaFinancieraMapperPersistenciaImpl implements MatriculaFinancieraMapperPersistencia {
     
     private final PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper;
+    private final EstudianteMapperPersistencia objEstudianteMapper;
     
-    public MatriculaFinancieraMapperPersistenciaImpl(PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper) {
+    public MatriculaFinancieraMapperPersistenciaImpl(
+            PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper,
+            EstudianteMapperPersistencia objEstudianteMapper) {
         this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
+        this.objEstudianteMapper = objEstudianteMapper;
     }
     
     @Override
@@ -30,6 +34,12 @@ public class MatriculaFinancieraMapperPersistenciaImpl implements MatriculaFinan
         if (matricula.getObjPeriodoAcademico() != null) {
             matriculaFinanciera.setObjPeriodoAcademico(
                 objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(matricula.getObjPeriodoAcademico())
+            );
+        }
+        
+        if (matricula.getObjEstudiante() != null) {
+            matriculaFinanciera.setObjEstudiante(
+                objEstudianteMapper.mappearDeEntityAEstudiante(matricula.getObjEstudiante())
             );
         }
         
@@ -50,6 +60,12 @@ public class MatriculaFinancieraMapperPersistenciaImpl implements MatriculaFinan
         if (matricula.getObjPeriodoAcademico() != null) {
             entity.setObjPeriodoAcademico(
                 objPeriodoAcademicoMapper.mappearPeriodoAcademicoAEntity(matricula.getObjPeriodoAcademico())
+            );
+        }
+        
+        if (matricula.getObjEstudiante() != null) {
+            entity.setObjEstudiante(
+                objEstudianteMapper.mappearEstudianteAEntity(matricula.getObjEstudiante())
             );
         }
         

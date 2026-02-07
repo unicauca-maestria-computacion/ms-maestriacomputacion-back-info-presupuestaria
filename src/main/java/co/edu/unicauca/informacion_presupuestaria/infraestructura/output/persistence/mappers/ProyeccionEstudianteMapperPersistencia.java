@@ -3,9 +3,11 @@ package co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persis
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiante;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ProyeccionEstudianteEntity;
 
+import java.util.List;
+
 public interface ProyeccionEstudianteMapperPersistencia {
-    
-    ProyeccionEstudiante mappearDeEntityAProyeccionEstudiante(ProyeccionEstudianteEntity proyeccion);
-    
-    ProyeccionEstudianteEntity mappearProyeccionEstudianteAEntity(ProyeccionEstudiante proyeccion);
+
+    ProyeccionEstudiante mappearDeEntityAProyeccionEstudiante(ProyeccionEstudianteEntity entity);
+
+    List<ProyeccionEstudiante> mappearListaEntityAProyeccionEstudiante(List<ProyeccionEstudianteEntity> entities);
 }

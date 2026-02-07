@@ -5,12 +5,10 @@ import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionRe
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstudiante;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteEstudiantes;
-import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReporteProyeccionEstudiantes;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOAnswer.ConfiguracionReporteFinancieroDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOAnswer.ReporteEstudiantesDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOAnswer.ReporteProyeccionEstudiantesDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOPeticion.ConfiguracionReporteFinancieroDTOPeticion;
-import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOPeticion.PeriodoAcademicoDTOPeticion;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.DTOPeticion.ProyeccionEstudianteDTOPeticion;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.mappers.ConfiguracionReporteFinancieroMapperInfraestructura;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.mappers.PeriodoAcademicoMapperInfraestructura;
@@ -48,43 +46,53 @@ public class ReporteEstudiantesRestController {
     @PutMapping("/configuracion-proyeccion")
     public ResponseEntity<ConfiguracionReporteFinancieroDTORespuesta> actualizarConfiguracionProyeccion(
             @RequestBody ConfiguracionReporteFinancieroDTOPeticion configuracion) {
-        try {
-            ConfiguracionReporteFinanciero configuracionDomain = 
-                objMapperConfiguracionReporteFinanciero.mappearDePeticionAConfiguracionReporteFinanciero(configuracion);
-            ConfiguracionReporteFinanciero configuracionActualizada = 
-                objGestionarReporteEstudiantesCUInt.actualizarConfiguracionProyeccion(configuracionDomain);
-            ConfiguracionReporteFinancieroDTORespuesta respuesta = 
-                objMapperConfiguracionReporteFinanciero.mappearDeConfiguracionReporteFinancieroARespuesta(configuracionActualizada);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if (configuracion == null || configuracion.getId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        
+        ConfiguracionReporteFinanciero configuracionDomain = 
+            objMapperConfiguracionReporteFinanciero.mappearDePeticionAConfiguracionReporteFinanciero(configuracion);
+        ConfiguracionReporteFinanciero configuracionActualizada = 
+            objGestionarReporteEstudiantesCUInt.actualizarConfiguracionProyeccion(configuracion.getId(), configuracionDomain);
+        
+        if (configuracionActualizada == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        
+        ConfiguracionReporteFinancieroDTORespuesta respuesta = 
+            objMapperConfiguracionReporteFinanciero.mappearDeConfiguracionReporteFinancieroARespuesta(configuracionActualizada);
+        return ResponseEntity.ok(respuesta);
     }
 
     @PutMapping("/proyeccion-estudiante")
     public ResponseEntity<ReporteProyeccionEstudiantesDTORespuesta> actualizarProyeccionEstudiante(
             @RequestBody ProyeccionEstudianteDTOPeticion proyeccion) {
-        try {
-            ProyeccionEstudiante proyeccionDomain = 
-                objMapperProyeccionEstudiante.mappearDePeticionAProyeccionEstudiante(proyeccion);
-            ReporteProyeccionEstudiantes reporte = 
-                objGestionarReporteEstudiantesCUInt.actualizarProyeccionEstudiante(proyeccionDomain);
-            ReporteProyeccionEstudiantesDTORespuesta respuesta = 
-                objMapperReporteProyeccionEstudiantes.mappearDeReporteProyeccionEstudiantesARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        ProyeccionEstudiante proyeccionDomain = 
+            objMapperProyeccionEstudiante.mappearDePeticionAProyeccionEstudiante(proyeccion);
+        ReporteEstudiantes reporte = 
+            objGestionarReporteEstudiantesCUInt.actualizarProyeccionEstudiante(proyeccionDomain);
+        
+        if (reporte == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        
+        ReporteProyeccionEstudiantesDTORespuesta respuesta = 
+            objMapperReporteProyeccionEstudiantes.mappearDeReporteEstudiantesARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
 
-      
-    @PostMapping("/financiero")
+    @GetMapping("/financiero")
     public ResponseEntity<ReporteEstudiantesDTORespuesta> obtenerReporteFinanciero(
-            @RequestBody PeriodoAcademicoDTOPeticion periodo) {
+            @RequestParam Integer periodo,
+            @RequestParam(name = "anio") Integer anio) {
         try {
-            PeriodoAcademico periodoAcademico = 
-                objMapperProyeccionPeriodoAcademico.mappearDePeticionAPeriodoAcademico(periodo);
+            PeriodoAcademico periodoAcademico = new PeriodoAcademico(periodo, anio);
             ReporteEstudiantes reporte = objGestionarReporteEstudiantesCUInt.obtenerReporteFinanciero(periodoAcademico);
+            
+            if (reporte == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            
             ReporteEstudiantesDTORespuesta respuesta = 
                 objMapperReporteEstudiantes.mappearDeReporteEstudiantesARespuesta(reporte);
             return ResponseEntity.ok(respuesta);
@@ -97,9 +105,9 @@ public class ReporteEstudiantesRestController {
     @GetMapping("/proyeccion")
     public ResponseEntity<ReporteProyeccionEstudiantesDTORespuesta> obtenerProyeccionEstudiantes() {
         try {
-            ReporteProyeccionEstudiantes reporte = objGestionarReporteEstudiantesCUInt.obtenerProyeccionEstudiantes();
+            ReporteEstudiantes reporte = objGestionarReporteEstudiantesCUInt.obtenerProyeccionEstudiantes();
             ReporteProyeccionEstudiantesDTORespuesta respuesta = 
-                objMapperReporteProyeccionEstudiantes.mappearDeReporteProyeccionEstudiantesARespuesta(reporte);
+                objMapperReporteProyeccionEstudiantes.mappearDeReporteEstudiantesARespuesta(reporte);
             return ResponseEntity.ok(respuesta);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

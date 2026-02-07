@@ -21,6 +21,6 @@ public class BecasEntity {
     private String titulo;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estudiante_codigo")
-    private EstudianteEntity estudiante;
+    @JoinColumn(name = "estudiante_codigo", referencedColumnName = "codigo")
+    private EstudianteEntity objEstudiante;
 }

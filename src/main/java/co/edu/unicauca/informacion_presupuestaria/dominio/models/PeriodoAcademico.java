@@ -5,6 +5,7 @@ import java.util.List;
 public class PeriodoAcademico {
     private Integer periodo;
     private Integer año;
+    private Boolean activo;
     private List<MatriculaFinanciera> matriculasFinancieras;
     private ConfiguracionReporteFinanciero objConfiguracionReporteFinanciero;
     private ConfiguracionReporteGrupos objConfiguracionReporteGrupo;
@@ -64,5 +65,13 @@ public class PeriodoAcademico {
 
     public void setObjProyeccionEstudiante(ProyeccionEstudiante objProyeccionEstudiante) {
         this.objProyeccionEstudiante = objProyeccionEstudiante;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 }

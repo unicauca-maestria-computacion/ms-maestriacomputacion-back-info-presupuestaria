@@ -23,6 +23,6 @@ public class PeriodoAcademicoMapperInfraestructuraImpl implements PeriodoAcademi
             return null;
         }
         
-        return new PeriodoAcademicoDTORespuesta(periodo.getPeriodo(), periodo.getAño());
+        return new PeriodoAcademicoDTORespuesta(periodo.getPeriodo(), periodo.getAño(), periodo.getActivo());
     }
 }

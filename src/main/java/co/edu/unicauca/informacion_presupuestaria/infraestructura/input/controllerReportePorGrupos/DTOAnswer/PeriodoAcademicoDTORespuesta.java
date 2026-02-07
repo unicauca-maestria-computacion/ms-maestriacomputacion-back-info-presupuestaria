@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class PeriodoAcademicoDTORespuesta {
     private Integer periodo;
     private Integer año;
+    private Boolean activo;
 }
 
