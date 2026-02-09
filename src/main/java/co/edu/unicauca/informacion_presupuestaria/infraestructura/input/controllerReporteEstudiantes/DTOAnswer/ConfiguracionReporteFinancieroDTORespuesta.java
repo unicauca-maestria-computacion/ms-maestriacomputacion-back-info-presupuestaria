@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConfiguracionReporteFinancieroDTORespuesta {
+    private Long id;
     private Boolean esReporteFinal;
     private Float biblioteca;
     private Float recursosComputacionales;
@@ -18,4 +19,3 @@ public class ConfiguracionReporteFinancieroDTORespuesta {
     private Float totalIngresos;
     private PeriodoAcademicoDTORespuesta objPeriodoAcademico;
 }
-

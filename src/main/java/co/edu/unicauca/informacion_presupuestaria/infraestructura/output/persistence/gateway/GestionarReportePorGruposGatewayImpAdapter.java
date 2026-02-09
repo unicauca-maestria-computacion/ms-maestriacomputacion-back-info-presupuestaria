@@ -9,6 +9,11 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.mappers.GastoGeneralMapperPersistencia;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.mappers.PeriodoAcademicoMapperPersistencia;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.mappers.ReportePorGruposMapperPersistencia;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ConfiguracionReporteGruposRepositoryInt;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteGrupos;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ConfiguracionReporteGruposEntity;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.PeriodoAcademicoEntity;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.mappers.ConfiguracionReporteGruposMapperPersistencia;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.GastoGeneralRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.GrupoRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.PeriodoAcademicoRepositoryInt;
@@ -19,14 +24,17 @@ import java.util.Optional;
 
 @Component
 public class GestionarReportePorGruposGatewayImpAdapter implements GestionarReportePorGruposGatewayIntPort {
-    
+
     private final ReportePorGruposRepositoryInt objProyeccionEstudiante;
     private final PeriodoAcademicoRepositoryInt objPeriodoAcademico;
     private final GastoGeneralRepositoryInt objGastoGeneral;
     private final GrupoRepositoryInt objGrupoRepository;
     private final GastoGeneralMapperPersistencia objGastoGeneralMapper;
     private final ReportePorGruposMapperPersistencia objReportePorGrupos;
-    
+    private final ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos;
+    private final ConfiguracionReporteGruposMapperPersistencia objConfiguracionReporteGruposMapper;
+    private final PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper;
+
     public GestionarReportePorGruposGatewayImpAdapter(
             ReportePorGruposRepositoryInt objProyeccionEstudiante,
             PeriodoAcademicoRepositoryInt objPeriodoAcademico,
@@ -34,67 +42,104 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             GrupoRepositoryInt objGrupoRepository,
             PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper,
             GastoGeneralMapperPersistencia objGastoGeneralMapper,
-            ReportePorGruposMapperPersistencia objReportePorGrupos) {
+            ReportePorGruposMapperPersistencia objReportePorGrupos,
+            ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos,
+            ConfiguracionReporteGruposMapperPersistencia objConfiguracionReporteGruposMapper) {
         this.objProyeccionEstudiante = objProyeccionEstudiante;
         this.objPeriodoAcademico = objPeriodoAcademico;
         this.objGastoGeneral = objGastoGeneral;
-        this.objGrupoRepository = objGrupoRepository;      
+        this.objGrupoRepository = objGrupoRepository;
+        this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
         this.objGastoGeneralMapper = objGastoGeneralMapper;
         this.objReportePorGrupos = objReportePorGrupos;
+        this.objConfiguracionReporteGrupos = objConfiguracionReporteGrupos;
+        this.objConfiguracionReporteGruposMapper = objConfiguracionReporteGruposMapper;
     }
-    
+
     @Override
     public Boolean existePeriodoAcademico(PeriodoAcademico periodo) {
         return objPeriodoAcademico.existsByPeriodoAndAño(periodo.getPeriodo(), periodo.getAño());
     }
-    
+
     @Override
-    public ReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
-        // Implementación básica - se requiere mapeo completo
+    public ConfiguracionReporteGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
+        Optional<PeriodoAcademicoEntity> periodoEntityOpt = objPeriodoAcademico
+                .findByPeriodoAndAño(periodo.getPeriodo(), periodo.getAño());
+        if (periodoEntityOpt.isPresent()) {
+            Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos
+                    .findByObjPeriodoAcademico(periodoEntityOpt.get());
+            if (configOpt.isPresent()) {
+                return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(configOpt.get());
+            }
+        }
         return null;
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeParticipacionPrimerSemestreGrupo(String nombreGrupo, Float nuevoValor) {
+    public ConfiguracionReporteGrupos actualizarPorcentajeParticipacionPrimerSemestreGrupo(String nombreGrupo,
+            Float nuevoValor) {
         Optional<ReportePorGruposEntity> reporteOpt = objProyeccionEstudiante.findByObjGrupoNombre(nombreGrupo);
         if (reporteOpt.isPresent()) {
             ReportePorGruposEntity reporte = reporteOpt.get();
             reporte.setParticipacionPrimerSemestre(nuevoValor);
-            ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
-            return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
+            objProyeccionEstudiante.save(reporte);
+
+            // Retornar la configuración completa asociada
+            if (reporte.getObjConfiguracionReporteGrupos() != null) {
+                return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(
+                        reporte.getObjConfiguracionReporteGrupos());
+            }
         }
         return null;
     }
-    
+
     @Override
     public Boolean existeGrupoPorNombre(String nombre) {
         return objGrupoRepository.existsByNombre(nombre);
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeParticipacionSegundoSemestreGrupo(String nombreGrupo, Float nuevoValor) {
+    public ConfiguracionReporteGrupos actualizarPorcentajeParticipacionSegundoSemestreGrupo(String nombreGrupo,
+            Float nuevoValor) {
         Optional<ReportePorGruposEntity> reporteOpt = objProyeccionEstudiante.findByObjGrupoNombre(nombreGrupo);
         if (reporteOpt.isPresent()) {
             ReportePorGruposEntity reporte = reporteOpt.get();
             reporte.setParticipacionSegundoSemestre(nuevoValor);
-            ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
-            return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
+            objProyeccionEstudiante.save(reporte);
+
+            // Retornar la configuración completa asociada
+            if (reporte.getObjConfiguracionReporteGrupos() != null) {
+                return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(
+                        reporte.getObjConfiguracionReporteGrupos());
+            }
         }
         return null;
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeAUIUniversidad(Float nuevoValor) {
-        // Implementación pendiente
+    public ConfiguracionReporteGrupos actualizarPorcentajeAUIUniversidad(Long idConfiguracion, Float nuevoValor) {
+        Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos.findById(idConfiguracion);
+        if (configOpt.isPresent()) {
+            ConfiguracionReporteGruposEntity config = configOpt.get();
+            config.setAUIPorcentaje(nuevoValor);
+            ConfiguracionReporteGruposEntity saved = objConfiguracionReporteGrupos.save(config);
+            return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(saved);
+        }
         return null;
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarValorExcedentesMaestria(Float nuevoValor) {
-        // Implementación pendiente
+    public ConfiguracionReporteGrupos actualizarValorExcedentesMaestria(Long idConfiguracion, Float nuevoValor) {
+        Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos.findById(idConfiguracion);
+        if (configOpt.isPresent()) {
+            ConfiguracionReporteGruposEntity config = configOpt.get();
+            config.setExcedentesMaestria(nuevoValor);
+            ConfiguracionReporteGruposEntity saved = objConfiguracionReporteGrupos.save(config);
+            return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(saved);
+        }
         return null;
     }
-    
+
     @Override
     public GastoGeneral actualizarGastoGeneral(GastoGeneral gasto) {
         if (gasto.getIdGastoGeneral() != null) {
@@ -110,14 +155,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         return null;
     }
-    
+
     @Override
     public GastoGeneral crearGastoGeneral(GastoGeneral gasto) {
         GastoGeneralEntity entity = objGastoGeneralMapper.mappearGastoGeneralAEntity(gasto);
         GastoGeneralEntity saved = objGastoGeneral.save(entity);
         return objGastoGeneralMapper.mappearDeEntityAGastoGeneral(saved);
     }
-    
+
     @Override
     public Boolean eliminarGastoGeneral(Integer idGastoGeneral) {
         if (objGastoGeneral.existsById(idGastoGeneral)) {
@@ -126,33 +171,57 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         return false;
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeItem1(Float nuevoValor) {
-        // Implementación pendiente
+    public ConfiguracionReporteGrupos actualizarPorcentajeItem1(Long idConfiguracion, Float nuevoValor) {
+        Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos.findById(idConfiguracion);
+        if (configOpt.isPresent()) {
+            ConfiguracionReporteGruposEntity config = configOpt.get();
+            config.setItem1(nuevoValor);
+            ConfiguracionReporteGruposEntity saved = objConfiguracionReporteGrupos.save(config);
+            return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(saved);
+        }
         return null;
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeItem2(Float nuevoValor) {
-        // Implementación pendiente
+    public ConfiguracionReporteGrupos actualizarPorcentajeItem2(Long idConfiguracion, Float nuevoValor) {
+        Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos.findById(idConfiguracion);
+        if (configOpt.isPresent()) {
+            ConfiguracionReporteGruposEntity config = configOpt.get();
+            config.setItem2(nuevoValor);
+            ConfiguracionReporteGruposEntity saved = objConfiguracionReporteGrupos.save(config);
+            return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(saved);
+        }
         return null;
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeImprevistos(Float nuevoValor) {
-        // Implementación pendiente
+    public ConfiguracionReporteGrupos actualizarPorcentajeImprevistos(Long idConfiguracion, Float nuevoValor) {
+        Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos.findById(idConfiguracion);
+        if (configOpt.isPresent()) {
+            ConfiguracionReporteGruposEntity config = configOpt.get();
+            config.setImprevistos(nuevoValor);
+            ConfiguracionReporteGruposEntity saved = objConfiguracionReporteGrupos.save(config);
+            return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(saved);
+        }
         return null;
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeVigenciasAnterioresGrupo(String nombreGrupo, Float nuevoValor) {
+    public ConfiguracionReporteGrupos actualizarPorcentajeVigenciasAnterioresGrupo(String nombreGrupo,
+            Float nuevoValor) {
         Optional<ReportePorGruposEntity> reporteOpt = objProyeccionEstudiante.findByObjGrupoNombre(nombreGrupo);
         if (reporteOpt.isPresent()) {
             ReportePorGruposEntity reporte = reporteOpt.get();
             reporte.setVigenciasAnteriores(nuevoValor);
-            ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
-            return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
+            objProyeccionEstudiante.save(reporte);
+
+            // Retornar la configuración completa asociada
+            if (reporte.getObjConfiguracionReporteGrupos() != null) {
+                return objConfiguracionReporteGruposMapper.mappearDeEntityAConfiguracionReporteGrupos(
+                        reporte.getObjConfiguracionReporteGrupos());
+            }
         }
         return null;
     }
@@ -163,4 +232,3 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         return false;
     }
 }
-

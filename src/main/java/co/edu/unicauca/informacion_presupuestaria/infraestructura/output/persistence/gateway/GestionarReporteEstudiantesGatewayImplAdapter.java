@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @Component
 public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarReporteEstudiantesGatewayIntPort {
-    
+
     private final PeriodoAcademicoRepositoryInt objPeriodoAcademico;
     private final MatriculaFinancieraRepositoryInt objMatriculaFinanciera;
     private final ConfiguracionReporteFinancieroRepositoryInt objConfiguracionReporteRepository;
@@ -56,93 +56,121 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
         this.objProyeccionEstudianteRepository = objProyeccionEstudianteRepository;
         this.objProyeccionEstudianteMapper = objProyeccionEstudianteMapper;
     }
-    
+
     @Override
     public ProyeccionEstudiante guardarProyeccionEstudiante(ProyeccionEstudiante proyeccion) {
-        // La entidad ProyeccionEstudianteEntity ha sido eliminada
-        // Retornar null ya que no hay forma de persistir sin la entidad
-        return null;
+        if (proyeccion == null) {
+            return null;
+        }
+
+        // Mapear a entidad
+        var entity = objProyeccionEstudianteMapper.mappearDeProyeccionEstudianteAEntity(proyeccion);
+
+        // Si tiene ID, verificar existencia, aunque en este caso parece que el ID no
+        // viene en el DTO
+        // La lógica de negocio debería manejar si es creación o actualización
+        // pero aquí simplemente guardamos
+
+        // Manejar relación con Periodo Académico si es necesario
+        if (proyeccion.getObjPeriodoAcademico() != null && entity.getObjPeriodoAcademico() == null) {
+            var periodo = proyeccion.getObjPeriodoAcademico();
+            var periodoEntity = objPeriodoAcademico.findByPeriodoAndAño(periodo.getPeriodo(), periodo.getAño());
+            if (periodoEntity.isPresent()) {
+                entity.setObjPeriodoAcademico(periodoEntity.get());
+            }
+        }
+
+        var savedEntity = objProyeccionEstudianteRepository.save(entity);
+        return objProyeccionEstudianteMapper.mappearDeEntityAProyeccionEstudiante(savedEntity);
     }
-    
+
     @Override
     public ProyeccionEstudiante obtenerProyeccionPorCodigoEstudiante(String codigo) {
-        // La entidad ProyeccionEstudianteEntity ha sido eliminada
-        // Retornar null ya que no hay forma de obtener datos sin la entidad
-        return null;
+        if (codigo == null) {
+            return null;
+        }
+        var entityOpt = objProyeccionEstudianteRepository.findByCodigoEstudiante(codigo);
+        return entityOpt.map(objProyeccionEstudianteMapper::mappearDeEntityAProyeccionEstudiante)
+                .orElse(null);
     }
-    
+
     @Override
-    public List<ProyeccionEstudiante> obtenerProyeccionesPorPeriodoAcademico(PeriodoAcademico periodo, EstadoProyeccionEstudiante estado) {
+    public List<ProyeccionEstudiante> obtenerProyeccionesPorPeriodoAcademico(PeriodoAcademico periodo,
+            EstadoProyeccionEstudiante estado) {
         Optional<PeriodoAcademicoEntity> periodoEntity = objPeriodoAcademico.findByPeriodoAndAño(
-            periodo.getPeriodo(), periodo.getAño());
+                periodo.getPeriodo(), periodo.getAño());
         if (periodoEntity.isEmpty()) {
             return List.of();
         }
         Long periodoId = periodoEntity.get().getId();
         var entities = estado == null
-            ? objProyeccionEstudianteRepository.findByObjPeriodoAcademicoId(periodoId)
-            : objProyeccionEstudianteRepository.findByObjPeriodoAcademicoIdAndEstado(periodoId, estado);
+                ? objProyeccionEstudianteRepository.findByObjPeriodoAcademicoId(periodoId)
+                : objProyeccionEstudianteRepository.findByObjPeriodoAcademicoIdAndEstado(periodoId, estado);
         return objProyeccionEstudianteMapper.mappearListaEntityAProyeccionEstudiante(entities);
     }
-    
+
     @Override
     public Boolean esPeriodoEnAcademicoEnCurso(PeriodoAcademico periodo) {
         return existePeriodoAcademico(periodo);
     }
-    
+
     @Override
     public Boolean existeProyeccionPorCodigoEstudiante(String codigo) {
-        // La entidad ProyeccionEstudianteEntity ha sido eliminada
-        // Retornar false ya que no hay forma de verificar sin la entidad
-        return false;
+        if (codigo == null) {
+            return false;
+        }
+        return objProyeccionEstudianteRepository.existsByCodigoEstudiante(codigo);
     }
-    
+
     @Override
     public ConfiguracionReporteFinanciero obtenerConfiguracionReporteFinanciero(PeriodoAcademico periodo) {
         Optional<PeriodoAcademicoEntity> periodoEntity = objPeriodoAcademico.findByPeriodoAndAño(
-            periodo.getPeriodo(), periodo.getAño());
-        
+                periodo.getPeriodo(), periodo.getAño());
+
         if (periodoEntity.isEmpty()) {
             return null;
         }
-        
+
         var configEntity = objConfiguracionReporteRepository.findByObjPeriodoAcademicoId(periodoEntity.get().getId());
         return configEntity.map(objConfiguracionReporte::mappearDeEntityAConfiguracionReporteFinanciero)
-            .orElse(null);
+                .orElse(null);
     }
-    
+
     @Override
     @Transactional
-    public ConfiguracionReporteFinanciero actualizarConfiguracionReporteFinanciero(Long id, ConfiguracionReporteFinanciero configuracion) {
+    public ConfiguracionReporteFinanciero actualizarConfiguracionReporteFinanciero(Long id,
+            ConfiguracionReporteFinanciero configuracion) {
         // Verificar que la configuración existe
         if (!objConfiguracionReporteRepository.existsById(id)) {
             return null;
         }
-        
-        // Obtener solo el ID del período académico y esReporteFinal sin cargar relaciones
+
+        // Obtener solo el ID del período académico y esReporteFinal sin cargar
+        // relaciones
         Long periodoAcademicoId = objConfiguracionReporteRepository.obtenerPeriodoAcademicoId(id);
         Boolean esReporteFinal = objConfiguracionReporteRepository.obtenerEsReporteFinal(id);
-        
+
         // Si ambas consultas retornan null, podría ser que el registro no existe
         // pero ya verificamos con existsById, así que continuamos
-        
-        // Usar consulta nativa para actualizar directamente sin cargar relaciones problemáticas
+
+        // Usar consulta nativa para actualizar directamente sin cargar relaciones
+        // problemáticas
         int filasActualizadas = objConfiguracionReporteRepository.actualizarConfiguracionPorId(
-            id,
-            configuracion.getBiblioteca(),
-            configuracion.getRecursosComputacionales(),
-            configuracion.getValorMatricula(),
-            configuracion.getValorSMLV(),
-            configuracion.getTotalNeto(),
-            configuracion.getTotalDescuentos(),
-            configuracion.getTotalIngresos()
-        );
-        
+                id,
+                configuracion.getBiblioteca(),
+                configuracion.getRecursosComputacionales(),
+                configuracion.getValorMatricula(),
+                configuracion.getValorSMLV(),
+                configuracion.getTotalNeto(),
+                configuracion.getTotalDescuentos(),
+                configuracion.getTotalIngresos());
+
         if (filasActualizadas == 0) {
             return null;
         }
-        
-        // Construir la respuesta directamente desde los datos actualizados sin recargar la entidad
+
+        // Construir la respuesta directamente desde los datos actualizados sin recargar
+        // la entidad
         // para evitar problemas con relaciones bidireccionales
         ConfiguracionReporteFinanciero configuracionActualizada = new ConfiguracionReporteFinanciero();
         configuracionActualizada.setBiblioteca(configuracion.getBiblioteca());
@@ -153,7 +181,7 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
         configuracionActualizada.setTotalDescuentos(configuracion.getTotalDescuentos());
         configuracionActualizada.setTotalIngresos(configuracion.getTotalIngresos());
         configuracionActualizada.setEsReporteFinal(esReporteFinal);
-        
+
         // Obtener el período académico solo si es necesario, usando una consulta nativa
         // para obtener solo periodo y año sin cargar relaciones problemáticas
         if (periodoAcademicoId != null) {
@@ -174,65 +202,64 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
                 // pero la configuración se actualiza correctamente
             }
         }
-        
+
         return configuracionActualizada;
     }
-    
+
     @Override
     public Boolean existePeriodoAcademico(PeriodoAcademico periodo) {
         // Usar findByPeriodoAndAño en lugar de existsByPeriodoAndAño
         // para evitar errores cuando hay múltiples registros con el mismo período y año
         Optional<PeriodoAcademicoEntity> periodoEntity = objPeriodoAcademico.findByPeriodoAndAño(
-            periodo.getPeriodo(), periodo.getAño());
+                periodo.getPeriodo(), periodo.getAño());
         return periodoEntity.isPresent();
     }
-    
+
     @Override
     public List<MatriculaFinanciera> obtenerMatriculasFinancieras(PeriodoAcademico periodo) {
         Optional<PeriodoAcademicoEntity> periodoEntity = objPeriodoAcademico.findByPeriodoAndAño(
-            periodo.getPeriodo(), periodo.getAño());
-        
+                periodo.getPeriodo(), periodo.getAño());
+
         if (periodoEntity.isEmpty()) {
             return List.of();
         }
-        
+
         var matriculas = objMatriculaFinanciera.findByObjPeriodoAcademicoId(periodoEntity.get().getId());
         return objMatriculaFinancieraMapper.mappearListaEntityAMatriculaFinanciera(matriculas);
     }
 
     @Override
     public Boolean finalizarProyeccion() {
-        //implementar logica para finalizar la proyeccion
-        //todo falta implementar esta parte en la logica de la aplicacion
-       return true;
+        // implementar logica para finalizar la proyeccion
+        // todo falta implementar esta parte en la logica de la aplicacion
+        return true;
     }
-    
+
     @Override
     public PeriodoAcademico obtenerPeriodoAcademicoActual() {
         Optional<PeriodoAcademicoEntity> periodoEntity = objPeriodoAcademico.findPeriodoAcademicoActivo();
         return periodoEntity.map(objPeriodoAcademicoMapper::mappearDeEntityAPeriodoAcademico)
-            .orElse(null);
+                .orElse(null);
     }
-    
+
     @Override
     public List<Estudiante> obtenerEstudiantesDesdeMatriculasFinancieras(List<MatriculaFinanciera> matriculas) {
         if (matriculas == null || matriculas.isEmpty()) {
             return List.of();
         }
-        
-        // Obtener estudiantes únicos desde las matrículas financieras usando código como identificador único
+
+        // Obtener estudiantes únicos desde las matrículas financieras usando código
+        // como identificador único
         return matriculas.stream()
-            .filter(matricula -> matricula.getObjEstudiante() != null)
-            .map(MatriculaFinanciera::getObjEstudiante)
-            .filter(estudiante -> estudiante.getCodigo() != null)
-            .collect(java.util.stream.Collectors.toMap(
-                Estudiante::getCodigo,
-                estudiante -> estudiante,
-                (estudiante1, estudiante2) -> estudiante1
-            ))
-            .values()
-            .stream()
-            .toList();
+                .filter(matricula -> matricula.getObjEstudiante() != null)
+                .map(MatriculaFinanciera::getObjEstudiante)
+                .filter(estudiante -> estudiante.getCodigo() != null)
+                .collect(java.util.stream.Collectors.toMap(
+                        Estudiante::getCodigo,
+                        estudiante -> estudiante,
+                        (estudiante1, estudiante2) -> estudiante1))
+                .values()
+                .stream()
+                .toList();
     }
 }
-

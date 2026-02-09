@@ -23,6 +23,5 @@ public class ReportePorGruposDTORespuesta {
     private Float presupuestoPorGrupoImprevistos;
     private Float vigenciasAnteriores;
     private List<GastoGeneralDTORespuesta> gastosGenerales;
-    private ConfiguracionReporteGruposDTORespuesta objConfiguracionReporteGrupos;
+    private GrupoDTORespuesta objGrupo;
 }
-

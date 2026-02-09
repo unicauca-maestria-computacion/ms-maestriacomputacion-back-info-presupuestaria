@@ -30,23 +30,43 @@ public class ProyeccionEstudianteMapperPersistenciaImpl implements ProyeccionEst
         proyeccion.setPorcentajeEgresado(entity.getPorcentajeEgresado());
         proyeccion.setGrupoInvestigacion(entity.getGrupoInvestigacion());
         proyeccion.setEstadoProyeccion(entity.getEstadoProyeccion() != null
-            ? entity.getEstadoProyeccion()
-            : EstadoProyeccionEstudiante.PROYECCION);
+                ? entity.getEstadoProyeccion()
+                : EstadoProyeccionEstudiante.PROYECCION);
         if (entity.getObjPeriodoAcademico() != null) {
             proyeccion.setObjPeriodoAcademico(
-                objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(entity.getObjPeriodoAcademico())
-            );
+                    objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(entity.getObjPeriodoAcademico()));
         }
         return proyeccion;
     }
 
     @Override
-    public List<ProyeccionEstudiante> mappearListaEntityAProyeccionEstudiante(List<ProyeccionEstudianteEntity> entities) {
+    public ProyeccionEstudianteEntity mappearDeProyeccionEstudianteAEntity(ProyeccionEstudiante proyeccion) {
+        if (proyeccion == null) {
+            return null;
+        }
+        ProyeccionEstudianteEntity entity = new ProyeccionEstudianteEntity();
+        entity.setCodigoEstudiante(proyeccion.getCodigoEstudiante());
+        entity.setEstaPago(proyeccion.getEstaPago());
+        entity.setPorcentajeVotacion(proyeccion.getPorcentajeVotacion());
+        entity.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
+        entity.setPorcentajeEgresado(proyeccion.getPorcentajeEgresado());
+        entity.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
+        entity.setEstadoProyeccion(proyeccion.getEstadoProyeccion());
+        if (proyeccion.getObjPeriodoAcademico() != null) {
+            entity.setObjPeriodoAcademico(
+                    objPeriodoAcademicoMapper.mappearPeriodoAcademicoAEntity(proyeccion.getObjPeriodoAcademico()));
+        }
+        return entity;
+    }
+
+    @Override
+    public List<ProyeccionEstudiante> mappearListaEntityAProyeccionEstudiante(
+            List<ProyeccionEstudianteEntity> entities) {
         if (entities == null) {
             return List.of();
         }
         return entities.stream()
-            .map(this::mappearDeEntityAProyeccionEstudiante)
-            .collect(Collectors.toList());
+                .map(this::mappearDeEntityAProyeccionEstudiante)
+                .collect(Collectors.toList());
     }
 }

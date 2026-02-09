@@ -9,17 +9,32 @@ import co.edu.unicauca.informacion_presupuestaria.dominio.models.PorcentajeGrupo
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ValorGrupo;
 
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteGrupos;
+
 public interface GestionarReportePorGruposCUIntPort {
-    ReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo);
-    ReportePorGrupos actualizarPorcentajeParticipacionPrimerSemestre(List<PorcentajeGrupo> porcentajesPorGrupo);
-    ReportePorGrupos actualizarPorcentajeParticipacionSegundoSemestre(List<PorcentajeGrupo> porcentajesPorGrupo);
-    ReportePorGrupos actualizarPorcentajeAUIUniversidad(Float nuevoValor);
-    ReportePorGrupos actualizarValorExcedentesMaestria(Float nuevoValor);
+    ConfiguracionReporteGrupos obtenerReporteGrupos(PeriodoAcademico periodo);
+
+    ConfiguracionReporteGrupos actualizarPorcentajeParticipacionPrimerSemestre(
+            List<PorcentajeGrupo> porcentajesPorGrupo);
+
+    ConfiguracionReporteGrupos actualizarPorcentajeParticipacionSegundoSemestre(
+            List<PorcentajeGrupo> porcentajesPorGrupo);
+
+    ConfiguracionReporteGrupos actualizarPorcentajeAUIUniversidad(Long idConfiguracion, Float nuevoValor);
+
+    ConfiguracionReporteGrupos actualizarValorExcedentesMaestria(Long idConfiguracion, Float nuevoValor);
+
     GastoGeneral actualizarGastoGeneral(GastoGeneral gasto);
+
     GastoGeneral crearGastoGeneral(GastoGeneral gasto);
+
     Boolean eliminarGastoGeneral(Integer idGastoGeneral);
-    ReportePorGrupos actualizarPorcentajeItems(Items items);
-    ReportePorGrupos actualizarPorcentajeImprevistos(Float nuevoValor);
-    ReportePorGrupos actualizarValorVigenciasAnteriores(List<ValorGrupo> valoresGrupo);
+
+    ConfiguracionReporteGrupos actualizarPorcentajeItems(Long idConfiguracion, Items items);
+
+    ConfiguracionReporteGrupos actualizarPorcentajeImprevistos(Long idConfiguracion, Float nuevoValor);
+
+    ConfiguracionReporteGrupos actualizarValorVigenciasAnteriores(List<ValorGrupo> valoresGrupo);
+
     Boolean finalizarReporteGrupos();
 }

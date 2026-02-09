@@ -1,6 +1,7 @@
 package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 
 public class ConfiguracionReporteFinanciero {
+    private Long id;
     private Boolean esReporteFinal;
     private Float biblioteca;
     private Float recursosComputacionales;
@@ -14,9 +15,11 @@ public class ConfiguracionReporteFinanciero {
     public ConfiguracionReporteFinanciero() {
     }
 
-    public ConfiguracionReporteFinanciero(Boolean esReporteFinal, Float biblioteca, Float recursosComputacionales,
-                                         Float valorMatricula, Float valorSMLV, Float totalNeto, Float totalDescuentos,
-                                         Float totalIngresos, PeriodoAcademico objPeriodoAcademico) {
+    public ConfiguracionReporteFinanciero(Long id, Boolean esReporteFinal, Float biblioteca,
+            Float recursosComputacionales,
+            Float valorMatricula, Float valorSMLV, Float totalNeto, Float totalDescuentos,
+            Float totalIngresos, PeriodoAcademico objPeriodoAcademico) {
+        this.id = id;
         this.esReporteFinal = esReporteFinal;
         this.biblioteca = biblioteca;
         this.recursosComputacionales = recursosComputacionales;
@@ -26,6 +29,14 @@ public class ConfiguracionReporteFinanciero {
         this.totalDescuentos = totalDescuentos;
         this.totalIngresos = totalIngresos;
         this.objPeriodoAcademico = objPeriodoAcademico;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Boolean getEsReporteFinal() {

@@ -9,5 +9,7 @@ public interface ProyeccionEstudianteMapperPersistencia {
 
     ProyeccionEstudiante mappearDeEntityAProyeccionEstudiante(ProyeccionEstudianteEntity entity);
 
+    ProyeccionEstudianteEntity mappearDeProyeccionEstudianteAEntity(ProyeccionEstudiante proyeccion);
+
     List<ProyeccionEstudiante> mappearListaEntityAProyeccionEstudiante(List<ProyeccionEstudianteEntity> entities);
 }

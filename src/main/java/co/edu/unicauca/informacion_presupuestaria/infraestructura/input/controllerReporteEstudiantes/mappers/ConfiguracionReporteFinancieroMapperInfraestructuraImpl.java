@@ -6,22 +6,25 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controll
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConfiguracionReporteFinancieroMapperInfraestructuraImpl implements ConfiguracionReporteFinancieroMapperInfraestructura {
-    
+public class ConfiguracionReporteFinancieroMapperInfraestructuraImpl
+        implements ConfiguracionReporteFinancieroMapperInfraestructura {
+
     private final PeriodoAcademicoMapperInfraestructura objPeriodoAcademicoMapper;
-    
-    public ConfiguracionReporteFinancieroMapperInfraestructuraImpl(PeriodoAcademicoMapperInfraestructura objPeriodoAcademicoMapper) {
+
+    public ConfiguracionReporteFinancieroMapperInfraestructuraImpl(
+            PeriodoAcademicoMapperInfraestructura objPeriodoAcademicoMapper) {
         this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
     }
-    
+
     @Override
-    public ConfiguracionReporteFinanciero mappearDePeticionAConfiguracionReporteFinanciero(ConfiguracionReporteFinancieroDTOPeticion configuracion) {
+    public ConfiguracionReporteFinanciero mappearDePeticionAConfiguracionReporteFinanciero(
+            ConfiguracionReporteFinancieroDTOPeticion configuracion) {
         if (configuracion == null) {
             return null;
         }
-        
+
         ConfiguracionReporteFinanciero config = new ConfiguracionReporteFinanciero();
-        // El ID se manejará en el caso de uso, no se mapea al modelo de dominio
+        config.setId(configuracion.getId());
         config.setBiblioteca(configuracion.getBiblioteca());
         config.setRecursosComputacionales(configuracion.getRecursosComputacionales());
         config.setValorMatricula(configuracion.getValorMatricula());
@@ -29,26 +32,28 @@ public class ConfiguracionReporteFinancieroMapperInfraestructuraImpl implements 
         config.setTotalNeto(configuracion.getTotalNeto());
         config.setTotalDescuentos(configuracion.getTotalDescuentos());
         config.setTotalIngresos(configuracion.getTotalIngresos());
-        
+
         if (configuracion.getObjPeriodoAcademico() != null) {
             // Necesitamos convertir el DTO de respuesta a un modelo de dominio
             // Por ahora, creamos un PeriodoAcademico básico
-            config.setObjPeriodoAcademico(new co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico(
-                configuracion.getObjPeriodoAcademico().getPeriodo(),
-                configuracion.getObjPeriodoAcademico().getAño()
-            ));
+            config.setObjPeriodoAcademico(
+                    new co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico(
+                            configuracion.getObjPeriodoAcademico().getPeriodo(),
+                            configuracion.getObjPeriodoAcademico().getAño()));
         }
-        
+
         return config;
     }
-    
+
     @Override
-    public ConfiguracionReporteFinancieroDTORespuesta mappearDeConfiguracionReporteFinancieroARespuesta(ConfiguracionReporteFinanciero configuracion) {
+    public ConfiguracionReporteFinancieroDTORespuesta mappearDeConfiguracionReporteFinancieroARespuesta(
+            ConfiguracionReporteFinanciero configuracion) {
         if (configuracion == null) {
             return null;
         }
-        
+
         ConfiguracionReporteFinancieroDTORespuesta dto = new ConfiguracionReporteFinancieroDTORespuesta();
+        dto.setId(configuracion.getId());
         dto.setEsReporteFinal(configuracion.getEsReporteFinal());
         dto.setBiblioteca(configuracion.getBiblioteca());
         dto.setRecursosComputacionales(configuracion.getRecursosComputacionales());
@@ -57,11 +62,12 @@ public class ConfiguracionReporteFinancieroMapperInfraestructuraImpl implements 
         dto.setTotalNeto(configuracion.getTotalNeto());
         dto.setTotalDescuentos(configuracion.getTotalDescuentos());
         dto.setTotalIngresos(configuracion.getTotalIngresos());
-        
+
         if (configuracion.getObjPeriodoAcademico() != null) {
-            dto.setObjPeriodoAcademico(objPeriodoAcademicoMapper.mappearDePeriodoAcademicoARespuesta(configuracion.getObjPeriodoAcademico()));
+            dto.setObjPeriodoAcademico(objPeriodoAcademicoMapper
+                    .mappearDePeriodoAcademicoARespuesta(configuracion.getObjPeriodoAcademico()));
         }
-        
+
         return dto;
     }
 }

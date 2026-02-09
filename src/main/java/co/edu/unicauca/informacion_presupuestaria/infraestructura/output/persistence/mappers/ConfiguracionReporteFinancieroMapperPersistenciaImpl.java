@@ -5,21 +5,25 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConfiguracionReporteFinancieroMapperPersistenciaImpl implements ConfiguracionReporteFinancieroMapperPersistencia {
-    
+public class ConfiguracionReporteFinancieroMapperPersistenciaImpl
+        implements ConfiguracionReporteFinancieroMapperPersistencia {
+
     private final PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper;
-    
-    public ConfiguracionReporteFinancieroMapperPersistenciaImpl(PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper) {
+
+    public ConfiguracionReporteFinancieroMapperPersistenciaImpl(
+            PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper) {
         this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
     }
-    
+
     @Override
-    public ConfiguracionReporteFinanciero mappearDeEntityAConfiguracionReporteFinanciero(ConfiguracionReporteFinancieroEntity configuracion) {
+    public ConfiguracionReporteFinanciero mappearDeEntityAConfiguracionReporteFinanciero(
+            ConfiguracionReporteFinancieroEntity configuracion) {
         if (configuracion == null) {
             return null;
         }
-        
+
         ConfiguracionReporteFinanciero config = new ConfiguracionReporteFinanciero();
+        config.setId(configuracion.getId());
         config.setEsReporteFinal(configuracion.getEsReporteFinal());
         config.setBiblioteca(configuracion.getBiblioteca());
         config.setRecursosComputacionales(configuracion.getRecursosComputacionales());
@@ -28,23 +32,24 @@ public class ConfiguracionReporteFinancieroMapperPersistenciaImpl implements Con
         config.setTotalNeto(configuracion.getTotalNeto());
         config.setTotalDescuentos(configuracion.getTotalDescuentos());
         config.setTotalIngresos(configuracion.getTotalIngresos());
-        
+
         if (configuracion.getObjPeriodoAcademico() != null) {
             config.setObjPeriodoAcademico(
-                objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(configuracion.getObjPeriodoAcademico())
-            );
+                    objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(configuracion.getObjPeriodoAcademico()));
         }
-        
+
         return config;
     }
-    
+
     @Override
-    public ConfiguracionReporteFinancieroEntity mappearDeConfiguracionReporteFinancieroAEntity(ConfiguracionReporteFinanciero configuracion) {
+    public ConfiguracionReporteFinancieroEntity mappearDeConfiguracionReporteFinancieroAEntity(
+            ConfiguracionReporteFinanciero configuracion) {
         if (configuracion == null) {
             return null;
         }
-        
+
         ConfiguracionReporteFinancieroEntity entity = new ConfiguracionReporteFinancieroEntity();
+        entity.setId(configuracion.getId());
         entity.setEsReporteFinal(configuracion.getEsReporteFinal());
         entity.setBiblioteca(configuracion.getBiblioteca());
         entity.setRecursosComputacionales(configuracion.getRecursosComputacionales());
@@ -53,13 +58,12 @@ public class ConfiguracionReporteFinancieroMapperPersistenciaImpl implements Con
         entity.setTotalNeto(configuracion.getTotalNeto());
         entity.setTotalDescuentos(configuracion.getTotalDescuentos());
         entity.setTotalIngresos(configuracion.getTotalIngresos());
-        
+
         if (configuracion.getObjPeriodoAcademico() != null) {
             entity.setObjPeriodoAcademico(
-                objPeriodoAcademicoMapper.mappearPeriodoAcademicoAEntity(configuracion.getObjPeriodoAcademico())
-            );
+                    objPeriodoAcademicoMapper.mappearPeriodoAcademicoAEntity(configuracion.getObjPeriodoAcademico()));
         }
-        
+
         return entity;
     }
 }

@@ -10,33 +10,29 @@ import java.util.stream.Collectors;
 
 @Component
 public class ProyeccionEstudianteMapperInfraestructuraImpl implements ProyeccionEstudianteMapperInfraestructura {
-    
+
     @Override
     public ProyeccionEstudiante mappearDePeticionAProyeccionEstudiante(ProyeccionEstudianteDTOPeticion proyeccion) {
         if (proyeccion == null) {
             return null;
         }
-        
+
         ProyeccionEstudiante proyeccionEstudiante = new ProyeccionEstudiante();
         proyeccionEstudiante.setCodigoEstudiante(proyeccion.getCodigoEstudiante());
-        proyeccionEstudiante.setIdentificacion(proyeccion.getIdentificacion());
-        proyeccionEstudiante.setApellido(proyeccion.getApellido());
-        proyeccionEstudiante.setNombre(proyeccion.getNombre());
         proyeccionEstudiante.setEstaPago(proyeccion.getEstaPago());
         proyeccionEstudiante.setPorcentajeVotacion(proyeccion.getPorcentajeVotacion());
         proyeccionEstudiante.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
         proyeccionEstudiante.setPorcentajeEgresado(proyeccion.getPorcentajeEgresado());
-        proyeccionEstudiante.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
-        
+
         return proyeccionEstudiante;
     }
-    
+
     @Override
     public ProyeccionEstudianteDTORespuesta mappearDeProyeccionEstudianteARespuesta(ProyeccionEstudiante proyeccion) {
         if (proyeccion == null) {
             return null;
         }
-        
+
         ProyeccionEstudianteDTORespuesta dto = new ProyeccionEstudianteDTORespuesta();
         dto.setCodigoEstudiante(proyeccion.getCodigoEstudiante());
         dto.setNombre(proyeccion.getNombre());
@@ -47,17 +43,19 @@ public class ProyeccionEstudianteMapperInfraestructuraImpl implements Proyeccion
         dto.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
         dto.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
         dto.setPorcentajeEgresado(proyeccion.getPorcentajeEgresado());
-        dto.setEstadoProyeccion(proyeccion.getEstadoProyeccion() != null ? proyeccion.getEstadoProyeccion().name() : null);
-        
+        dto.setEstadoProyeccion(
+                proyeccion.getEstadoProyeccion() != null ? proyeccion.getEstadoProyeccion().name() : null);
+
         return dto;
     }
-    
+
     @Override
-    public List<ProyeccionEstudianteDTORespuesta> mappearDeListaProyeccionEstudianteARespuesta(List<ProyeccionEstudiante> proyecciones) {
+    public List<ProyeccionEstudianteDTORespuesta> mappearDeListaProyeccionEstudianteARespuesta(
+            List<ProyeccionEstudiante> proyecciones) {
         if (proyecciones == null) {
             return List.of();
         }
-        
+
         return proyecciones.stream()
                 .map(this::mappearDeProyeccionEstudianteARespuesta)
                 .collect(Collectors.toList());
