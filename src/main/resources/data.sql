@@ -20,6 +20,10 @@ INSERT IGNORE INTO periodo_academico (periodo, anio, activo) VALUES
 (1, 2024, FALSE),
 (2, 2024, TRUE);
 
+-- Garantizar que solo exista un periodo academico activo (2-2024)
+UPDATE periodo_academico SET activo = FALSE;
+UPDATE periodo_academico SET activo = TRUE WHERE periodo = 2 AND anio = 2024 LIMIT 1;
+
 -- 2. PERSONAS (Tabla base - sin dependencias)
 -- Primero insertamos los datos de personas (sin tildes en los nombres)
 INSERT IGNORE INTO personas (id, identificacion, apellido, nombre) VALUES
@@ -368,7 +372,11 @@ INSERT IGNORE INTO gasto_general (categoria, descripcion, monto, configuracion_r
 ('Infraestructura', 'Ampliación de espacios', 800000.00, 5);
 
 -- 12. REPORTE_POR_GRUPOS (Depende de configuracion_reporte_grupos y grupo)
-INSERT IGNORE INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id) VALUES
+-- Regla: por cada configuracion_reporte_grupos_id solo puede haber una fila por grupo_id (par único).
+-- Se vacía la tabla antes de insertar para evitar duplicados al re-ejecutar el script.
+DELETE FROM reporte_por_grupos;
+
+INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id) VALUES
 (4675000.00, 2337500.00, 2337500.00, 0.10, 0.10, 0.20, 1870000.00, 1402500.00, 3272500.00, 0.05, 233750.00, 0.00, 1, 1),
 (4771200.00, 2385600.00, 2385600.00, 0.11, 0.11, 0.22, 1956192.00, 1467144.00, 3423336.00, 0.05, 238560.00, 0.00, 2, 2),
 (4938500.00, 2469250.00, 2469250.00, 0.12, 0.12, 0.24, 2074170.00, 1555627.50, 3629797.50, 0.06, 296310.00, 0.00, 3, 3),

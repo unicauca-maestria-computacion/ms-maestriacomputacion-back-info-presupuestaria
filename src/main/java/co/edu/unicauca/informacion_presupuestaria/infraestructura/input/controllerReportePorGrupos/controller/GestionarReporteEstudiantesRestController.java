@@ -63,129 +63,119 @@ public class GestionarReporteEstudiantesRestController {
     @PutMapping("/actualizar-porcentaje-primer-semestre")
     public ResponseEntity<ReportePorGruposDTORespuesta> actualizarPorcentajeParticipacionPrimerSemestre(
             @RequestBody List<PorcentajeGrupoDTOPeticion> porcentajesPorGrupo) {
-        try {
-            List<PorcentajeGrupo> porcentajes = porcentajesPorGrupo.stream()
-                    .map(objMapperPorcentajeGrupo::mappearDePeticionAPorcentajeGrupo)
-                    .collect(Collectors.toList());
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeParticipacionPrimerSemestre(porcentajes);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        List<PorcentajeGrupo> porcentajes = porcentajesPorGrupo.stream()
+                .map(objMapperPorcentajeGrupo::mappearDePeticionAPorcentajeGrupo)
+                .collect(Collectors.toList());
+        ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeParticipacionPrimerSemestre(porcentajes);
+        if (reporte == null) {
+            return ResponseEntity.notFound().build();
         }
+        ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
     
     @PutMapping("/actualizar-porcentaje-segundo-semestre")
     public ResponseEntity<ReportePorGruposDTORespuesta> actualizarPorcentajeParticipacionSegundoSemestre(
             @RequestBody List<PorcentajeGrupoDTOPeticion> porcentajesPorGrupo) {
-        try {
-            List<PorcentajeGrupo> porcentajes = porcentajesPorGrupo.stream()
-                    .map(objMapperPorcentajeGrupo::mappearDePeticionAPorcentajeGrupo)
-                    .collect(Collectors.toList());
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeParticipacionSegundoSemestre(porcentajes);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        List<PorcentajeGrupo> porcentajes = porcentajesPorGrupo.stream()
+                .map(objMapperPorcentajeGrupo::mappearDePeticionAPorcentajeGrupo)
+                .collect(Collectors.toList());
+        ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeParticipacionSegundoSemestre(porcentajes);
+        if (reporte == null) {
+            return ResponseEntity.notFound().build();
         }
+        ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
     
     @PutMapping("/actualizar-porcentaje-aui")
     public ResponseEntity<ReportePorGruposDTORespuesta> actualizarPorcentajeAUIUniversidad(
             @RequestParam Float nuevoValor) {
-        try {
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeAUIUniversidad(nuevoValor);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeAUIUniversidad(nuevoValor);
+        if (reporte == null) {
+            return ResponseEntity.notFound().build();
         }
+        ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
     
     @PutMapping("/actualizar-excedentes-maestria")
     public ResponseEntity<ReportePorGruposDTORespuesta> actualizarValorExcedentesMaestria(
             @RequestParam Float nuevoValor) {
-        try {
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarValorExcedentesMaestria(nuevoValor);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarValorExcedentesMaestria(nuevoValor);
+        if (reporte == null) {
+            return ResponseEntity.notFound().build();
         }
+        ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
     
     @PutMapping("/actualizar-gasto-general")
     public ResponseEntity<GastoGeneralDTORespuesta> actualizarGastoGeneral(
             @RequestBody GastoGeneralDTOPeticion gasto) {
-        try {
-            GastoGeneral gastoGeneral = objMapperGastoGeneral.mappearDePeticionAGastoGeneral(gasto);
-            GastoGeneral gastoActualizado = objGestionarReportePorGruposCUInt.actualizarGastoGeneral(gastoGeneral);
-            GastoGeneralDTORespuesta respuesta = objMapperGastoGeneral.mappearDeGastoGeneralARespuesta(gastoActualizado);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        GastoGeneral gastoGeneral = objMapperGastoGeneral.mappearDePeticionAGastoGeneral(gasto);
+        GastoGeneral gastoActualizado = objGestionarReportePorGruposCUInt.actualizarGastoGeneral(gastoGeneral);
+        if (gastoActualizado == null) {
+            return ResponseEntity.notFound().build();
         }
+        GastoGeneralDTORespuesta respuesta = objMapperGastoGeneral.mappearDeGastoGeneralARespuesta(gastoActualizado);
+        return ResponseEntity.ok(respuesta);
     }
     
     @PostMapping("/crear-gasto-general")
     public ResponseEntity<GastoGeneralDTORespuesta> crearGastoGeneral(
             @RequestBody GastoGeneralDTOPeticion gasto) {
-        try {
-            GastoGeneral gastoGeneral = objMapperGastoGeneral.mappearDePeticionAGastoGeneral(gasto);
-            GastoGeneral gastoCreado = objGestionarReportePorGruposCUInt.crearGastoGeneral(gastoGeneral);
-            GastoGeneralDTORespuesta respuesta = objMapperGastoGeneral.mappearDeGastoGeneralARespuesta(gastoCreado);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        GastoGeneral gastoGeneral = objMapperGastoGeneral.mappearDePeticionAGastoGeneral(gasto);
+        GastoGeneral gastoCreado = objGestionarReportePorGruposCUInt.crearGastoGeneral(gastoGeneral);
+        if (gastoCreado == null) {
+            return ResponseEntity.notFound().build();
         }
+        GastoGeneralDTORespuesta respuesta = objMapperGastoGeneral.mappearDeGastoGeneralARespuesta(gastoCreado);
+        return ResponseEntity.ok(respuesta);
     }
     
     @DeleteMapping("/eliminar-gasto-general/{idGastoGeneral}")
-    public ResponseEntity<Boolean> eliminarGastoGeneral(@PathVariable Integer idGastoGeneral) {
-        try {
-            Boolean eliminado = objGestionarReportePorGruposCUInt.eliminarGastoGeneral(idGastoGeneral);
-            return ResponseEntity.ok(eliminado);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<Void> eliminarGastoGeneral(@PathVariable Integer idGastoGeneral) {
+        Boolean eliminado = objGestionarReportePorGruposCUInt.eliminarGastoGeneral(idGastoGeneral);
+        if (Boolean.FALSE.equals(eliminado)) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.noContent().build();
     }
     
     @PutMapping("/actualizar-porcentaje-items")
     public ResponseEntity<ReportePorGruposDTORespuesta> actualizarPorcentajeItems(
             @RequestBody ItemsDTOPeticion items) {
-        try {
-            Items itemsDomain = objMapperItems.mappearDePeticionAItems(items);
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeItems(itemsDomain);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        Items itemsDomain = objMapperItems.mappearDePeticionAItems(items);
+        ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeItems(itemsDomain);
+        if (reporte == null) {
+            return ResponseEntity.notFound().build();
         }
+        ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
     
     @PutMapping("/actualizar-porcentaje-imprevistos")
     public ResponseEntity<ReportePorGruposDTORespuesta> actualizarPorcentajeImprevistos(
             @RequestParam Float nuevoValor) {
-        try {
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeImprevistos(nuevoValor);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarPorcentajeImprevistos(nuevoValor);
+        if (reporte == null) {
+            return ResponseEntity.notFound().build();
         }
+        ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
     
     @PutMapping("/actualizar-vigencias-anteriores")
     public ResponseEntity<ReportePorGruposDTORespuesta> actualizarValorVigenciasAnteriores(
             @RequestBody List<ValorGrupoDTOPeticion> valoresGrupo) {
-        try {
-            List<ValorGrupo> valores = objMapperValorGrupo.mappearDeListaPeticionAValorGrupo(valoresGrupo);
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarValorVigenciasAnteriores(valores);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        List<ValorGrupo> valores = objMapperValorGrupo.mappearDeListaPeticionAValorGrupo(valoresGrupo);
+        ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.actualizarValorVigenciasAnteriores(valores);
+        if (reporte == null) {
+            return ResponseEntity.notFound().build();
         }
+        ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+        return ResponseEntity.ok(respuesta);
     }
 }
 

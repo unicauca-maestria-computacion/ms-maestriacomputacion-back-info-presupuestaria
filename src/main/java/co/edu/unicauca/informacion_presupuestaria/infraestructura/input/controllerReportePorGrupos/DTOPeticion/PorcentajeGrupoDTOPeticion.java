@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PorcentajeGrupoDTOPeticion {
+    private String idGrupo;
     private String nombreGrupo;
     private Float porcentaje;
 }

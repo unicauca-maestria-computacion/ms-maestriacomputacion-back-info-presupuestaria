@@ -19,13 +19,13 @@ public class ReportePorGruposEntity {
     @Column(name = "aporte_segundo_semestre")
     private Float aporteSegundoSemestre;
     
-    @Column(name = "participacion_primer_semestre")
+    @Column(name = "participacion_primer_semestre", columnDefinition = "DECIMAL(10,2)")
     private Float participacionPrimerSemestre;
     
-    @Column(name = "participacion_segundo_semestre")
+    @Column(name = "participacion_segundo_semestre", columnDefinition = "DECIMAL(10,2)")
     private Float participacionSegundoSemestre;
     
-    @Column(name = "participacion_por_anio")
+    @Column(name = "participacion_por_anio", columnDefinition = "DECIMAL(10,2)")
     private Float participacionPorAño;
     
     @Column(name = "presupuesto_por_grupo_item1")

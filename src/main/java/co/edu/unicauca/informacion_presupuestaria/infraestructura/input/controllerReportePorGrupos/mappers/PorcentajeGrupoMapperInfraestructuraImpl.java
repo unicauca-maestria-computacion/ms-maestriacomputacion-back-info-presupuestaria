@@ -16,7 +16,9 @@ public class PorcentajeGrupoMapperInfraestructuraImpl implements PorcentajeGrupo
         if (porcentaje == null) {
             return null;
         }
-        
+        if (porcentaje.getIdGrupo() != null && !porcentaje.getIdGrupo().isBlank()) {
+            return new PorcentajeGrupo(porcentaje.getIdGrupo(), porcentaje.getNombreGrupo(), porcentaje.getPorcentaje());
+        }
         return new PorcentajeGrupo(porcentaje.getNombreGrupo(), porcentaje.getPorcentaje());
     }
     

@@ -15,7 +15,9 @@ public class ValorGrupoMapperInfraestructuraImpl implements ValorGrupoMapperInfr
         if (valores == null) {
             return null;
         }
-        
+        if (valores.getIdGrupo() != null && !valores.getIdGrupo().isBlank()) {
+            return new ValorGrupo(valores.getIdGrupo(), valores.getNombreGrupo(), valores.getValor());
+        }
         return new ValorGrupo(valores.getNombreGrupo(), valores.getValor());
     }
     

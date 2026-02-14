@@ -13,5 +13,7 @@ import java.util.Optional;
 public interface ReportePorGruposRepositoryInt extends JpaRepository<ReportePorGruposEntity, Long> {
     List<ReportePorGruposEntity> findByObjConfiguracionReporteGruposId(Long configuracionId);
     Optional<ReportePorGruposEntity> findByObjGrupoNombre(String nombreGrupo);
+    /** Puede haber más de un reporte por (config, grupo); se usa el primero. */
+    List<ReportePorGruposEntity> findByObjConfiguracionReporteGruposIdAndObjGrupoId(Long configuracionId, Long grupoId);
 }
 

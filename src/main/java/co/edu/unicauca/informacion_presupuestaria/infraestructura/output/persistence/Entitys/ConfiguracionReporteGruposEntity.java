@@ -13,7 +13,7 @@ public class ConfiguracionReporteGruposEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "aui_porcentaje")
+    @Column(name = "aui_porcentaje", columnDefinition = "DECIMAL(10,2)")
     private Float aUIPorcentaje;
     
     @Column(name = "excedentes_maestria")
@@ -28,8 +28,11 @@ public class ConfiguracionReporteGruposEntity {
     @Column(name = "valor_a_distribuir")
     private Float valorADistribuir;
     
+    @Column(columnDefinition = "DECIMAL(10,2)")
     private Float item1;
+    @Column(columnDefinition = "DECIMAL(10,2)")
     private Float item2;
+    @Column(columnDefinition = "DECIMAL(10,2)")
     private Float imprevistos;
     
     @OneToOne(fetch = FetchType.LAZY)
