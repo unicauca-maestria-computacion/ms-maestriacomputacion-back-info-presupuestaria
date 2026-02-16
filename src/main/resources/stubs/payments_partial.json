@@ -1,0 +1,30 @@
+{
+  "codigo": "partial",
+  "pagos": [
+    {
+      "periodo": "2-2024",
+      "fecha_creacion": "2024-06-01",
+      "fecha_vencimiento": "2024-07-31",
+      "pagadoTotalmente": false,
+      "estado": "ac",
+      "numero_cuotas": 2,
+      "monto_total": 6000000,
+      "saldo_pendiente": 3000000,
+      "monto_pagado": 3000000,
+      "cuotas": [
+        {
+          "monto": 3000000,
+          "saldo_pendiente": 0,
+          "fecha_vencimiento": "2024-06-30",
+          "pagadoTotalmente": true
+        },
+        {
+          "monto": 3000000,
+          "saldo_pendiente": 3000000,
+          "fecha_vencimiento": "2024-07-31",
+          "pagadoTotalmente": false
+        }
+      ]
+    }
+  ]
+}

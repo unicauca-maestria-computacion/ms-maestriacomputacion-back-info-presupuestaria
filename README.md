@@ -26,13 +26,161 @@ src/main/java/co/edu/unicauca/informacion_presupuestaria/
 │   ├── input/                       # Puertos de entrada (interfaces de casos de uso)
 │   └── output/                      # Puertos de salida (interfaces de gateways)
 └── infraestructura/                 # Capa de infraestructura
-    ├── input/                       # Adaptadores de entrada (controladores REST)
+    ├── input/                       # Adaptadores de entrada (controladores REST, scheduler)
     │   ├── controllerReporteEstudiantes/
-    │   └── controllerReportePorGrupos/
+    │   ├── controllerReportePorGrupos/
+    │   ├── scheduler/               # Tarea programada (sincronización de pagos)
+    │   └── Configuracion/
     └── output/                      # Adaptadores de salida
         ├── persistence/             # Persistencia (JPA, Repositorios)
+        ├── external/               # Cliente del servicio externo de pagos (stub/HTTP)
         └── exceptionsController/    # Manejo de excepciones
 ```
+
+---
+
+## 🔌 Consumo de servicios externos (SIMCA/CINCA) y sincronización de pagos
+
+El microservicio está preparado para **consumir un servicio externo de pagos** (cuando esté disponible) y, mientras tanto, **simular** sus respuestas. Toda la lógica sigue la arquitectura hexagonal: el dominio no depende de HTTP ni de la base de datos concreta.
+
+### Arquitectura del consumo del servicio externo
+
+El flujo se compone de:
+
+1. **Puerto de salida (Output Port)**  
+   Interfaz que representa “consultar pagos” sin saber si la implementación es HTTP real o simulada.
+
+2. **Adaptadores de salida**  
+   Dos implementaciones del mismo puerto:
+   - **Stub**: respuestas desde JSON en `resources/stubs/` o datos mínimos (por defecto).
+   - **HTTP**: llamada GET al endpoint real con timeouts y reintentos (se activa por configuración).
+
+3. **Caso de uso**  
+   Orquesta la consulta al externo, el mapeo DTO → dominio y la persistencia. **No** llama a HTTP ni a la BD directamente; solo usa puertos.
+
+4. **Puerto de persistencia**  
+   Interfaz para guardar/actualizar los pagos sincronizados. El adaptador HTTP **no** persiste; solo el caso de uso, a través de este puerto.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  ENTRADA                    APLICACIÓN / DOMINIO              SALIDA       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  PaymentsSyncScheduler  ──►  SyncStudentPaymentsInputPort                    │
+│  (tarea programada)           │                                             │
+│                                ▼                                             │
+│                         SyncStudentPaymentsUseCase                           │
+│                                │                                             │
+│                    ┌───────────┴───────────┐                                 │
+│                    ▼                       ▼                                 │
+│           ExternalPaymentsPort    StudentPaymentsRepositoryPort               │
+│           (getPayments)           (upsertStudentPayments)                      │
+│                    │                       │                                 │
+└────────────────────┼───────────────────────┼───────────────────────────────┘
+                      │                       │
+         ┌────────────┴────────────┐          ▼
+         ▼                         ▼   StudentPaymentsRepositoryAdapter
+  StubExternalPaymentsAdapter  HttpExternalPaymentsAdapter    (JPA → pago_sincronizado)
+  (JSON / datos fijos)         (GET + retry + timeout)
+```
+
+### Componentes principales
+
+| Componente | Ubicación | Responsabilidad |
+|------------|-----------|------------------|
+| **ExternalPaymentsPort** | `aplicacion.output` | Contrato: `Optional<PaymentsInformationDto> getPayments(String codigoEstudiante, Optional<String> periodo)`. Sin dependencias de HTTP ni BD. |
+| **StubExternalPaymentsAdapter** | `infraestructura.output.external` | Implementación stub: lee `stubs/payments_*.json` o devuelve datos mínimos. Activo cuando `external.payments.mode=stub`. |
+| **HttpExternalPaymentsAdapter** | `infraestructura.output.external` | Implementación HTTP: GET al servicio real con query params, timeout y reintentos. Activo cuando `external.payments.mode=http`. |
+| **SyncStudentPaymentsInputPort** | `aplicacion.input` | Contrato del caso de uso: `boolean syncPayments(String codigoEstudiante, Optional<String> periodo)`. |
+| **SyncStudentPaymentsUseCase** | `dominio.usecases` | Valida código, llama al puerto externo, mapea DTO → `PagosEstudiante`/`Pago`, persiste vía `StudentPaymentsRepositoryPort`. Un fallo por estudiante no tumba el batch. |
+| **StudentPaymentsRepositoryPort** | `aplicacion.output` | Contrato: `void upsertStudentPayments(PagosEstudiante)`. |
+| **StudentPaymentsRepositoryAdapter** | `infraestructura.output.persistence.gateway` | Persiste en la tabla `pago_sincronizado` (upsert por `codigo_estudiante` + `periodo`). |
+
+### DTOs del servicio externo
+
+En `external.dto` se definen los DTOs del contrato del servicio externo (SIMCA/CINCA):
+
+- **PaymentsInformationDto**: `codigo`, `pagos` (lista de facturas).
+- **BillDto**: `periodo`, `fecha_creacion`, `fecha_vencimiento`, `pagadoTotalmente`, `estado`, `numero_cuotas`, `monto_total`, `saldo_pendiente`, `monto_pagado`, `cuotas`.
+- **FeeDto**: `monto`, `saldo_pendiente`, `fecha_vencimiento`, `pagadoTotalmente`.
+
+El **mapeo DTO → dominio** se hace en el caso de uso (a modelos `PagosEstudiante` y `Pago`), no en los adaptadores.
+
+---
+
+## ⏰ Demonio / tarea programada (sincronización de pagos)
+
+Para no saturar el servicio externo con consultas constantes, la sincronización se hace mediante **polling controlado**: una tarea programada que ejecuta el caso de uso de forma periódica.
+
+### Cómo está programado el demonio
+
+- **Clase**: `PaymentsSyncScheduler` en `infraestructura.input.scheduler`.
+- **Tecnología**: `@Scheduled` de Spring (cron). La aplicación tiene `@EnableScheduling` en la clase principal.
+- **Comportamiento**:
+  - Obtiene la lista de códigos de estudiante desde configuración (`external.payments.sync.codigos`).
+  - Opcionalmente un periodo (`external.payments.sync.periodo`).
+  - En cada ejecución, para cada código invoca **solo al Input Port** del caso de uso (`SyncStudentPaymentsInputPort.syncPayments`).
+  - Un fallo en un estudiante no detiene el resto: se registra y se sigue con el siguiente.
+
+El scheduler **no** llama al adaptador externo ni al repositorio directamente; todo pasa por el caso de uso.
+
+### Configuración del scheduler y del servicio externo
+
+En `application.properties`:
+
+```properties
+# Modo del servicio externo: stub (por defecto) o http
+external.payments.mode=stub
+
+# Activar/desactivar la tarea programada
+external.payments.scheduler.enabled=false
+
+# Lista de códigos de estudiante a sincronizar (separados por coma)
+external.payments.sync.codigos=
+
+# Periodo opcional (ej. 1-2024)
+external.payments.sync.periodo=
+
+# Cron: por defecto una vez al día a medianoche (0 0 0 * * ?)
+external.payments.scheduler.cron=0 0 0 * * ?
+```
+
+Para **probar el scheduler** con el stub:
+
+```properties
+external.payments.scheduler.enabled=true
+external.payments.sync.codigos=123,456
+```
+
+Cuando el **endpoint real** esté disponible:
+
+```properties
+external.payments.mode=http
+external.payments.base-url=https://url-del-servicio
+external.payments.path=/api/pagos
+external.payments.timeout-ms=10000
+external.payments.retry.max=2
+```
+
+### Stubs de prueba
+
+En `src/main/resources/stubs/`:
+
+- **payments_empty.json**: estudiante sin pagos (`pagos: []`).
+- **payments_success.json**: un pago con una cuota pagada en totalidad.
+- **payments_partial.json**: pago con varias cuotas y saldos pendientes.
+
+El stub puede elegir el JSON según el código (por ejemplo, códigos especiales para vacío o parcial).
+
+### Criterios de aceptación (resumen)
+
+- El caso de uso **no** depende de infraestructura (HTTP, BD concreta).
+- El adaptador HTTP **no** guarda en BD; solo el caso de uso, vía puerto de persistencia.
+- El scheduler llama al **Input Port** del caso de uso, no al adaptador externo.
+- Con `mode=stub` se puede ejecutar el scheduler y persistir en `pago_sincronizado`.
+- Cambiar a `mode=http` no cambia dominio ni caso de uso; solo la implementación del puerto externo.
+
+---
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -422,6 +570,9 @@ El proyecto utiliza configuración manual de beans en `BeanConfigurations.java` 
 
 - `GestionarReporteEstudiantesCUIntPort`
 - `GestionarReportePorGruposCUIntPort`
+- `SyncStudentPaymentsInputPort` (sincronización de pagos con servicio externo)
+
+La elección entre adaptador **stub** o **HTTP** del servicio de pagos se hace por propiedad (`external.payments.mode`); el wiring lo gestiona Spring con `@ConditionalOnProperty` en los adaptadores y en `ExternalPaymentsConfig`.
 
 ## 🧪 Testing
 

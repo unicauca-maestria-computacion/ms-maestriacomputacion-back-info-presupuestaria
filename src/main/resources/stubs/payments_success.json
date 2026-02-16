@@ -1,0 +1,24 @@
+{
+  "codigo": "123",
+  "pagos": [
+    {
+      "periodo": "1-2024",
+      "fecha_creacion": "2024-01-15",
+      "fecha_vencimiento": "2024-02-28",
+      "pagadoTotalmente": true,
+      "estado": "ca",
+      "numero_cuotas": 1,
+      "monto_total": 5000000,
+      "saldo_pendiente": 0,
+      "monto_pagado": 5000000,
+      "cuotas": [
+        {
+          "monto": 5000000,
+          "saldo_pendiente": 0,
+          "fecha_vencimiento": "2024-02-28",
+          "pagadoTotalmente": true
+        }
+      ]
+    }
+  ]
+}
