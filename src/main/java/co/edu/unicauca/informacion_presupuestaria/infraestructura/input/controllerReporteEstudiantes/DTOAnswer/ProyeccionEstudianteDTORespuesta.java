@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ProyeccionEstudianteDTORespuesta {
     private String codigoEstudiante;
     private String nombre;
+    /** Número de identificación del estudiante (tabla personas). */
     private Integer identificacion;
     private String apellido;
     private Boolean estaPago;
