@@ -142,53 +142,49 @@ INSERT IGNORE INTO estudiante (persona_id, codigo, cohorte, periodo_ingreso, sem
 (49, 1049, '2024-1', '2024-1', 1),
 (50, 1050, '2024-2', '2024-2', 2);
 
--- 4. GRUPO (Tabla base - sin dependencias)
-INSERT IGNORE INTO grupo (nombre) VALUES
-('Grupo de Investigación en Sistemas Inteligentes'),
-('Grupo de Investigación en Ingeniería de Software'),
-('Grupo de Investigación en Redes y Comunicaciones'),
-('Grupo de Investigación en Ciencia de Datos'),
-('Grupo de Investigación en Seguridad Informática'),
-('Grupo de Investigación en Computación Gráfica'),
-('Grupo de Investigación en Sistemas Distribuidos'),
-('Grupo de Investigación en Inteligencia Artificial'),
-('Grupo de Investigación en Bases de Datos'),
-('Grupo de Investigación en Arquitectura de Software');
+-- 4. GRUPO (Tabla base - sin dependencias). Solo 3 grupos: GTI, IDIS, GICO
+-- Se vacía reporte_por_grupos antes porque tiene FK a grupo; luego se vacía grupo para que los IDs queden 1, 2, 3.
+DELETE FROM reporte_por_grupos;
+DELETE FROM grupo;
+INSERT INTO grupo (nombre) VALUES
+('GTI'),
+('IDIS'),
+('GICO');
 
--- 5. PROYECCION_ESTUDIANTE (Depende de periodo_academico). estado_proyeccion: PROYECCION=editable, FINALIZADO=reporte final
+-- 5. PROYECCION_ESTUDIANTE (Depende de periodo_academico). grupo_investigacion solo usa: GTI, IDIS, GICO
 INSERT IGNORE INTO proyeccion_estudiante (codigo_estudiante, esta_pago, porcentaje_votacion, porcentaje_beca, porcentaje_egresado, grupo_investigacion, estado_proyeccion, periodo_academico_id) VALUES
-('1001', TRUE, 0.05, 0.20, 0.0, 'Grupo de Investigacion en Sistemas Inteligentes', 'PROYECCION', 1),
-('1002', TRUE, 0.03, 0.15, 0.0, 'Grupo de Investigacion en Ingenieria de Software', 'PROYECCION', 1),
-('1003', FALSE, 0.04, 0.25, 0.0, 'Grupo de Investigacion en Redes y Comunicaciones', 'PROYECCION', 2),
-('1004', TRUE, 0.06, 0.30, 0.0, 'Grupo de Investigacion en Ciencia de Datos', 'PROYECCION', 3),
-('1005', TRUE, 0.05, 0.20, 0.0, 'Grupo de Investigacion en Seguridad Informatica', 'PROYECCION', 3),
-('1006', FALSE, 0.04, 0.15, 0.0, 'Grupo de Investigacion en Computacion Grafica', 'PROYECCION', 4),
-('1007', TRUE, 0.07, 0.35, 0.0, 'Grupo de Investigacion en Sistemas Distribuidos', 'PROYECCION', 5),
-('1008', TRUE, 0.05, 0.25, 0.0, 'Grupo de Investigacion en Inteligencia Artificial', 'PROYECCION', 5),
-('1009', FALSE, 0.06, 0.20, 0.0, 'Grupo de Investigacion en Bases de Datos', 'PROYECCION', 6),
-('1010', TRUE, 0.08, 0.40, 0.0, 'Grupo de Investigacion en Arquitectura de Software', 'PROYECCION', 7),
--- Proyeccion periodo 1-2024 (ID 9) - mismos estudiantes que aparecen en matricula_financiera para ese periodo
-('1001', FALSE, 0.05, 0.20, 0.0, 'Grupo de Investigacion en Sistemas Inteligentes', 'PROYECCION', 9),
-('1002', TRUE, 0.03, 0.15, 0.0, 'Grupo de Investigacion en Ingenieria de Software', 'PROYECCION', 9),
-('1005', TRUE, 0.05, 0.20, 0.0, 'Grupo de Investigacion en Seguridad Informatica', 'PROYECCION', 9),
-('1006', FALSE, 0.04, 0.15, 0.0, 'Grupo de Investigacion en Computacion Grafica', 'PROYECCION', 9),
-('1009', TRUE, 0.06, 0.20, 0.0, 'Grupo de Investigacion en Bases de Datos', 'PROYECCION', 9),
-('1041', TRUE, 0.05, 0.22, 0.0, 'Grupo de Investigacion en Sistemas Distribuidos', 'PROYECCION', 9),
-('1042', TRUE, 0.04, 0.18, 0.0, 'Grupo de Investigacion en Inteligencia Artificial', 'PROYECCION', 9),
-('1045', FALSE, 0.07, 0.25, 0.0, 'Grupo de Investigacion en Redes y Comunicaciones', 'PROYECCION', 9),
-('1046', TRUE, 0.06, 0.28, 0.0, 'Grupo de Investigacion en Ciencia de Datos', 'PROYECCION', 9),
-('1049', TRUE, 0.05, 0.20, 0.0, 'Grupo de Investigacion en Arquitectura de Software', 'PROYECCION', 9),
--- Proyeccion periodo 2-2024 (ID 10) - periodo actual (activo). Mismos estudiantes que matricula_financiera para ese periodo
-('1003', TRUE, 0.05, 0.22, 0.0, 'Grupo de Investigacion en Redes y Comunicaciones', 'PROYECCION', 10),
-('1004', TRUE, 0.06, 0.28, 0.0, 'Grupo de Investigacion en Ciencia de Datos', 'PROYECCION', 10),
-('1007', FALSE, 0.07, 0.30, 0.0, 'Grupo de Investigacion en Sistemas Distribuidos', 'PROYECCION', 10),
-('1008', TRUE, 0.05, 0.24, 0.0, 'Grupo de Investigacion en Inteligencia Artificial', 'PROYECCION', 10),
-('1010', TRUE, 0.06, 0.26, 0.0, 'Grupo de Investigacion en Arquitectura de Software', 'PROYECCION', 10),
-('1043', TRUE, 0.05, 0.20, 0.0, 'Grupo de Investigacion en Sistemas Inteligentes', 'PROYECCION', 10),
-('1044', FALSE, 0.06, 0.25, 0.0, 'Grupo de Investigacion en Ingenieria de Software', 'PROYECCION', 10),
-('1047', TRUE, 0.05, 0.22, 0.0, 'Grupo de Investigacion en Seguridad Informatica', 'PROYECCION', 10),
-('1048', TRUE, 0.04, 0.18, 0.0, 'Grupo de Investigacion en Computacion Grafica', 'PROYECCION', 10),
-('1050', FALSE, 0.07, 0.28, 0.0, 'Grupo de Investigacion en Bases de Datos', 'PROYECCION', 10);
+('1001', TRUE, 0.05, 0.20, 0.0, 'GTI', 'PROYECCION', 1),
+('1002', TRUE, 0.03, 0.15, 0.0, 'IDIS', 'PROYECCION', 1),
+('1003', FALSE, 0.04, 0.25, 0.0, 'GICO', 'PROYECCION', 2),
+('1004', TRUE, 0.06, 0.30, 0.0, 'GTI', 'PROYECCION', 3),
+('1005', TRUE, 0.05, 0.20, 0.0, 'IDIS', 'PROYECCION', 3),
+('1006', FALSE, 0.04, 0.15, 0.0, 'GICO', 'PROYECCION', 4),
+('1007', TRUE, 0.07, 0.35, 0.0, 'GTI', 'PROYECCION', 5),
+('1008', TRUE, 0.05, 0.25, 0.0, 'IDIS', 'PROYECCION', 5),
+('1009', FALSE, 0.06, 0.20, 0.0, 'GICO', 'PROYECCION', 6),
+('1010', TRUE, 0.08, 0.40, 0.0, 'GTI', 'PROYECCION', 7),
+-- Proyeccion periodo 1-2024 (ID 9)
+('1001', FALSE, 0.05, 0.20, 0.0, 'GTI', 'PROYECCION', 9),
+('1002', TRUE, 0.03, 0.15, 0.0, 'IDIS', 'PROYECCION', 9),
+('1005', TRUE, 0.05, 0.20, 0.0, 'IDIS', 'PROYECCION', 9),
+('1006', FALSE, 0.04, 0.15, 0.0, 'GICO', 'PROYECCION', 9),
+('1009', TRUE, 0.06, 0.20, 0.0, 'GICO', 'PROYECCION', 9),
+('1041', TRUE, 0.05, 0.22, 0.0, 'GTI', 'PROYECCION', 9),
+('1042', TRUE, 0.04, 0.18, 0.0, 'IDIS', 'PROYECCION', 9),
+('1045', FALSE, 0.07, 0.25, 0.0, 'GICO', 'PROYECCION', 9),
+('1046', TRUE, 0.06, 0.28, 0.0, 'GTI', 'PROYECCION', 9),
+('1049', TRUE, 0.05, 0.20, 0.0, 'IDIS', 'PROYECCION', 9),
+-- Proyeccion periodo 2-2024 (ID 10) - periodo actual (activo)
+('1003', TRUE, 0.05, 0.22, 0.0, 'GICO', 'PROYECCION', 10),
+('1004', TRUE, 0.06, 0.28, 0.0, 'GTI', 'PROYECCION', 10),
+('1007', FALSE, 0.07, 0.30, 0.0, 'GTI', 'PROYECCION', 10),
+('1008', TRUE, 0.05, 0.24, 0.0, 'IDIS', 'PROYECCION', 10),
+('1010', TRUE, 0.06, 0.26, 0.0, 'GTI', 'PROYECCION', 10),
+('1043', TRUE, 0.05, 0.20, 0.0, 'GTI', 'PROYECCION', 10),
+('1044', FALSE, 0.06, 0.25, 0.0, 'IDIS', 'PROYECCION', 10),
+('1047', TRUE, 0.05, 0.22, 0.0, 'IDIS', 'PROYECCION', 10),
+('1048', TRUE, 0.04, 0.18, 0.0, 'GICO', 'PROYECCION', 10),
+('1050', FALSE, 0.07, 0.28, 0.0, 'GICO', 'PROYECCION', 10);
 
 -- 6. CONFIGURACION_REPORTE_FINANCIERO (Depende de periodo_academico)
 INSERT IGNORE INTO configuracion_reporte_financiero (es_reporte_final, biblioteca, recursos_computacionales, valor_matricula, valor_smlv, total_neto, total_descuentos, total_ingresos, periodo_academico_id) VALUES
@@ -372,18 +368,47 @@ INSERT IGNORE INTO gasto_general (categoria, descripcion, monto, configuracion_r
 ('Infraestructura', 'Ampliación de espacios', 800000.00, 5);
 
 -- 12. REPORTE_POR_GRUPOS (Depende de configuracion_reporte_grupos y grupo)
--- Regla: por cada configuracion_reporte_grupos_id solo puede haber una fila por grupo_id (par único).
--- Se vacía la tabla antes de insertar para evitar duplicados al re-ejecutar el script.
+-- Solo 3 grupos: grupo_id 1=GTI, 2=IDIS, 3=GICO. Una fila por (config, grupo).
 DELETE FROM reporte_por_grupos;
 
 INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id) VALUES
-(4675000.00, 2337500.00, 2337500.00, 0.10, 0.10, 0.20, 1870000.00, 1402500.00, 3272500.00, 0.05, 233750.00, 0.00, 1, 1),
-(4771200.00, 2385600.00, 2385600.00, 0.11, 0.11, 0.22, 1956192.00, 1467144.00, 3423336.00, 0.05, 238560.00, 0.00, 2, 2),
-(4938500.00, 2469250.00, 2469250.00, 0.12, 0.12, 0.24, 2074170.00, 1555627.50, 3629797.50, 0.06, 296310.00, 0.00, 3, 3),
-(5026600.00, 2513300.00, 2513300.00, 0.13, 0.13, 0.26, 2161438.00, 1621078.50, 3782516.50, 0.06, 301596.00, 0.00, 4, 4),
-(5184000.00, 2592000.00, 2592000.00, 0.14, 0.14, 0.28, 2280960.00, 1710720.00, 3991680.00, 0.07, 362880.00, 0.00, 5, 5),
-(5264000.00, 2632000.00, 2632000.00, 0.15, 0.15, 0.30, 2368800.00, 1776600.00, 4145400.00, 0.07, 368480.00, 0.00, 6, 6),
-(5411500.00, 2705750.00, 2705750.00, 0.16, 0.16, 0.32, 2489290.00, 1866967.50, 4356257.50, 0.08, 432920.00, 0.00, 7, 7),
-(5483400.00, 2741700.00, 2741700.00, 0.17, 0.17, 0.34, 2577198.00, 1932898.50, 4510096.50, 0.08, 438672.00, 0.00, 8, 8),
-(5621000.00, 2810500.00, 2810500.00, 0.18, 0.18, 0.36, 2698080.00, 2023560.00, 4721640.00, 0.09, 505890.00, 0.00, 9, 9),
-(5684800.00, 2842400.00, 2842400.00, 0.19, 0.19, 0.38, 2785552.00, 2089164.00, 4874716.00, 0.09, 511632.00, 0.00, 10, 10);
+-- Config 1: GTI(1), IDIS(2), GICO(3)
+(1558333.33, 779166.67, 779166.67, 0.10, 0.10, 0.20, 623333.33, 467500.00, 1090833.33, 0.05, 77916.67, 0.00, 1, 1),
+(1558333.33, 779166.67, 779166.67, 0.10, 0.10, 0.20, 623333.33, 467500.00, 1090833.33, 0.05, 77916.67, 0.00, 1, 2),
+(1558333.34, 779166.66, 779166.66, 0.10, 0.10, 0.20, 623333.34, 467500.00, 1090833.34, 0.05, 77916.66, 0.00, 1, 3),
+-- Config 2
+(1590400.00, 795200.00, 795200.00, 0.11, 0.11, 0.22, 652064.00, 489048.00, 1141112.00, 0.05, 79520.00, 0.00, 2, 1),
+(1590400.00, 795200.00, 795200.00, 0.11, 0.11, 0.22, 652064.00, 489048.00, 1141112.00, 0.05, 79520.00, 0.00, 2, 2),
+(1590400.00, 795200.00, 795200.00, 0.11, 0.11, 0.22, 652064.00, 489048.00, 1141112.00, 0.05, 79520.00, 0.00, 2, 3),
+-- Config 3
+(1646166.67, 823083.33, 823083.33, 0.12, 0.12, 0.24, 691392.50, 518544.50, 1209936.50, 0.06, 98770.00, 0.00, 3, 1),
+(1646166.67, 823083.33, 823083.33, 0.12, 0.12, 0.24, 691392.50, 518544.50, 1209936.50, 0.06, 98770.00, 0.00, 3, 2),
+(1646166.66, 823083.34, 823083.34, 0.12, 0.12, 0.24, 691392.50, 518544.50, 1209936.66, 0.06, 98770.00, 0.00, 3, 3),
+-- Config 4
+(1675533.33, 837766.67, 837766.67, 0.13, 0.13, 0.26, 720479.33, 540359.50, 1260838.83, 0.06, 100532.00, 0.00, 4, 1),
+(1675533.33, 837766.67, 837766.67, 0.13, 0.13, 0.26, 720479.33, 540359.50, 1260838.83, 0.06, 100532.00, 0.00, 4, 2),
+(1675533.34, 837766.66, 837766.66, 0.13, 0.13, 0.26, 720479.34, 540359.50, 1260838.84, 0.06, 100532.00, 0.00, 4, 3),
+-- Config 5
+(1728000.00, 864000.00, 864000.00, 0.14, 0.14, 0.28, 760320.00, 570240.00, 1330560.00, 0.07, 120960.00, 0.00, 5, 1),
+(1728000.00, 864000.00, 864000.00, 0.14, 0.14, 0.28, 760320.00, 570240.00, 1330560.00, 0.07, 120960.00, 0.00, 5, 2),
+(1728000.00, 864000.00, 864000.00, 0.14, 0.14, 0.28, 760320.00, 570240.00, 1330560.00, 0.07, 120960.00, 0.00, 5, 3),
+-- Config 6
+(1754666.67, 877333.33, 877333.33, 0.15, 0.15, 0.30, 789600.00, 592200.00, 1381800.00, 0.07, 122773.33, 0.00, 6, 1),
+(1754666.67, 877333.33, 877333.33, 0.15, 0.15, 0.30, 789600.00, 592200.00, 1381800.00, 0.07, 122773.33, 0.00, 6, 2),
+(1754666.66, 877333.34, 877333.34, 0.15, 0.15, 0.30, 789600.00, 592200.00, 1381800.00, 0.07, 122773.34, 0.00, 6, 3),
+-- Config 7
+(1803833.33, 901916.67, 901916.67, 0.16, 0.16, 0.32, 829763.33, 622322.50, 1452085.83, 0.08, 144306.67, 0.00, 7, 1),
+(1803833.33, 901916.67, 901916.67, 0.16, 0.16, 0.32, 829763.33, 622322.50, 1452085.83, 0.08, 144306.67, 0.00, 7, 2),
+(1803833.34, 901916.66, 901916.66, 0.16, 0.16, 0.32, 829763.34, 622322.50, 1452085.84, 0.08, 144306.66, 0.00, 7, 3),
+-- Config 8
+(1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 1),
+(1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 2),
+(1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 3),
+-- Config 9
+(1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 1),
+(1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 2),
+(1873666.66, 936833.34, 936833.34, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 3),
+-- Config 10
+(1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 1),
+(1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 2),
+(1894933.34, 947466.66, 947466.66, 0.19, 0.19, 0.38, 928517.34, 696388.00, 1624905.34, 0.09, 170544.00, 0.00, 10, 3);
