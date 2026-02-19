@@ -25,7 +25,8 @@ UPDATE periodo_academico SET activo = FALSE;
 UPDATE periodo_academico SET activo = TRUE WHERE periodo = 2 AND anio = 2024 LIMIT 1;
 
 -- 2. PERSONAS (Tabla base - sin dependencias)
--- Primero insertamos los datos de personas (sin tildes en los nombres)
+-- Regla: la cantidad de personas debe ser LA MISMA que la cantidad de estudiantes (relacion 1:1).
+-- Se insertan 50 personas; cada una tendra exactamente un registro en estudiante (persona_id).
 INSERT IGNORE INTO personas (id, identificacion, apellido, nombre) VALUES
 -- Personas 2020
 (1, 1001001, 'Garcia', 'Juan'),
@@ -83,7 +84,8 @@ INSERT IGNORE INTO personas (id, identificacion, apellido, nombre) VALUES
 (49, 1049049, 'Cardenas', 'Manuel'),
 (50, 1050050, 'Benitez', 'Carmen');
 
--- 3. ESTUDIANTE (Depende de personas). codigo: formato 67_<identificacion> (ej: 67_1087421928)
+-- 3. ESTUDIANTE (Depende de personas). Misma cantidad que personas (50).
+-- codigo: formato 67_<identificacion>. Cada persona_id (1..50) tiene un unico estudiante.
 INSERT IGNORE INTO estudiante (persona_id, codigo, cohorte, periodo_ingreso, semestre_financiero) VALUES
 -- Estudiantes 2020
 (1, '67_1001001', '2020-1', '2020-1', 1),
@@ -327,7 +329,7 @@ INSERT IGNORE INTO matricula_financiera (fecha_matricula, valor_matricula, pagad
 ('2024-07-18', 7200000.00, TRUE, 10, '67_1008008'),
 ('2024-07-19', 7200000.00, TRUE, 10, '67_1010010');
 
--- 9. DESCUENTOS (Depende de estudiante)
+-- 9. DESCUENTOS (Depende de estudiante). Solo codigos de estudiantes existentes (67_1001001 a 67_1010010).
 INSERT IGNORE INTO descuentos (fecha_inicio, fecha_fin, tipo_descuento, num_acta_des, fecha_acta_des, poliza, estado, estudiante_codigo) VALUES
 ('2020-01-01', '2020-12-31', 'Beca Académica', 'ACTA-001', '2020-01-10', 'POL-2020-001', 'Activo', '67_1001001'),
 ('2020-01-01', '2020-12-31', 'Beca Deportiva', 'ACTA-002', '2020-01-12', 'POL-2020-002', 'Activo', '67_1002002'),
@@ -340,7 +342,7 @@ INSERT IGNORE INTO descuentos (fecha_inicio, fecha_fin, tipo_descuento, num_acta
 ('2022-07-01', '2023-06-30', 'Beca Académica', 'ACTA-009', '2022-07-08', 'POL-2022-003', 'Activo', '67_1009009'),
 ('2023-01-01', '2023-12-31', 'Beca Cultural', 'ACTA-010', '2023-01-10', 'POL-2023-001', 'Activo', '67_1010010');
 
--- 10. BECAS (Depende de estudiante)
+-- 10. BECAS (Depende de estudiante). Solo codigos de estudiantes existentes (67_1001001 a 67_1010010).
 INSERT IGNORE INTO becas (dedicador, entidad_asociada, tipo, titulo, estudiante_codigo) VALUES
 ('Tiempo Completo', 'Colciencias', 'Beca Nacional', 'Beca de Excelencia Académica', '67_1001001'),
 ('Medio Tiempo', 'Universidad del Cauca', 'Beca Institucional', 'Beca de Investigación', '67_1002002'),
