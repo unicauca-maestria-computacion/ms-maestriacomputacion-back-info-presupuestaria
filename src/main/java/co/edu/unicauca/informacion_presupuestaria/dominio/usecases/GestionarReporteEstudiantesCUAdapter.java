@@ -183,7 +183,7 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
             return new ArrayList<>();
         }
         
-        java.util.Map<Integer, MatriculaFinanciera> matriculaPorEstudiante = new java.util.HashMap<>();
+        java.util.Map<String, MatriculaFinanciera> matriculaPorEstudiante = new java.util.HashMap<>();
         if (matriculasFinancieras != null) {
             for (MatriculaFinanciera matricula : matriculasFinancieras) {
                 if (matricula.getObjEstudiante() != null && matricula.getObjEstudiante().getCodigo() != null) {
@@ -207,7 +207,7 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
             ProyeccionEstudiante proyeccion = new ProyeccionEstudiante();
             
             if (estudiante.getCodigo() != null) {
-                proyeccion.setCodigoEstudiante(estudiante.getCodigo().toString());
+                proyeccion.setCodigoEstudiante(estudiante.getCodigo());
             }
             proyeccion.setIdentificacion(estudiante.getIdentificacion());
             proyeccion.setApellido(estudiante.getApellido());
@@ -223,7 +223,7 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
             
             // Completar desde la proyección del periodo (tabla proyeccion_estudiante) si existe
             ProyeccionEstudiante datosProyeccion = estudiante.getCodigo() != null
-                ? proyeccionPorCodigo.get(estudiante.getCodigo().toString())
+                ? proyeccionPorCodigo.get(estudiante.getCodigo())
                 : null;
             if (datosProyeccion != null) {
                 proyeccion.setPorcentajeVotacion(datosProyeccion.getPorcentajeVotacion());

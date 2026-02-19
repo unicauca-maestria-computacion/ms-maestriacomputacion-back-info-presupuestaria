@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Estudiante extends Personas {
     
-    private Integer codigo;
+    private String codigo;
     private String cohorte;
     private String periodoIngreso;
     private Integer semestreFinanciero;
@@ -16,8 +16,8 @@ public class Estudiante extends Personas {
         super();
     }
 
-    public Estudiante(Integer id, Integer identificacion, String apellido, String nombre, 
-                      Integer codigo, String cohorte, String periodoIngreso, Integer semestreFinanciero) {
+    public Estudiante(Integer id, Integer identificacion, String apellido, String nombre,
+                      String codigo, String cohorte, String periodoIngreso, Integer semestreFinanciero) {
         super(id, identificacion, apellido, nombre);
         this.codigo = codigo;
         this.cohorte = cohorte;
@@ -25,11 +25,11 @@ public class Estudiante extends Personas {
         this.semestreFinanciero = semestreFinanciero;
     }
 
-    public Integer getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Integer codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 

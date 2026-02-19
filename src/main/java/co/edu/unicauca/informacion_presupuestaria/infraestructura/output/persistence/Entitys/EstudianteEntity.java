@@ -13,8 +13,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class EstudianteEntity extends PersonasEntity {
     
-    @Column(name = "codigo", unique = true, nullable = false)
-    private Integer codigo;
+    @Column(name = "codigo", unique = true, nullable = false, length = 20)
+    private String codigo;
     
     private String cohorte;
     
