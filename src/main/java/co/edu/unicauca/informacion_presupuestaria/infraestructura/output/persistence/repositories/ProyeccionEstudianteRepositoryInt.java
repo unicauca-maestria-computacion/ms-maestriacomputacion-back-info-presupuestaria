@@ -11,6 +11,12 @@ import java.util.List;
 
 @Repository
 public interface ProyeccionEstudianteRepositoryInt extends JpaRepository<ProyeccionEstudianteEntity, Long> {
+
+    boolean existsByCodigoEstudiante(String codigoEstudiante);
+
+    /** Lista (puede haber duplicados en BD); usar el primero para actualizar. */
+    List<ProyeccionEstudianteEntity> findByCodigoEstudianteAndObjPeriodoAcademico_Id(String codigoEstudiante, Long periodoAcademicoId);
+
     @Query(value = "SELECT p FROM ProyeccionEstudianteEntity p " +
                    "LEFT JOIN FETCH p.objPeriodoAcademico " +
                    "WHERE p.objPeriodoAcademico.id = :periodoAcademicoId")

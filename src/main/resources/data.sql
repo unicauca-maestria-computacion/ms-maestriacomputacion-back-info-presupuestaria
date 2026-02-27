@@ -5,6 +5,20 @@
 -- respetando las relaciones entre entidades
 -- ============================================
 
+-- Ajuste de esquema: columnas estudiante.codigo y *_estudiante_codigo en VARCHAR(20)
+-- para evitar error "Referencing column and referenced column in foreign key are incompatible"
+-- (MySQL no permite MODIFY con FK activos; se eliminan, se alteran, se recrean)
+ALTER TABLE becas DROP FOREIGN KEY FKlcv91vdb1xrchn5sk6jmwil5;
+ALTER TABLE descuentos DROP FOREIGN KEY FKlo1slet8786cdx5dffyfwgfvf;
+ALTER TABLE matricula_financiera DROP FOREIGN KEY FKs7uwbmelb0c19sl1005sy4hkp;
+ALTER TABLE estudiante MODIFY COLUMN codigo VARCHAR(20) NOT NULL;
+ALTER TABLE becas MODIFY COLUMN estudiante_codigo VARCHAR(20);
+ALTER TABLE descuentos MODIFY COLUMN estudiante_codigo VARCHAR(20);
+ALTER TABLE matricula_financiera MODIFY COLUMN estudiante_codigo VARCHAR(20);
+ALTER TABLE becas ADD CONSTRAINT FKlcv91vdb1xrchn5sk6jmwil5 FOREIGN KEY (estudiante_codigo) REFERENCES estudiante(codigo);
+ALTER TABLE descuentos ADD CONSTRAINT FKlo1slet8786cdx5dffyfwgfvf FOREIGN KEY (estudiante_codigo) REFERENCES estudiante(codigo);
+ALTER TABLE matricula_financiera ADD CONSTRAINT FKs7uwbmelb0c19sl1005sy4hkp FOREIGN KEY (estudiante_codigo) REFERENCES estudiante(codigo);
+
 -- 1. PERIODO_ACADEMICO (Tabla base - sin dependencias)
 -- Nota: La columna 'activo' indica si el período académico está actualmente en curso
 -- Solo un período debe estar activo a la vez

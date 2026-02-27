@@ -15,14 +15,20 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controll
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.mappers.ProyeccionEstudianteMapperInfraestructura;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.mappers.ReporteEstudiantesMapperInfraestructura;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReporteEstudiantes.mappers.ReporteProyeccionEstudiantesMapperInfraestructura;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/reportes-estudiantes")
 public class ReporteEstudiantesRestController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReporteEstudiantesRestController.class);
     
     @Autowired
     private GestionarReporteEstudiantesCUIntPort objGestionarReporteEstudiantesCUInt;
@@ -82,7 +88,7 @@ public class ReporteEstudiantesRestController {
     }
 
     @GetMapping("/financiero")
-    public ResponseEntity<ReporteEstudiantesDTORespuesta> obtenerReporteFinanciero(
+    public ResponseEntity<?> obtenerReporteFinanciero(
             @RequestParam Integer periodo,
             @RequestParam(name = "anio") Integer anio) {
         try {
@@ -90,14 +96,18 @@ public class ReporteEstudiantesRestController {
             ReporteEstudiantes reporte = objGestionarReporteEstudiantesCUInt.obtenerReporteFinanciero(periodoAcademico);
             
             if (reporte == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                LOG.warn("Reporte financiero no encontrado para periodo={}, anio={}", periodo, anio);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "No se encontró reporte para el periodo indicado. Verifique que el periodo exista y sea anterior al periodo académico actual."));
             }
             
             ReporteEstudiantesDTORespuesta respuesta = 
                 objMapperReporteEstudiantes.mappearDeReporteEstudiantesARespuesta(reporte);
             return ResponseEntity.ok(respuesta);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            LOG.error("Error al obtener reporte financiero para periodo={}, anio={}", periodo, anio, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error interno: " + e.getMessage()));
         }
     }
 

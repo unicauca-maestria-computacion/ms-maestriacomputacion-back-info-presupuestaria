@@ -16,6 +16,7 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ConfiguracionReporteFinancieroRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.MatriculaFinancieraRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.PeriodoAcademicoRepositoryInt;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ProyeccionEstudianteEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ProyeccionEstudianteRepositoryInt;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,17 +59,40 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
     }
     
     @Override
+    @Transactional
     public ProyeccionEstudiante guardarProyeccionEstudiante(ProyeccionEstudiante proyeccion) {
-        // La entidad ProyeccionEstudianteEntity ha sido eliminada
-        // Retornar null ya que no hay forma de persistir sin la entidad
-        return null;
+        if (proyeccion == null || proyeccion.getCodigoEstudiante() == null) {
+            return null;
+        }
+        Optional<PeriodoAcademicoEntity> periodoActual = objPeriodoAcademico.findPeriodoAcademicoActivo();
+        if (periodoActual.isEmpty()) {
+            return null;
+        }
+        Long periodoId = periodoActual.get().getId();
+        List<ProyeccionEstudianteEntity> entities = objProyeccionEstudianteRepository
+            .findByCodigoEstudianteAndObjPeriodoAcademico_Id(proyeccion.getCodigoEstudiante(), periodoId);
+        if (entities == null || entities.isEmpty()) {
+            return null;
+        }
+        ProyeccionEstudianteEntity entity = entities.get(0);
+        entity.setEstaPago(proyeccion.getEstaPago());
+        entity.setPorcentajeVotacion(proyeccion.getPorcentajeVotacion());
+        entity.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
+        entity.setPorcentajeEgresado(proyeccion.getPorcentajeEgresado());
+        entity = objProyeccionEstudianteRepository.save(entity);
+        return objProyeccionEstudianteMapper.mappearDeEntityAProyeccionEstudiante(entity);
     }
     
     @Override
+    @Transactional(readOnly = true)
     public ProyeccionEstudiante obtenerProyeccionPorCodigoEstudiante(String codigo) {
-        // La entidad ProyeccionEstudianteEntity ha sido eliminada
-        // Retornar null ya que no hay forma de obtener datos sin la entidad
-        return null;
+        if (codigo == null) return null;
+        Optional<PeriodoAcademicoEntity> periodoActual = objPeriodoAcademico.findPeriodoAcademicoActivo();
+        if (periodoActual.isEmpty()) return null;
+        List<ProyeccionEstudianteEntity> entities = objProyeccionEstudianteRepository
+            .findByCodigoEstudianteAndObjPeriodoAcademico_Id(codigo, periodoActual.get().getId());
+        if (entities == null || entities.isEmpty()) return null;
+        return objProyeccionEstudianteMapper.mappearDeEntityAProyeccionEstudiante(entities.get(0));
     }
     
     @Override
@@ -92,13 +116,16 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
     
     @Override
     public Boolean existeProyeccionPorCodigoEstudiante(String codigo) {
-        // La entidad ProyeccionEstudianteEntity ha sido eliminada
-        // Retornar false ya que no hay forma de verificar sin la entidad
-        return false;
+        if (codigo == null) return false;
+        return objProyeccionEstudianteRepository.existsByCodigoEstudiante(codigo);
     }
     
     @Override
+    @Transactional(readOnly = true)
     public ConfiguracionReporteFinanciero obtenerConfiguracionReporteFinanciero(PeriodoAcademico periodo) {
+        if (periodo == null || periodo.getPeriodo() == null || periodo.getAño() == null) {
+            return null;
+        }
         Optional<PeriodoAcademicoEntity> periodoEntity = objPeriodoAcademico.findByPeriodoAndAño(
             periodo.getPeriodo(), periodo.getAño());
         
