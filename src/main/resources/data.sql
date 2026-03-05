@@ -217,17 +217,18 @@ INSERT IGNORE INTO configuracion_reporte_financiero (es_reporte_final, bibliotec
 (TRUE, 42000, 149000, 5.90, 1700000.00, 8200000.00, 720000.00, 7480000.00, 10);
 
 -- 7. CONFIGURACION_REPORTE_GRUPOS (Depende de periodo_academico)
+-- excedentes_maestria: valor en pesos colombianos (COP), >= 0
 INSERT IGNORE INTO configuracion_reporte_grupos (aui_porcentaje, excedentes_maestria, aui_valor, ingresos_netos, valor_a_distribuir, item1, item2, imprevistos, periodo_academico_id) VALUES
-(0.15, 0.10, 825000.00, 5500000.00, 4675000.00, 0.40, 0.30, 0.05, 1),
-(0.16, 0.11, 908800.00, 5680000.00, 4771200.00, 0.41, 0.31, 0.05, 2),
-(0.17, 0.12, 1011500.00, 5950000.00, 4938500.00, 0.42, 0.32, 0.06, 3),
-(0.18, 0.13, 1103400.00, 6130000.00, 5026600.00, 0.43, 0.33, 0.06, 4),
-(0.19, 0.14, 1216000.00, 6400000.00, 5184000.00, 0.44, 0.34, 0.07, 5),
-(0.20, 0.15, 1316000.00, 6580000.00, 5264000.00, 0.45, 0.35, 0.07, 6),
-(0.21, 0.16, 1438500.00, 6850000.00, 5411500.00, 0.46, 0.36, 0.08, 7),
-(0.22, 0.17, 1546600.00, 7030000.00, 5483400.00, 0.47, 0.37, 0.08, 8),
-(0.23, 0.18, 1679000.00, 7300000.00, 5621000.00, 0.48, 0.38, 0.09, 9),
-(0.24, 0.19, 1795200.00, 7480000.00, 5684800.00, 0.49, 0.39, 0.09, 10);
+(0.15, 550000.00, 825000.00, 5500000.00, 4675000.00, 0.40, 0.30, 0.05, 1),
+(0.16, 624800.00, 908800.00, 5680000.00, 4771200.00, 0.41, 0.31, 0.05, 2),
+(0.17, 714000.00, 1011500.00, 5950000.00, 4938500.00, 0.42, 0.32, 0.06, 3),
+(0.18, 797800.00, 1103400.00, 6130000.00, 5026600.00, 0.43, 0.33, 0.06, 4),
+(0.19, 896000.00, 1216000.00, 6400000.00, 5184000.00, 0.44, 0.34, 0.07, 5),
+(0.20, 987000.00, 1316000.00, 6580000.00, 5264000.00, 0.45, 0.35, 0.07, 6),
+(0.21, 1096000.00, 1438500.00, 6850000.00, 5411500.00, 0.46, 0.36, 0.08, 7),
+(0.22, 1195100.00, 1546600.00, 7030000.00, 5483400.00, 0.47, 0.37, 0.08, 8),
+(0.23, 1314000.00, 1679000.00, 7300000.00, 5621000.00, 0.48, 0.38, 0.09, 9),
+(0.24, 1421200.00, 1795200.00, 7480000.00, 5684800.00, 0.49, 0.39, 0.09, 10);
 
 -- 8. MATRICULA_FINANCIERA (Depende de periodo_academico y estudiante)
 -- Crear matrículas para al menos 10 estudiantes por período
@@ -383,7 +384,10 @@ INSERT IGNORE INTO gasto_general (categoria, descripcion, monto, configuracion_r
 ('Infraestructura', 'Ampliación de espacios', 800000.00, 5);
 
 -- 12. REPORTE_POR_GRUPOS (Depende de configuracion_reporte_grupos y grupo)
--- Solo 3 grupos: grupo_id 1=GTI, 2=IDIS, 3=GICO. Una fila por (config, grupo).
+-- Una fila por (config, grupo). Sin estas filas, el endpoint
+-- GET /api/reportes-grupos/obtener?periodo=X&anio=Y devuelve totalNeto, aportes, etc. en null.
+-- Solo 3 grupos: grupo_id 1=GTI, 2=IDIS, 3=GICO.
+-- Config 1..8 = periodos 2020-2023; Config 9 = Periodo 1 - 2024; Config 10 = Periodo 2 - 2024.
 DELETE FROM reporte_por_grupos;
 
 INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id) VALUES
@@ -415,15 +419,15 @@ INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segun
 (1803833.33, 901916.67, 901916.67, 0.16, 0.16, 0.32, 829763.33, 622322.50, 1452085.83, 0.08, 144306.67, 0.00, 7, 1),
 (1803833.33, 901916.67, 901916.67, 0.16, 0.16, 0.32, 829763.33, 622322.50, 1452085.83, 0.08, 144306.67, 0.00, 7, 2),
 (1803833.34, 901916.66, 901916.66, 0.16, 0.16, 0.32, 829763.34, 622322.50, 1452085.84, 0.08, 144306.66, 0.00, 7, 3),
--- Config 8
+-- Config 8 (Periodo 2 - 2023)
 (1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 1),
 (1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 2),
 (1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 3),
--- Config 9
+-- Config 9 (Periodo 1 - 2024): necesario para reportes-grupos/obtener?periodo=1&anio=2024
 (1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 1),
 (1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 2),
 (1873666.66, 936833.34, 936833.34, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 3),
--- Config 10
+-- Config 10 (Periodo 2 - 2024): necesario para reportes-grupos/obtener?periodo=2&anio=2024
 (1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 1),
 (1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 2),
 (1894933.34, 947466.66, 947466.66, 0.19, 0.19, 0.38, 928517.34, 696388.00, 1624905.34, 0.09, 170544.00, 0.00, 10, 3);

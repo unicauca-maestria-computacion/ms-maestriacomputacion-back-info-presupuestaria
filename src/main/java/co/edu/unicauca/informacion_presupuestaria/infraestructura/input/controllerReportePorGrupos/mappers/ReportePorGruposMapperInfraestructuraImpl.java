@@ -1,20 +1,24 @@
 package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.mappers;
 
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ConfiguracionReporteGruposDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ReportePorGruposDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOPeticion.ReportePorGruposDTOPeticion;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component
 public class ReportePorGruposMapperInfraestructuraImpl implements ReportePorGruposMapperInfraestructura {
     
     private final GastoGeneralMapperInfraestructura objGastoGeneralMapper;
+    private final PeriodoAcademicoMapperInfraestructura objPeriodoAcademicoMapper;
     
-    public ReportePorGruposMapperInfraestructuraImpl(GastoGeneralMapperInfraestructura objGastoGeneralMapper) {
+    public ReportePorGruposMapperInfraestructuraImpl(GastoGeneralMapperInfraestructura objGastoGeneralMapper,
+                                                     PeriodoAcademicoMapperInfraestructura objPeriodoAcademicoMapper) {
         this.objGastoGeneralMapper = objGastoGeneralMapper;
+        this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
     }
     
     @Override
@@ -50,8 +54,33 @@ public class ReportePorGruposMapperInfraestructuraImpl implements ReportePorGrup
                     .collect(Collectors.toList()));
         }
         
-        // No mapeamos objConfiguracionReporteGrupos ya que no está en el modelo de dominio visible
+        if (reporte.getObjConfiguracionReporteGrupos() != null) {
+            dto.setObjConfiguracionReporteGrupos(mappearConfiguracionARespuesta(reporte.getObjConfiguracionReporteGrupos()));
+        }
         
+        return dto;
+    }
+    
+    private ConfiguracionReporteGruposDTORespuesta mappearConfiguracionARespuesta(co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteGrupos config) {
+        ConfiguracionReporteGruposDTORespuesta dto = new ConfiguracionReporteGruposDTORespuesta();
+        dto.setAUIPorcentaje(config.getaUIPorcentaje());
+        dto.setExcedentesMaestria(config.getExcedentesMaestria());
+        dto.setAUIValor(config.getaUIValor());
+        dto.setIngresosNetos(config.getIngresosNetos());
+        dto.setValorADistribuir(config.getValorADistribuir());
+        dto.setItem1(config.getItem1());
+        dto.setItem2(config.getItem2());
+        dto.setImprevistos(config.getImprevistos());
+        if (config.getObjPeriodoAcademico() != null) {
+            dto.setObjPeriodoAcademico(objPeriodoAcademicoMapper.mappearDePeriodoAcademicoARespuesta(config.getObjPeriodoAcademico()));
+        }
+        if (config.getGastosGenerales() != null && !config.getGastosGenerales().isEmpty()) {
+            dto.setGastosGenerales(config.getGastosGenerales().stream()
+                    .map(objGastoGeneralMapper::mappearDeGastoGeneralARespuesta)
+                    .collect(Collectors.toList()));
+        } else {
+            dto.setGastosGenerales(Collections.emptyList());
+        }
         return dto;
     }
 }

@@ -1,6 +1,7 @@
 package co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.gateway;
 
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.GestionarReportePorGruposGatewayIntPort;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.GastoGeneral;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
@@ -18,9 +19,12 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.PeriodoAcademicoRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ReportePorGruposRepositoryInt;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class GestionarReportePorGruposGatewayImpAdapter implements GestionarReportePorGruposGatewayIntPort {
@@ -30,6 +34,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     private final ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos;
     private final GastoGeneralRepositoryInt objGastoGeneral;
     private final GrupoRepositoryInt objGrupoRepository;
+    private final PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper;
     private final GastoGeneralMapperPersistencia objGastoGeneralMapper;
     private final ReportePorGruposMapperPersistencia objReportePorGrupos;
     
@@ -46,7 +51,8 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         this.objPeriodoAcademico = objPeriodoAcademico;
         this.objConfiguracionReporteGrupos = objConfiguracionReporteGrupos;
         this.objGastoGeneral = objGastoGeneral;
-        this.objGrupoRepository = objGrupoRepository;      
+        this.objGrupoRepository = objGrupoRepository;
+        this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
         this.objGastoGeneralMapper = objGastoGeneralMapper;
         this.objReportePorGrupos = objReportePorGrupos;
     }
@@ -57,9 +63,65 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     }
     
     @Override
+    @Transactional(readOnly = true)
     public ReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
-        // Implementación básica - se requiere mapeo completo
-        return null;
+        if (periodo == null || periodo.getPeriodo() == null || periodo.getAño() == null) {
+            return null;
+        }
+        Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findByPeriodoAndAño(periodo.getPeriodo(), periodo.getAño());
+        if (periodoOpt.isEmpty()) {
+            return null;
+        }
+        Long periodoId = periodoOpt.get().getId();
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        if (configList == null || configList.isEmpty()) {
+            return null;
+        }
+        ConfiguracionReporteGruposEntity configEntity = configList.get(0);
+        ConfiguracionReporteGrupos configDomain = mappearConfigEntityADominio(configEntity);
+        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(configEntity.getId());
+        ReportePorGrupos reporte = new ReportePorGrupos();
+        reporte.setObjConfiguracionReporteGrupos(configDomain);
+        reporte.setGastosGenerales(configDomain.getGastosGenerales());
+        if (reporteList != null && !reporteList.isEmpty()) {
+            ReportePorGruposEntity firstEntity = reporteList.get(0);
+            reporte.setTotalNeto(firstEntity.getTotalNeto());
+            reporte.setAportePrimerSemestre(firstEntity.getAportePrimerSemestre());
+            reporte.setAporteSegundoSemestre(firstEntity.getAporteSegundoSemestre());
+            reporte.setParticipacionPrimerSemestre(firstEntity.getParticipacionPrimerSemestre());
+            reporte.setParticipacionSegundoSemestre(firstEntity.getParticipacionSegundoSemestre());
+            reporte.setParticipacionPorAño(firstEntity.getParticipacionPorAño());
+            reporte.setPresupuestoPorGrupoItem1(firstEntity.getPresupuestoPorGrupoItem1());
+            reporte.setPresupuestoPorGrupoItem2(firstEntity.getPresupuestoPorGrupoItem2());
+            reporte.setPresupuestoPorGrupo(firstEntity.getPresupuestoPorGrupo());
+            reporte.setImprevistos(firstEntity.getImprevistos());
+            reporte.setPresupuestoPorGrupoImprevistos(firstEntity.getPresupuestoPorGrupoImprevistos());
+            reporte.setVigenciasAnteriores(firstEntity.getVigenciasAnteriores());
+        }
+        return reporte;
+    }
+    
+    private ConfiguracionReporteGrupos mappearConfigEntityADominio(ConfiguracionReporteGruposEntity entity) {
+        ConfiguracionReporteGrupos config = new ConfiguracionReporteGrupos();
+        config.setaUIPorcentaje(entity.getAUIPorcentaje());
+        config.setExcedentesMaestria(entity.getExcedentesMaestria());
+        config.setaUIValor(entity.getAUIValor());
+        config.setIngresosNetos(entity.getIngresosNetos());
+        config.setValorADistribuir(entity.getValorADistribuir());
+        config.setItem1(entity.getItem1());
+        config.setItem2(entity.getItem2());
+        config.setImprevistos(entity.getImprevistos());
+        if (entity.getObjPeriodoAcademico() != null) {
+            config.setObjPeriodoAcademico(objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(entity.getObjPeriodoAcademico()));
+        }
+        if (entity.getGastosGenerales() != null && !entity.getGastosGenerales().isEmpty()) {
+            config.setGastosGenerales(entity.getGastosGenerales().stream()
+                    .map(objGastoGeneralMapper::mappearDeEntityAGastoGeneral)
+                    .collect(Collectors.toList()));
+        } else {
+            config.setGastosGenerales(Collections.emptyList());
+        }
+        return config;
     }
     
     @Override
