@@ -63,6 +63,9 @@ public class ReportePorGruposMapperInfraestructuraImpl implements ReportePorGrup
     
     private ConfiguracionReporteGruposDTORespuesta mappearConfiguracionARespuesta(co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteGrupos config) {
         ConfiguracionReporteGruposDTORespuesta dto = new ConfiguracionReporteGruposDTORespuesta();
+        if (config.getId() != null) {
+            dto.setIdConfiguracionReporteGrupos(config.getId());
+        }
         dto.setAUIPorcentaje(config.getaUIPorcentaje());
         dto.setExcedentesMaestria(config.getExcedentesMaestria());
         dto.setAUIValor(config.getaUIValor());

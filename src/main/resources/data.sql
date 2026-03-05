@@ -371,17 +371,48 @@ INSERT IGNORE INTO becas (dedicador, entidad_asociada, tipo, titulo, estudiante_
 ('Medio Tiempo', 'Colciencias', 'Beca Nacional', 'Beca Jóvenes Investigadores', '67_1010010');
 
 -- 11. GASTO_GENERAL (Depende de configuracion_reporte_grupos)
+-- Cada una de las 10 configuraciones tiene varios gastos generales.
 INSERT IGNORE INTO gasto_general (categoria, descripcion, monto, configuracion_reporte_grupos_id) VALUES
+-- Config 1 (periodo 1 - 2020)
 ('Infraestructura', 'Mantenimiento de laboratorios', 500000.00, 1),
 ('Recursos Humanos', 'Honorarios profesores', 800000.00, 1),
+('Equipamiento', 'Material didáctico', 350000.00, 1),
+-- Config 2 (periodo 2 - 2020)
 ('Equipamiento', 'Compra de equipos de cómputo', 1200000.00, 2),
 ('Infraestructura', 'Renovación de espacios', 600000.00, 2),
+('Recursos Humanos', 'Auxiliares de investigación', 450000.00, 2),
+-- Config 3 (periodo 1 - 2021)
 ('Recursos Humanos', 'Contratación de investigadores', 1000000.00, 3),
 ('Equipamiento', 'Actualización de servidores', 1500000.00, 3),
+('Infraestructura', 'Adecuación de aulas', 550000.00, 3),
+-- Config 4 (periodo 2 - 2021)
 ('Infraestructura', 'Mejora de conectividad', 700000.00, 4),
 ('Recursos Humanos', 'Capacitación docente', 900000.00, 4),
+('Equipamiento', 'Licencias académicas', 400000.00, 4),
+-- Config 5 (periodo 1 - 2022)
 ('Equipamiento', 'Adquisición de software', 1100000.00, 5),
-('Infraestructura', 'Ampliación de espacios', 800000.00, 5);
+('Infraestructura', 'Ampliación de espacios', 800000.00, 5),
+('Recursos Humanos', 'Becarios de maestría', 600000.00, 5),
+-- Config 6 (periodo 2 - 2022)
+('Infraestructura', 'Mantenimiento de equipos', 520000.00, 6),
+('Recursos Humanos', 'Honorarios invitados', 750000.00, 6),
+('Equipamiento', 'Reposición de equipos', 980000.00, 6),
+-- Config 7 (periodo 1 - 2023)
+('Recursos Humanos', 'Consultores externos', 1100000.00, 7),
+('Equipamiento', 'Red de datos', 1300000.00, 7),
+('Infraestructura', 'Seguridad y vigilancia', 480000.00, 7),
+-- Config 8 (periodo 2 - 2023)
+('Equipamiento', 'Cloud y almacenamiento', 900000.00, 8),
+('Infraestructura', 'Energía y climatización', 620000.00, 8),
+('Recursos Humanos', 'Formación continua', 850000.00, 8),
+-- Config 9 (periodo 1 - 2024)
+('Infraestructura', 'Laboratorios especializados', 1150000.00, 9),
+('Recursos Humanos', 'Profesores de planta', 1400000.00, 9),
+('Equipamiento', 'Herramientas de desarrollo', 720000.00, 9),
+-- Config 10 (periodo 2 - 2024)
+('Recursos Humanos', 'Asistentes de investigación', 680000.00, 10),
+('Equipamiento', 'Actualización de licencias', 950000.00, 10),
+('Infraestructura', 'Mantenimiento preventivo', 540000.00, 10);
 
 -- 12. REPORTE_POR_GRUPOS (Depende de configuracion_reporte_grupos y grupo)
 -- Una fila por (config, grupo). Sin estas filas, el endpoint
@@ -431,3 +462,22 @@ INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segun
 (1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 1),
 (1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 2),
 (1894933.34, 947466.66, 947466.66, 0.19, 0.19, 0.38, 928517.34, 696388.00, 1624905.34, 0.09, 170544.00, 0.00, 10, 3);
+
+-- Respaldo: asegurar datos de reporte_por_grupos para periodo 1 y 2 - 2024 (config 9 y 10).
+-- Si el INSERT anterior falló o la BD se creó con una versión antigua, este bloque inserta
+-- solo las filas faltantes para que /api/reportes-grupos/obtener?periodo=1&anio=2024 (y periodo=2) devuelva totales.
+INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id)
+SELECT 1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, c.id, g.id
+FROM configuracion_reporte_grupos c
+JOIN periodo_academico p ON c.periodo_academico_id = p.id
+CROSS JOIN grupo g
+WHERE p.periodo = 1 AND p.anio = 2024
+  AND NOT EXISTS (SELECT 1 FROM reporte_por_grupos rpg WHERE rpg.configuracion_reporte_grupos_id = c.id AND rpg.grupo_id = g.id);
+
+INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id)
+SELECT 1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, c.id, g.id
+FROM configuracion_reporte_grupos c
+JOIN periodo_academico p ON c.periodo_academico_id = p.id
+CROSS JOIN grupo g
+WHERE p.periodo = 2 AND p.anio = 2024
+  AND NOT EXISTS (SELECT 1 FROM reporte_por_grupos rpg WHERE rpg.configuracion_reporte_grupos_id = c.id AND rpg.grupo_id = g.id);

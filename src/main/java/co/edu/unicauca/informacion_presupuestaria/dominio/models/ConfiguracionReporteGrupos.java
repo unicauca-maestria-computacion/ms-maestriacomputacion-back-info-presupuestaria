@@ -3,6 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 import java.util.List;
 
 public class ConfiguracionReporteGrupos {
+    private Long id;
     private Float aUIPorcentaje;
     private Float excedentesMaestria;
     private Float aUIValor;
@@ -94,6 +95,14 @@ public class ConfiguracionReporteGrupos {
 
     public void setImprevistos(Float imprevistos) {
         this.imprevistos = imprevistos;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public PeriodoAcademico getObjPeriodoAcademico() {

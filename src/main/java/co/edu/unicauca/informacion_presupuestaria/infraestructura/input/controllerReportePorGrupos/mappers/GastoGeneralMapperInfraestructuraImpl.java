@@ -1,5 +1,6 @@
 package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.mappers;
 
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.GastoGeneral;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.GastoGeneralDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOPeticion.GastoGeneralDTOPeticion;
@@ -19,7 +20,11 @@ public class GastoGeneralMapperInfraestructuraImpl implements GastoGeneralMapper
         gastoGeneral.setCategoria(gasto.getCategoria());
         gastoGeneral.setDescripcion(gasto.getDescripcion());
         gastoGeneral.setMonto(gasto.getMonto());
-        
+        if (gasto.getIdConfiguracionReporteGrupos() != null) {
+            ConfiguracionReporteGrupos config = new ConfiguracionReporteGrupos();
+            config.setId(gasto.getIdConfiguracionReporteGrupos());
+            gastoGeneral.setObjConfiguracionReporteGrupos(config);
+        }
         return gastoGeneral;
     }
     

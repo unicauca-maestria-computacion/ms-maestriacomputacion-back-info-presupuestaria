@@ -103,6 +103,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     
     private ConfiguracionReporteGrupos mappearConfigEntityADominio(ConfiguracionReporteGruposEntity entity) {
         ConfiguracionReporteGrupos config = new ConfiguracionReporteGrupos();
+        config.setId(entity.getId());
         config.setaUIPorcentaje(entity.getAUIPorcentaje());
         config.setExcedentesMaestria(entity.getExcedentesMaestria());
         config.setaUIValor(entity.getAUIValor());
@@ -262,16 +263,17 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     
     @Override
     public GastoGeneral crearGastoGeneral(GastoGeneral gasto) {
-        Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findPeriodoAcademicoActivo();
-        if (periodoOpt.isEmpty()) {
+        Long configId = gasto.getObjConfiguracionReporteGrupos() != null
+                ? gasto.getObjConfiguracionReporteGrupos().getId()
+                : null;
+        if (configId == null) {
             return null;
         }
-        Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
-        if (configList == null || configList.isEmpty()) {
+        Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos.findById(configId);
+        if (configOpt.isEmpty()) {
             return null;
         }
-        ConfiguracionReporteGruposEntity config = configList.get(0);
+        ConfiguracionReporteGruposEntity config = configOpt.get();
         GastoGeneralEntity entity = objGastoGeneralMapper.mappearGastoGeneralAEntity(gasto);
         entity.setObjConfiguracionReporteGrupos(config);
         entity.setIdGastoGeneral(null);

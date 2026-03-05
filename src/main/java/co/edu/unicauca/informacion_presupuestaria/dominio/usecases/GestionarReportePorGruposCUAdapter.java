@@ -180,10 +180,15 @@ public class GestionarReportePorGruposCUAdapter implements GestionarReportePorGr
             objFormateadorResultados.errorReglaNegocioViolada("El monto debe ser un valor positivo");
             return null;
         }
+        if (gasto.getObjConfiguracionReporteGrupos() == null || gasto.getObjConfiguracionReporteGrupos().getId() == null) {
+            objFormateadorResultados.errorReglaNegocioViolada(
+                "Debe enviar el id de la configuración de reporte por grupos (idConfiguracionReporteGrupos)");
+            return null;
+        }
         GastoGeneral gastoCreado = objGestionarReportePorGrupos.crearGastoGeneral(gasto);
         if (gastoCreado == null) {
             objFormateadorResultados.errorEntidadNoExiste(
-                "No existe un periodo académico activo o su configuración de reporte por grupos");
+                "No se encontró la configuración de reporte por grupos con el id indicado. Verifique que exista en el sistema.");
             return null;
         }
         return gastoCreado;

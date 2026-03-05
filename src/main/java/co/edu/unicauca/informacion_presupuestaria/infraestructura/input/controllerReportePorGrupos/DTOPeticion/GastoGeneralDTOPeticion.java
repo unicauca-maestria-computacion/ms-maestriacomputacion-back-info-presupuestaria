@@ -1,5 +1,6 @@
 package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOPeticion;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GastoGeneralDTOPeticion {
     private Integer idGastoGeneral;
+    @JsonProperty("idConfiguracionReporteGrupos")
+    private Long idConfiguracionReporteGrupos;
     private String categoria;
     private String descripcion;
     private Float monto;

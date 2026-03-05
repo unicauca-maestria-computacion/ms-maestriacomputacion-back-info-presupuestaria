@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConfiguracionReporteGruposDTORespuesta {
+    private Long idConfiguracionReporteGrupos;
     private Float aUIPorcentaje;
     private Float excedentesMaestria;
     private Float aUIValor;
