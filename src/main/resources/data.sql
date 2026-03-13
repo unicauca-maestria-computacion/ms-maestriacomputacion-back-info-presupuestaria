@@ -1,8 +1,11 @@
 -- ============================================
--- Script de datos iniciales de prueba
+-- Script de datos iniciales de prueba (autocontenido)
 -- ============================================
--- Este script carga datos de prueba para todas las tablas
--- respetando las relaciones entre entidades
+-- Ejecutar una sola vez: carga datos de prueba para todas las tablas,
+-- respeta relaciones entre entidades, e incluye ajustes de esquema
+-- (precisión decimal y clave única en reporte_por_grupos).
+-- Si se ejecuta más de una vez, el último ALTER (ADD UNIQUE KEY) puede
+-- fallar si la restricción ya existe; en ese caso ignorar o comentar esa línea.
 -- ============================================
 
 -- Ajuste de esquema: columnas estudiante.codigo y *_estudiante_codigo en VARCHAR(20)
@@ -415,59 +418,68 @@ INSERT IGNORE INTO gasto_general (categoria, descripcion, monto, configuracion_r
 ('Infraestructura', 'Mantenimiento preventivo', 540000.00, 10);
 
 -- 12. REPORTE_POR_GRUPOS (Depende de configuracion_reporte_grupos y grupo)
--- Una fila por (config, grupo). Sin estas filas, el endpoint
--- GET /api/reportes-grupos/obtener?periodo=X&anio=Y devuelve totalNeto, aportes, etc. en null.
--- Solo 3 grupos: grupo_id 1=GTI, 2=IDIS, 3=GICO.
--- Config 1..8 = periodos 2020-2023; Config 9 = Periodo 1 - 2024; Config 10 = Periodo 2 - 2024.
+-- Una fila por (config, grupo). Valores distintos por grupo. imprevistos y vigencias_anteriores >= 0 y distintos por fila.
+-- grupo_id 1=GTI, 2=IDIS, 3=GICO.
 DELETE FROM reporte_por_grupos;
 
 INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id) VALUES
--- Config 1: GTI(1), IDIS(2), GICO(3)
-(1558333.33, 779166.67, 779166.67, 0.10, 0.10, 0.20, 623333.33, 467500.00, 1090833.33, 0.05, 77916.67, 0.00, 1, 1),
-(1558333.33, 779166.67, 779166.67, 0.10, 0.10, 0.20, 623333.33, 467500.00, 1090833.33, 0.05, 77916.67, 0.00, 1, 2),
-(1558333.34, 779166.66, 779166.66, 0.10, 0.10, 0.20, 623333.34, 467500.00, 1090833.34, 0.05, 77916.66, 0.00, 1, 3),
--- Config 2
-(1590400.00, 795200.00, 795200.00, 0.11, 0.11, 0.22, 652064.00, 489048.00, 1141112.00, 0.05, 79520.00, 0.00, 2, 1),
-(1590400.00, 795200.00, 795200.00, 0.11, 0.11, 0.22, 652064.00, 489048.00, 1141112.00, 0.05, 79520.00, 0.00, 2, 2),
-(1590400.00, 795200.00, 795200.00, 0.11, 0.11, 0.22, 652064.00, 489048.00, 1141112.00, 0.05, 79520.00, 0.00, 2, 3),
--- Config 3
-(1646166.67, 823083.33, 823083.33, 0.12, 0.12, 0.24, 691392.50, 518544.50, 1209936.50, 0.06, 98770.00, 0.00, 3, 1),
-(1646166.67, 823083.33, 823083.33, 0.12, 0.12, 0.24, 691392.50, 518544.50, 1209936.50, 0.06, 98770.00, 0.00, 3, 2),
-(1646166.66, 823083.34, 823083.34, 0.12, 0.12, 0.24, 691392.50, 518544.50, 1209936.66, 0.06, 98770.00, 0.00, 3, 3),
--- Config 4
-(1675533.33, 837766.67, 837766.67, 0.13, 0.13, 0.26, 720479.33, 540359.50, 1260838.83, 0.06, 100532.00, 0.00, 4, 1),
-(1675533.33, 837766.67, 837766.67, 0.13, 0.13, 0.26, 720479.33, 540359.50, 1260838.83, 0.06, 100532.00, 0.00, 4, 2),
-(1675533.34, 837766.66, 837766.66, 0.13, 0.13, 0.26, 720479.34, 540359.50, 1260838.84, 0.06, 100532.00, 0.00, 4, 3),
--- Config 5
-(1728000.00, 864000.00, 864000.00, 0.14, 0.14, 0.28, 760320.00, 570240.00, 1330560.00, 0.07, 120960.00, 0.00, 5, 1),
-(1728000.00, 864000.00, 864000.00, 0.14, 0.14, 0.28, 760320.00, 570240.00, 1330560.00, 0.07, 120960.00, 0.00, 5, 2),
-(1728000.00, 864000.00, 864000.00, 0.14, 0.14, 0.28, 760320.00, 570240.00, 1330560.00, 0.07, 120960.00, 0.00, 5, 3),
--- Config 6
-(1754666.67, 877333.33, 877333.33, 0.15, 0.15, 0.30, 789600.00, 592200.00, 1381800.00, 0.07, 122773.33, 0.00, 6, 1),
-(1754666.67, 877333.33, 877333.33, 0.15, 0.15, 0.30, 789600.00, 592200.00, 1381800.00, 0.07, 122773.33, 0.00, 6, 2),
-(1754666.66, 877333.34, 877333.34, 0.15, 0.15, 0.30, 789600.00, 592200.00, 1381800.00, 0.07, 122773.34, 0.00, 6, 3),
--- Config 7
-(1803833.33, 901916.67, 901916.67, 0.16, 0.16, 0.32, 829763.33, 622322.50, 1452085.83, 0.08, 144306.67, 0.00, 7, 1),
-(1803833.33, 901916.67, 901916.67, 0.16, 0.16, 0.32, 829763.33, 622322.50, 1452085.83, 0.08, 144306.67, 0.00, 7, 2),
-(1803833.34, 901916.66, 901916.66, 0.16, 0.16, 0.32, 829763.34, 622322.50, 1452085.84, 0.08, 144306.66, 0.00, 7, 3),
--- Config 8 (Periodo 2 - 2023)
-(1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 1),
-(1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 2),
-(1827800.00, 913900.00, 913900.00, 0.17, 0.17, 0.34, 859066.00, 644299.50, 1503365.50, 0.08, 146224.00, 0.00, 8, 3),
--- Config 9 (Periodo 1 - 2024): necesario para reportes-grupos/obtener?periodo=1&anio=2024
-(1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 1),
-(1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 2),
-(1873666.66, 936833.34, 936833.34, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, 9, 3),
--- Config 10 (Periodo 2 - 2024): necesario para reportes-grupos/obtener?periodo=2&anio=2024
-(1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 1),
-(1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, 10, 2),
-(1894933.34, 947466.66, 947466.66, 0.19, 0.19, 0.38, 928517.34, 696388.00, 1624905.34, 0.09, 170544.00, 0.00, 10, 3);
+-- Config 1: imprevistos 0.06/0.05/0.04, vigencias 150000/80000/40000
+(1870000.00, 935000.00, 935000.00, 0.12, 0.12, 0.24, 748000.00, 561000.00, 1309000.00, 0.06, 93500.00, 150000.00, 1, 1),
+(1636250.00, 818125.00, 818125.00, 0.10, 0.10, 0.20, 654500.00, 490875.00, 1145375.00, 0.05, 81812.50, 80000.00, 1, 2),
+(1168750.00, 584375.00, 584375.00, 0.08, 0.08, 0.16, 467500.00, 350625.00, 818125.00, 0.04, 58437.50, 40000.00, 1, 3),
+-- Config 2: imprevistos 0.06/0.05/0.04, vigencias 120000/70000/35000
+(1908480.00, 954240.00, 954240.00, 0.13, 0.13, 0.26, 782476.80, 586857.60, 1369334.40, 0.06, 95424.00, 120000.00, 2, 1),
+(1671680.00, 835840.00, 835840.00, 0.11, 0.11, 0.22, 685388.80, 514041.60, 1199430.40, 0.05, 83584.00, 70000.00, 2, 2),
+(1194240.00, 597120.00, 597120.00, 0.09, 0.09, 0.18, 477696.00, 358272.00, 835968.00, 0.04, 59712.00, 35000.00, 2, 3),
+-- Config 3: imprevistos 0.07/0.06/0.05, vigencias 180000/95000/50000
+(1975400.00, 987700.00, 987700.00, 0.14, 0.14, 0.28, 829668.00, 622251.00, 1451919.00, 0.07, 118524.00, 180000.00, 3, 1),
+(1728475.00, 864237.50, 864237.50, 0.12, 0.12, 0.24, 726355.50, 544766.50, 1271122.00, 0.06, 103708.50, 95000.00, 3, 2),
+(1234281.00, 617140.50, 617140.50, 0.10, 0.10, 0.20, 518396.00, 388797.00, 907193.00, 0.05, 74056.86, 50000.00, 3, 3),
+-- Config 4: imprevistos 0.07/0.06/0.05, vigencias 200000/110000/60000
+(2010640.00, 1005320.00, 1005320.00, 0.15, 0.15, 0.30, 864578.40, 648433.80, 1513012.20, 0.07, 120638.40, 200000.00, 4, 1),
+(1759555.00, 879777.50, 879777.50, 0.13, 0.13, 0.26, 756611.65, 567458.65, 1324070.30, 0.06, 105573.30, 110000.00, 4, 2),
+(1256405.00, 628202.50, 628202.50, 0.11, 0.11, 0.22, 540254.15, 405190.55, 945444.70, 0.05, 75384.30, 60000.00, 4, 3),
+-- Config 5: imprevistos 0.08/0.07/0.06, vigencias 220000/130000/70000
+(2073600.00, 1036800.00, 1036800.00, 0.16, 0.16, 0.32, 912384.00, 684288.00, 1596672.00, 0.08, 145152.00, 220000.00, 5, 1),
+(1814400.00, 907200.00, 907200.00, 0.14, 0.14, 0.28, 798336.00, 598752.00, 1397088.00, 0.07, 127008.00, 130000.00, 5, 2),
+(1296000.00, 648000.00, 648000.00, 0.12, 0.12, 0.24, 570240.00, 427680.00, 997920.00, 0.06, 90720.00, 70000.00, 5, 3),
+-- Config 6: imprevistos 0.08/0.07/0.06, vigencias 250000/145000/80000
+(2108160.00, 1054080.00, 1054080.00, 0.17, 0.17, 0.34, 947712.00, 710784.00, 1658496.00, 0.08, 147571.20, 250000.00, 6, 1),
+(1844160.00, 922080.00, 922080.00, 0.15, 0.15, 0.30, 829440.00, 622080.00, 1451520.00, 0.07, 129292.80, 145000.00, 6, 2),
+(1317120.00, 658560.00, 658560.00, 0.13, 0.13, 0.26, 592128.00, 444096.00, 1036224.00, 0.06, 92236.80, 80000.00, 6, 3),
+-- Config 7: imprevistos 0.09/0.08/0.07, vigencias 280000/160000/90000
+(2164600.00, 1082300.00, 1082300.00, 0.18, 0.18, 0.36, 995716.00, 746787.00, 1742503.00, 0.09, 173168.00, 280000.00, 7, 1),
+(1894055.00, 947027.50, 947027.50, 0.16, 0.16, 0.32, 872249.30, 654187.00, 1526436.30, 0.08, 151524.40, 160000.00, 7, 2),
+(1352180.00, 676090.00, 676090.00, 0.14, 0.14, 0.28, 622002.80, 466502.00, 1088504.80, 0.07, 108174.40, 90000.00, 7, 3),
+-- Config 8: imprevistos 0.09/0.08/0.07, vigencias 300000/175000/95000
+(2193360.00, 1096680.00, 1096680.00, 0.19, 0.19, 0.38, 1030792.00, 772944.00, 1803736.00, 0.09, 175468.80, 300000.00, 8, 1),
+(1918835.00, 959417.50, 959417.50, 0.17, 0.17, 0.34, 902461.45, 676846.00, 1579307.45, 0.08, 153506.80, 175000.00, 8, 2),
+(1370580.00, 685290.00, 685290.00, 0.15, 0.15, 0.30, 644172.55, 483129.50, 1127302.05, 0.07, 109646.40, 95000.00, 8, 3),
+-- Config 9 (Periodo 1 - 2024): imprevistos 0.10/0.09/0.08, vigencias 320000/190000/100000
+(2248400.00, 1124200.00, 1124200.00, 0.20, 0.20, 0.40, 1079232.00, 809424.00, 1888656.00, 0.10, 202356.00, 320000.00, 9, 1),
+(1967350.00, 983675.00, 983675.00, 0.18, 0.18, 0.36, 944328.00, 708246.00, 1652574.00, 0.09, 177061.50, 190000.00, 9, 2),
+(1405250.00, 702625.00, 702625.00, 0.16, 0.16, 0.32, 674520.00, 505890.00, 1180410.00, 0.08, 126472.50, 100000.00, 9, 3),
+-- Config 10 (Periodo 2 - 2024): imprevistos 0.10/0.09/0.08, vigencias 350000/210000/110000
+(2277920.00, 1138960.00, 1138960.00, 0.21, 0.21, 0.42, 1114168.00, 835626.00, 1949794.00, 0.10, 205012.80, 350000.00, 10, 1),
+(1993168.00, 996584.00, 996584.00, 0.19, 0.19, 0.38, 976651.52, 732488.64, 1709140.16, 0.09, 179385.12, 210000.00, 10, 2),
+(1420912.00, 710456.00, 710456.00, 0.17, 0.17, 0.34, 696697.81, 522523.36, 1219221.17, 0.08, 127882.08, 110000.00, 10, 3);
 
--- Respaldo: asegurar datos de reporte_por_grupos para periodo 1 y 2 - 2024 (config 9 y 10).
--- Si el INSERT anterior falló o la BD se creó con una versión antigua, este bloque inserta
--- solo las filas faltantes para que /api/reportes-grupos/obtener?periodo=1&anio=2024 (y periodo=2) devuelva totales.
+-- Respaldo: asegurar datos de reporte_por_grupos para periodo 1 y 2 - 2024 (config 9 y 10) con valores distintos por grupo (imprevistos y vigencias_anteriores >= 0).
 INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id)
-SELECT 1873666.67, 936833.33, 936833.33, 0.18, 0.18, 0.36, 899360.00, 674520.00, 1573880.00, 0.09, 168630.00, 0.00, c.id, g.id
+SELECT
+  CASE g.id WHEN 1 THEN 2248400.00 WHEN 2 THEN 1967350.00 ELSE 1405250.00 END,
+  CASE g.id WHEN 1 THEN 1124200.00 WHEN 2 THEN 983675.00 ELSE 702625.00 END,
+  CASE g.id WHEN 1 THEN 1124200.00 WHEN 2 THEN 983675.00 ELSE 702625.00 END,
+  CASE g.id WHEN 1 THEN 0.20 WHEN 2 THEN 0.18 ELSE 0.16 END,
+  CASE g.id WHEN 1 THEN 0.20 WHEN 2 THEN 0.18 ELSE 0.16 END,
+  CASE g.id WHEN 1 THEN 0.40 WHEN 2 THEN 0.36 ELSE 0.32 END,
+  CASE g.id WHEN 1 THEN 1079232.00 WHEN 2 THEN 944328.00 ELSE 674520.00 END,
+  CASE g.id WHEN 1 THEN 809424.00 WHEN 2 THEN 708246.00 ELSE 505890.00 END,
+  CASE g.id WHEN 1 THEN 1888656.00 WHEN 2 THEN 1652574.00 ELSE 1180410.00 END,
+  CASE g.id WHEN 1 THEN 0.10 WHEN 2 THEN 0.09 ELSE 0.08 END,
+  CASE g.id WHEN 1 THEN 202356.00 WHEN 2 THEN 177061.50 ELSE 126472.50 END,
+  CASE g.id WHEN 1 THEN 320000.00 WHEN 2 THEN 190000.00 ELSE 100000.00 END,
+  c.id, g.id
 FROM configuracion_reporte_grupos c
 JOIN periodo_academico p ON c.periodo_academico_id = p.id
 CROSS JOIN grupo g
@@ -475,9 +487,39 @@ WHERE p.periodo = 1 AND p.anio = 2024
   AND NOT EXISTS (SELECT 1 FROM reporte_por_grupos rpg WHERE rpg.configuracion_reporte_grupos_id = c.id AND rpg.grupo_id = g.id);
 
 INSERT INTO reporte_por_grupos (total_neto, aporte_primer_semestre, aporte_segundo_semestre, participacion_primer_semestre, participacion_segundo_semestre, participacion_por_anio, presupuesto_por_grupo_item1, presupuesto_por_grupo_item2, presupuesto_por_grupo, imprevistos, presupuesto_por_grupo_imprevistos, vigencias_anteriores, configuracion_reporte_grupos_id, grupo_id)
-SELECT 1894933.33, 947466.67, 947466.67, 0.19, 0.19, 0.38, 928517.33, 696388.00, 1624905.33, 0.09, 170544.00, 0.00, c.id, g.id
+SELECT
+  CASE g.id WHEN 1 THEN 2277920.00 WHEN 2 THEN 1993168.00 ELSE 1420912.00 END,
+  CASE g.id WHEN 1 THEN 1138960.00 WHEN 2 THEN 996584.00 ELSE 710456.00 END,
+  CASE g.id WHEN 1 THEN 1138960.00 WHEN 2 THEN 996584.00 ELSE 710456.00 END,
+  CASE g.id WHEN 1 THEN 0.21 WHEN 2 THEN 0.19 ELSE 0.17 END,
+  CASE g.id WHEN 1 THEN 0.21 WHEN 2 THEN 0.19 ELSE 0.17 END,
+  CASE g.id WHEN 1 THEN 0.42 WHEN 2 THEN 0.38 ELSE 0.34 END,
+  CASE g.id WHEN 1 THEN 1114168.00 WHEN 2 THEN 976651.52 ELSE 696697.81 END,
+  CASE g.id WHEN 1 THEN 835626.00 WHEN 2 THEN 732488.64 ELSE 522523.36 END,
+  CASE g.id WHEN 1 THEN 1949794.00 WHEN 2 THEN 1709140.16 ELSE 1219221.17 END,
+  CASE g.id WHEN 1 THEN 0.10 WHEN 2 THEN 0.09 ELSE 0.08 END,
+  CASE g.id WHEN 1 THEN 205012.80 WHEN 2 THEN 179385.12 ELSE 127882.08 END,
+  CASE g.id WHEN 1 THEN 350000.00 WHEN 2 THEN 210000.00 ELSE 110000.00 END,
+  c.id, g.id
 FROM configuracion_reporte_grupos c
 JOIN periodo_academico p ON c.periodo_academico_id = p.id
 CROSS JOIN grupo g
 WHERE p.periodo = 2 AND p.anio = 2024
   AND NOT EXISTS (SELECT 1 FROM reporte_por_grupos rpg WHERE rpg.configuracion_reporte_grupos_id = c.id AND rpg.grupo_id = g.id);
+
+-- ============================================
+-- 13. AJUSTES DE ESQUEMA (integrado de alter-decimal-scale.sql)
+-- Precisión decimal en porcentajes y clave única en reporte_por_grupos.
+-- Si data.sql se ejecuta más de una vez, el ADD UNIQUE KEY puede fallar
+-- (restricción ya existe); en ese caso comentar la línea siguiente.
+-- ============================================
+ALTER TABLE configuracion_reporte_grupos MODIFY COLUMN aui_porcentaje DECIMAL(10,2);
+ALTER TABLE configuracion_reporte_grupos MODIFY COLUMN item1 DECIMAL(10,2);
+ALTER TABLE configuracion_reporte_grupos MODIFY COLUMN item2 DECIMAL(10,2);
+ALTER TABLE configuracion_reporte_grupos MODIFY COLUMN imprevistos DECIMAL(10,2);
+
+ALTER TABLE reporte_por_grupos MODIFY COLUMN participacion_primer_semestre DECIMAL(10,2);
+ALTER TABLE reporte_por_grupos MODIFY COLUMN participacion_segundo_semestre DECIMAL(10,2);
+ALTER TABLE reporte_por_grupos MODIFY COLUMN participacion_por_anio DECIMAL(10,2);
+
+ALTER TABLE reporte_por_grupos ADD UNIQUE KEY uk_reporte_config_grupo (configuracion_reporte_grupos_id, grupo_id);

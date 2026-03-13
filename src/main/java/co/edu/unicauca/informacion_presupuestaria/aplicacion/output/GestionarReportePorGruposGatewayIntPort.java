@@ -1,12 +1,14 @@
 package co.edu.unicauca.informacion_presupuestaria.aplicacion.output;
 
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConsultaReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.GastoGeneral;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
 
 public interface GestionarReportePorGruposGatewayIntPort {
     Boolean existePeriodoAcademico(PeriodoAcademico periodo);
-    ReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo);
+    /** Retorna configuración común + lista de reportes por grupo (uno por GTI, IDIS, GICO). */
+    ConsultaReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo);
     ReportePorGrupos actualizarPorcentajeParticipacionPrimerSemestreGrupo(String nombreGrupo, Float nuevoValor);
     Boolean existeGrupoPorId(Long id);
     ReportePorGrupos actualizarPorcentajeParticipacionPrimerSemestrePorGrupoId(Long grupoId, Float nuevoValor);

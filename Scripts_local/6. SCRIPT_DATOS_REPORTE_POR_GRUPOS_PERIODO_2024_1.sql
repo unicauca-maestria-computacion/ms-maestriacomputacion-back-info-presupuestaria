@@ -1,16 +1,13 @@
 -- ============================================
 -- Datos de reporte_por_grupos para periodo 1, año 2024
 -- ============================================
--- Este script inserta filas en reporte_por_grupos para la configuración
--- que corresponde a periodo=1 y anio=2024, de modo que el endpoint
--- GET /api/reportes-grupos/obtener?periodo=1&anio=2024 devuelva
--- totalNeto, aportePrimerSemestre, etc. con valores y no null.
---
--- Solo inserta si aún no existen filas para esa configuración y cada grupo.
--- Ejecutar contra la misma base que usa el microservicio.
+-- Inserta una fila por grupo (GTI, IDIS, GICO) con valores distintos:
+-- GTI (id 1): mayor total_neto y participación (~40%)
+-- IDIS (id 2): intermedio (~35%)
+-- GICO (id 3): menor (~25%)
+-- Solo inserta si no existen filas para esa config y cada grupo.
 -- ============================================
 
--- Insertar una fila por cada grupo (GTI, IDIS, GICO) para la config de periodo 1 - 2024
 INSERT INTO reporte_por_grupos (
     total_neto,
     aporte_primer_semestre,
@@ -28,17 +25,17 @@ INSERT INTO reporte_por_grupos (
     grupo_id
 )
 SELECT
-    1873666.67,
-    936833.33,
-    936833.33,
-    0.18,
-    0.18,
-    0.36,
-    899360.00,
-    674520.00,
-    1573880.00,
+    CASE g.id WHEN 1 THEN 2248400.00 WHEN 2 THEN 1967350.00 ELSE 1405250.00 END,
+    CASE g.id WHEN 1 THEN 1124200.00 WHEN 2 THEN 983675.00 ELSE 702625.00 END,
+    CASE g.id WHEN 1 THEN 1124200.00 WHEN 2 THEN 983675.00 ELSE 702625.00 END,
+    CASE g.id WHEN 1 THEN 0.20 WHEN 2 THEN 0.18 ELSE 0.16 END,
+    CASE g.id WHEN 1 THEN 0.20 WHEN 2 THEN 0.18 ELSE 0.16 END,
+    CASE g.id WHEN 1 THEN 0.40 WHEN 2 THEN 0.36 ELSE 0.32 END,
+    CASE g.id WHEN 1 THEN 1079232.00 WHEN 2 THEN 944328.00 ELSE 674520.00 END,
+    CASE g.id WHEN 1 THEN 809424.00 WHEN 2 THEN 708246.00 ELSE 505890.00 END,
+    CASE g.id WHEN 1 THEN 1888656.00 WHEN 2 THEN 1652574.00 ELSE 1180410.00 END,
     0.09,
-    168630.00,
+    CASE g.id WHEN 1 THEN 202356.00 WHEN 2 THEN 177061.50 ELSE 126472.50 END,
     0.00,
     c.id,
     g.id

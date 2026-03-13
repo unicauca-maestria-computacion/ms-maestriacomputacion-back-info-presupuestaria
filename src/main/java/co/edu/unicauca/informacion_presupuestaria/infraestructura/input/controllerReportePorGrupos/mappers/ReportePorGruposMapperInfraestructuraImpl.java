@@ -1,12 +1,17 @@
 package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.mappers;
 
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConsultaReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ConfiguracionReporteGruposDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.GrupoDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ObtenerReportePorGruposDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ReportePorGruposDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ReportePorGruposFilaDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOPeticion.ReportePorGruposDTOPeticion;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -84,6 +89,66 @@ public class ReportePorGruposMapperInfraestructuraImpl implements ReportePorGrup
         } else {
             dto.setGastosGenerales(Collections.emptyList());
         }
+        return dto;
+    }
+
+    @Override
+    public ObtenerReportePorGruposDTORespuesta mappearDeConsultaReportePorGruposARespuesta(ConsultaReportePorGrupos consulta) {
+        if (consulta == null) {
+            return null;
+        }
+        ObtenerReportePorGruposDTORespuesta dto = new ObtenerReportePorGruposDTORespuesta();
+        if (consulta.getConfiguracion() != null) {
+            var config = consulta.getConfiguracion();
+            if (config.getId() != null) {
+                dto.setIdConfiguracionReporteGrupos(config.getId());
+            }
+            dto.setAuiporcentaje(config.getaUIPorcentaje());
+            dto.setAuivalor(config.getaUIValor());
+            dto.setExcedentesMaestria(config.getExcedentesMaestria());
+            dto.setIngresosNetos(config.getIngresosNetos());
+            dto.setValorADistribuir(config.getValorADistribuir());
+            dto.setItem1(config.getItem1());
+            dto.setItem2(config.getItem2());
+            dto.setImprevistos(config.getImprevistos());
+            if (config.getObjPeriodoAcademico() != null) {
+                dto.setObjPeriodoAcademico(objPeriodoAcademicoMapper.mappearDePeriodoAcademicoARespuesta(config.getObjPeriodoAcademico()));
+            }
+            if (config.getGastosGenerales() != null && !config.getGastosGenerales().isEmpty()) {
+                dto.setGastosGenerales(config.getGastosGenerales().stream()
+                        .map(objGastoGeneralMapper::mappearDeGastoGeneralARespuesta)
+                        .collect(Collectors.toList()));
+            } else {
+                dto.setGastosGenerales(Collections.emptyList());
+            }
+        }
+        List<ReportePorGruposFilaDTORespuesta> filas = Collections.emptyList();
+        if (consulta.getReportesPorGrupos() != null && !consulta.getReportesPorGrupos().isEmpty()) {
+            filas = consulta.getReportesPorGrupos().stream()
+                    .map(this::mappearReportePorGruposAFilaDTORespuesta)
+                    .collect(Collectors.toList());
+        }
+        dto.setReportesPorGrupos(filas);
+        return dto;
+    }
+
+    private ReportePorGruposFilaDTORespuesta mappearReportePorGruposAFilaDTORespuesta(ReportePorGrupos reporte) {
+        ReportePorGruposFilaDTORespuesta dto = new ReportePorGruposFilaDTORespuesta();
+        if (reporte.getObjGrupo() != null) {
+            dto.setGrupo(new GrupoDTORespuesta(reporte.getObjGrupo().getId(), reporte.getObjGrupo().getNombre()));
+        }
+        dto.setTotalNeto(reporte.getTotalNeto());
+        dto.setAportePrimerSemestre(reporte.getAportePrimerSemestre());
+        dto.setAporteSegundoSemestre(reporte.getAporteSegundoSemestre());
+        dto.setParticipacionPrimerSemestre(reporte.getParticipacionPrimerSemestre());
+        dto.setParticipacionSegundoSemestre(reporte.getParticipacionSegundoSemestre());
+        dto.setParticipacionPorAño(reporte.getParticipacionPorAño());
+        dto.setPresupuestoPorGrupoItem1(reporte.getPresupuestoPorGrupoItem1());
+        dto.setPresupuestoPorGrupoItem2(reporte.getPresupuestoPorGrupoItem2());
+        dto.setPresupuestoPorGrupo(reporte.getPresupuestoPorGrupo());
+        dto.setImprevistos(reporte.getImprevistos());
+        dto.setPresupuestoPorGrupoImprevistos(reporte.getPresupuestoPorGrupoImprevistos());
+        dto.setVigenciasAnteriores(reporte.getVigenciasAnteriores());
         return dto;
     }
 }

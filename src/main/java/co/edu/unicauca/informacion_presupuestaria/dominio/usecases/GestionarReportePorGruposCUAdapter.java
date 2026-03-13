@@ -5,6 +5,7 @@ import java.util.List;
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.input.GestionarReportePorGruposCUIntPort;
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.FormateadorResultadosIntPort;
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.GestionarReportePorGruposGatewayIntPort;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConsultaReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.GastoGeneral;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.Items;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
@@ -24,7 +25,7 @@ public class GestionarReportePorGruposCUAdapter implements GestionarReportePorGr
     }
     
     @Override
-    public ReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
+    public ConsultaReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
         if (periodo == null) {
             objFormateadorResultados.errorEntidadNoExiste("El período académico no puede ser nulo");
             return null;

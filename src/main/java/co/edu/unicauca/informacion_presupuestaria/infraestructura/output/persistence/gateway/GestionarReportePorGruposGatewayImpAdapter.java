@@ -2,7 +2,9 @@ package co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persis
 
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.output.GestionarReportePorGruposGatewayIntPort;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConfiguracionReporteGrupos;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConsultaReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.GastoGeneral;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.Grupo;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.GastoGeneralEntity;
@@ -64,7 +66,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     
     @Override
     @Transactional(readOnly = true)
-    public ReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
+    public ConsultaReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
         if (periodo == null || periodo.getPeriodo() == null || periodo.getAño() == null) {
             return null;
         }
@@ -80,25 +82,32 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity configEntity = configList.get(0);
         ConfiguracionReporteGrupos configDomain = mappearConfigEntityADominio(configEntity);
         List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(configEntity.getId());
-        ReportePorGrupos reporte = new ReportePorGrupos();
-        reporte.setObjConfiguracionReporteGrupos(configDomain);
-        reporte.setGastosGenerales(configDomain.getGastosGenerales());
+        List<ReportePorGrupos> reportesPorGrupos = Collections.emptyList();
         if (reporteList != null && !reporteList.isEmpty()) {
-            ReportePorGruposEntity firstEntity = reporteList.get(0);
-            reporte.setTotalNeto(firstEntity.getTotalNeto());
-            reporte.setAportePrimerSemestre(firstEntity.getAportePrimerSemestre());
-            reporte.setAporteSegundoSemestre(firstEntity.getAporteSegundoSemestre());
-            reporte.setParticipacionPrimerSemestre(firstEntity.getParticipacionPrimerSemestre());
-            reporte.setParticipacionSegundoSemestre(firstEntity.getParticipacionSegundoSemestre());
-            reporte.setParticipacionPorAño(firstEntity.getParticipacionPorAño());
-            reporte.setPresupuestoPorGrupoItem1(firstEntity.getPresupuestoPorGrupoItem1());
-            reporte.setPresupuestoPorGrupoItem2(firstEntity.getPresupuestoPorGrupoItem2());
-            reporte.setPresupuestoPorGrupo(firstEntity.getPresupuestoPorGrupo());
-            reporte.setImprevistos(firstEntity.getImprevistos());
-            reporte.setPresupuestoPorGrupoImprevistos(firstEntity.getPresupuestoPorGrupoImprevistos());
-            reporte.setVigenciasAnteriores(firstEntity.getVigenciasAnteriores());
+            reportesPorGrupos = reporteList.stream()
+                    .map(this::mappearEntityAReportePorGruposConGrupo)
+                    .collect(Collectors.toList());
+        }
+        ConsultaReportePorGrupos consulta = new ConsultaReportePorGrupos();
+        consulta.setConfiguracion(configDomain);
+        consulta.setReportesPorGrupos(reportesPorGrupos);
+        return consulta;
+    }
+
+    private ReportePorGrupos mappearEntityAReportePorGruposConGrupo(ReportePorGruposEntity entity) {
+        ReportePorGrupos reporte = objReportePorGrupos.mappearDeEntityAReportePorGrupos(entity);
+        if (reporte != null && entity.getObjGrupo() != null) {
+            reporte.setObjGrupo(mappearGrupoEntityADominio(entity.getObjGrupo()));
         }
         return reporte;
+    }
+
+    private Grupo mappearGrupoEntityADominio(GrupoEntity entity) {
+        if (entity == null) return null;
+        Grupo grupo = new Grupo();
+        grupo.setId(entity.getId());
+        grupo.setNombre(entity.getNombre());
+        return grupo;
     }
     
     private ConfiguracionReporteGrupos mappearConfigEntityADominio(ConfiguracionReporteGruposEntity entity) {

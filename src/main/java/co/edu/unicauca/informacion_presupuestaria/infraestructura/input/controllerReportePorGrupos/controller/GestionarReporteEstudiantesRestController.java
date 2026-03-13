@@ -1,6 +1,7 @@
 package co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.controller;
 
 import co.edu.unicauca.informacion_presupuestaria.aplicacion.input.GestionarReportePorGruposCUIntPort;
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConsultaReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.GastoGeneral;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.Items;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
@@ -8,6 +9,7 @@ import co.edu.unicauca.informacion_presupuestaria.dominio.models.PorcentajeGrupo
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ValorGrupo;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.GastoGeneralDTORespuesta;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ObtenerReportePorGruposDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOAnswer.ReportePorGruposDTORespuesta;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.DTOPeticion.*;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.input.controllerReportePorGrupos.mappers.*;
@@ -46,14 +48,17 @@ public class GestionarReporteEstudiantesRestController {
     private ValorGrupoMapperInfraestructura objMapperValorGrupo;
     
     @GetMapping("/obtener")
-    public ResponseEntity<ReportePorGruposDTORespuesta> obtenerReporteGrupos(
+    public ResponseEntity<ObtenerReportePorGruposDTORespuesta> obtenerReporteGrupos(
             @RequestParam Integer periodo,
             @RequestParam Integer anio) {
         try {
             PeriodoAcademicoDTOPeticion periodoDTO = new PeriodoAcademicoDTOPeticion(periodo, anio);
             PeriodoAcademico periodoAcademico = objMapperPeriodoAcademico.mappearDePeticionAPeriodoAcademico(periodoDTO);
-            ReportePorGrupos reporte = objGestionarReportePorGruposCUInt.obtenerReporteGrupos(periodoAcademico);
-            ReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeReportePorGruposARespuesta(reporte);
+            ConsultaReportePorGrupos consulta = objGestionarReportePorGruposCUInt.obtenerReporteGrupos(periodoAcademico);
+            ObtenerReportePorGruposDTORespuesta respuesta = objMapperReportePorGrupos.mappearDeConsultaReportePorGruposARespuesta(consulta);
+            if (respuesta == null) {
+                return ResponseEntity.notFound().build();
+            }
             return ResponseEntity.ok(respuesta);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

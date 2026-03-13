@@ -2,6 +2,7 @@ package co.edu.unicauca.informacion_presupuestaria.aplicacion.input;
 
 import java.util.List;
 
+import co.edu.unicauca.informacion_presupuestaria.dominio.models.ConsultaReportePorGrupos;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.GastoGeneral;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.Items;
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.PeriodoAcademico;
@@ -10,7 +11,8 @@ import co.edu.unicauca.informacion_presupuestaria.dominio.models.ReportePorGrupo
 import co.edu.unicauca.informacion_presupuestaria.dominio.models.ValorGrupo;
 
 public interface GestionarReportePorGruposCUIntPort {
-    ReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo);
+    /** Retorna la consulta con configuración común y lista de reportes por grupo (GTI, IDIS, GICO). */
+    ConsultaReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo);
     ReportePorGrupos actualizarPorcentajeParticipacionPrimerSemestre(List<PorcentajeGrupo> porcentajesPorGrupo);
     ReportePorGrupos actualizarPorcentajeParticipacionSegundoSemestre(List<PorcentajeGrupo> porcentajesPorGrupo);
     ReportePorGrupos actualizarPorcentajeAUIUniversidad(Float nuevoValor);

@@ -3,6 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 import java.util.List;
 
 public class Grupo {
+    private Long id;
     private String nombre;
     private List<ReportePorGrupos> reportePorGrupos;
 
@@ -11,6 +12,14 @@ public class Grupo {
 
     public Grupo(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {
