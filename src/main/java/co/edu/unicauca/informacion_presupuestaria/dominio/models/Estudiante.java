@@ -3,7 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 import java.util.List;
 
 public class Estudiante extends Personas {
-    
+
     private String codigo;
     private String cohorte;
     private String periodoIngreso;
@@ -11,6 +11,7 @@ public class Estudiante extends Personas {
     private List<MatriculaFinanciera> matriculasFinancieras;
     private List<Descuentos> descuentos;
     private List<Becas> becas;
+    private List<MatriculaAcademica> matriculasAcademicas;
 
     public Estudiante() {
         super();
@@ -81,5 +82,12 @@ public class Estudiante extends Personas {
         this.becas = becas;
     }
 
+    public List<MatriculaAcademica> getMatriculasAcademicas() {
+        return matriculasAcademicas;
+    }
+
+    public void setMatriculasAcademicas(List<MatriculaAcademica> matriculasAcademicas) {
+        this.matriculasAcademicas = matriculasAcademicas;
+    }
 
 }

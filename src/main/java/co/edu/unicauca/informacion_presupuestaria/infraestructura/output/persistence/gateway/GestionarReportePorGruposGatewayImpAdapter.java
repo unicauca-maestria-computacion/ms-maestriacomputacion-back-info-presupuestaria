@@ -15,6 +15,7 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ConfiguracionReporteGruposEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.GrupoEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.PeriodoAcademicoEntity;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ConfiguracionReporteFinancieroRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ConfiguracionReporteGruposRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.GastoGeneralRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.GrupoRepositoryInt;
@@ -34,16 +35,18 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     private final ReportePorGruposRepositoryInt objProyeccionEstudiante;
     private final PeriodoAcademicoRepositoryInt objPeriodoAcademico;
     private final ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos;
+    private final ConfiguracionReporteFinancieroRepositoryInt objConfiguracionReporteFinanciero;
     private final GastoGeneralRepositoryInt objGastoGeneral;
     private final GrupoRepositoryInt objGrupoRepository;
     private final PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper;
     private final GastoGeneralMapperPersistencia objGastoGeneralMapper;
     private final ReportePorGruposMapperPersistencia objReportePorGrupos;
-    
+
     public GestionarReportePorGruposGatewayImpAdapter(
             ReportePorGruposRepositoryInt objProyeccionEstudiante,
             PeriodoAcademicoRepositoryInt objPeriodoAcademico,
             ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos,
+            ConfiguracionReporteFinancieroRepositoryInt objConfiguracionReporteFinanciero,
             GastoGeneralRepositoryInt objGastoGeneral,
             GrupoRepositoryInt objGrupoRepository,
             PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper,
@@ -52,6 +55,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         this.objProyeccionEstudiante = objProyeccionEstudiante;
         this.objPeriodoAcademico = objPeriodoAcademico;
         this.objConfiguracionReporteGrupos = objConfiguracionReporteGrupos;
+        this.objConfiguracionReporteFinanciero = objConfiguracionReporteFinanciero;
         this.objGastoGeneral = objGastoGeneral;
         this.objGrupoRepository = objGrupoRepository;
         this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
@@ -81,6 +85,12 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         ConfiguracionReporteGruposEntity configEntity = configList.get(0);
         ConfiguracionReporteGrupos configDomain = mappearConfigEntityADominio(configEntity);
+        // Tomar ingresosNetos = "Ingresos Totales Después de Descuentos" del reporte financiero
+        objConfiguracionReporteFinanciero.findByObjPeriodoAcademicoId(periodoId).ifPresent(rf -> {
+            if (rf.getTotalNeto() != null) {
+                configDomain.setIngresosNetos(rf.getTotalNeto());
+            }
+        });
         List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(configEntity.getId());
         List<ReportePorGrupos> reportesPorGrupos = Collections.emptyList();
         if (reporteList != null && !reporteList.isEmpty()) {
