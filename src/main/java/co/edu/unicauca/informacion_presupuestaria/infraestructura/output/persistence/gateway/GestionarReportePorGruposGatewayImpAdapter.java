@@ -15,8 +15,11 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ConfiguracionReporteGruposEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.GrupoEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.PeriodoAcademicoEntity;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ConfiguracionReporteFinancieroEntity;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ProyeccionEstudianteEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ConfiguracionReporteFinancieroRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ConfiguracionReporteGruposRepositoryInt;
+import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ProyeccionEstudianteRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.GastoGeneralRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.GrupoRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.PeriodoAcademicoRepositoryInt;
@@ -24,18 +27,22 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 public class GestionarReportePorGruposGatewayImpAdapter implements GestionarReportePorGruposGatewayIntPort {
     
-    private final ReportePorGruposRepositoryInt objProyeccionEstudiante;
+    private final ReportePorGruposRepositoryInt objReportePorGruposRepository;
     private final PeriodoAcademicoRepositoryInt objPeriodoAcademico;
     private final ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos;
     private final ConfiguracionReporteFinancieroRepositoryInt objConfiguracionReporteFinanciero;
+    private final ProyeccionEstudianteRepositoryInt objReportePorGruposRepositoryRepository;
     private final GastoGeneralRepositoryInt objGastoGeneral;
     private final GrupoRepositoryInt objGrupoRepository;
     private final PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper;
@@ -43,19 +50,21 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     private final ReportePorGruposMapperPersistencia objReportePorGrupos;
 
     public GestionarReportePorGruposGatewayImpAdapter(
-            ReportePorGruposRepositoryInt objProyeccionEstudiante,
+            ReportePorGruposRepositoryInt objReportePorGruposRepository,
             PeriodoAcademicoRepositoryInt objPeriodoAcademico,
             ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos,
             ConfiguracionReporteFinancieroRepositoryInt objConfiguracionReporteFinanciero,
+            ProyeccionEstudianteRepositoryInt objReportePorGruposRepositoryRepository,
             GastoGeneralRepositoryInt objGastoGeneral,
             GrupoRepositoryInt objGrupoRepository,
             PeriodoAcademicoMapperPersistencia objPeriodoAcademicoMapper,
             GastoGeneralMapperPersistencia objGastoGeneralMapper,
             ReportePorGruposMapperPersistencia objReportePorGrupos) {
-        this.objProyeccionEstudiante = objProyeccionEstudiante;
+        this.objReportePorGruposRepository = objReportePorGruposRepository;
         this.objPeriodoAcademico = objPeriodoAcademico;
         this.objConfiguracionReporteGrupos = objConfiguracionReporteGrupos;
         this.objConfiguracionReporteFinanciero = objConfiguracionReporteFinanciero;
+        this.objReportePorGruposRepositoryRepository = objReportePorGruposRepositoryRepository;
         this.objGastoGeneral = objGastoGeneral;
         this.objGrupoRepository = objGrupoRepository;
         this.objPeriodoAcademicoMapper = objPeriodoAcademicoMapper;
@@ -85,13 +94,28 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         ConfiguracionReporteGruposEntity configEntity = configList.get(0);
         ConfiguracionReporteGrupos configDomain = mappearConfigEntityADominio(configEntity);
-        // Tomar ingresosNetos = "Ingresos Totales Después de Descuentos" del reporte financiero
+        // Calcular "Ingresos Totales Después de Descuentos" desde proyecciones del período
         objConfiguracionReporteFinanciero.findByObjPeriodoAcademicoId(periodoId).ifPresent(rf -> {
-            if (rf.getTotalNeto() != null) {
-                configDomain.setIngresosNetos(rf.getTotalNeto());
+            float matriculaValor = orZero(rf.getValorMatricula()) * orZero(rf.getValorSMLV());
+            float recursosComp   = orZero(rf.getRecursosComputacionales());
+            float biblioteca     = orZero(rf.getBiblioteca());
+            List<ProyeccionEstudianteEntity> proyecciones = objReportePorGruposRepositoryRepository.findByObjPeriodoAcademicoId(periodoId);
+            Map<String, ProyeccionEstudianteEntity> uniqueMap = new LinkedHashMap<>();
+            for (ProyeccionEstudianteEntity p : proyecciones) {
+                uniqueMap.putIfAbsent(p.getCodigoEstudiante(), p);
             }
+            Collection<ProyeccionEstudianteEntity> unique = uniqueMap.values();
+            float total = 0f;
+            for (ProyeccionEstudianteEntity est : unique) {
+                float beca     = toRatio(orZero(est.getPorcentajeBeca()));
+                float egresado = toRatio(orZero(est.getPorcentajeEgresado()));
+                float votacion = toRatio(orZero(est.getPorcentajeVotacion()));
+                float descuentos = (beca + egresado + votacion) * matriculaValor;
+                total += matriculaValor + recursosComp + biblioteca - descuentos;
+            }
+            configDomain.setIngresosNetos(total);
         });
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(configEntity.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(configEntity.getId());
         List<ReportePorGrupos> reportesPorGrupos = Collections.emptyList();
         if (reporteList != null && !reporteList.isEmpty()) {
             reportesPorGrupos = reporteList.stream()
@@ -170,13 +194,13 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long configId = configList.get(0).getId();
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
         if (reporteList == null || reporteList.isEmpty()) {
             return null;
         }
         ReportePorGruposEntity reporte = reporteList.get(0);
         reporte.setParticipacionPrimerSemestre(nuevoValor);
-        ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
+        ReportePorGruposEntity saved = objReportePorGruposRepository.save(reporte);
         return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
     }
 
@@ -197,13 +221,13 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long configId = configList.get(0).getId();
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
         if (reporteList == null || reporteList.isEmpty()) {
             return null;
         }
         ReportePorGruposEntity reporte = reporteList.get(0);
         reporte.setParticipacionSegundoSemestre(nuevoValor);
-        ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
+        ReportePorGruposEntity saved = objReportePorGruposRepository.save(reporte);
         return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
     }
     
@@ -230,7 +254,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setAUIPorcentaje(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
@@ -251,7 +275,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setExcedentesMaestria(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
@@ -322,7 +346,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setItem1(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
@@ -342,7 +366,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setItem2(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
@@ -363,7 +387,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setImprevistos(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
@@ -382,13 +406,13 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long configId = configList.get(0).getId();
-        List<ReportePorGruposEntity> reporteList = objProyeccionEstudiante.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
         if (reporteList == null || reporteList.isEmpty()) {
             return null;
         }
         ReportePorGruposEntity reporte = reporteList.get(0);
         reporte.setVigenciasAnteriores(valor);
-        ReportePorGruposEntity saved = objProyeccionEstudiante.save(reporte);
+        ReportePorGruposEntity saved = objReportePorGruposRepository.save(reporte);
         return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
     }
 
@@ -405,6 +429,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     public Boolean finalizarReporteGrupos() {
         // Implementación pendiente
         return false;
+    }
+
+    private float orZero(Float value) {
+        return value != null ? value : 0f;
+    }
+
+    private float toRatio(float value) {
+        return value > 1f ? value / 100f : value;
     }
 }
 

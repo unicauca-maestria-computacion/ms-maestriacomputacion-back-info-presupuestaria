@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "periodo_academico")
+@Table(name = "periodo_academico", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"periodo", "anio"})
+})
 public class PeriodoAcademicoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

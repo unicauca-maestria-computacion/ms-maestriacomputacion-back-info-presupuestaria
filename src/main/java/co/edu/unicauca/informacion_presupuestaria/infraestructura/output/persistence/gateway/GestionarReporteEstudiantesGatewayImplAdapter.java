@@ -18,6 +18,8 @@ import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persist
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.PeriodoAcademicoRepositoryInt;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.Entitys.ProyeccionEstudianteEntity;
 import co.edu.unicauca.informacion_presupuestaria.infraestructura.output.persistence.repositories.ProyeccionEstudianteRepositoryInt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,8 @@ import java.util.Optional;
 
 @Component
 public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarReporteEstudiantesGatewayIntPort {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GestionarReporteEstudiantesGatewayImplAdapter.class);
     
     private final PeriodoAcademicoRepositoryInt objPeriodoAcademico;
     private final MatriculaFinancieraRepositoryInt objMatriculaFinanciera;
@@ -62,24 +66,36 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
     @Transactional
     public ProyeccionEstudiante guardarProyeccionEstudiante(ProyeccionEstudiante proyeccion) {
         if (proyeccion == null || proyeccion.getCodigoEstudiante() == null) {
+            LOG.warn("guardarProyeccionEstudiante: proyección o código nulo");
             return null;
         }
         Optional<PeriodoAcademicoEntity> periodoActual = objPeriodoAcademico.findPeriodoAcademicoActivo();
         if (periodoActual.isEmpty()) {
+            LOG.warn("guardarProyeccionEstudiante: no se encontró periodo activo");
             return null;
         }
         Long periodoId = periodoActual.get().getId();
+        LOG.info("guardarProyeccionEstudiante: código={}, periodoId={}, estaPago={}, votacion={}, beca={}, egresado={}",
+            proyeccion.getCodigoEstudiante(), periodoId,
+            proyeccion.getEstaPago(), proyeccion.getPorcentajeVotacion(),
+            proyeccion.getPorcentajeBeca(), proyeccion.getPorcentajeEgresado());
         List<ProyeccionEstudianteEntity> entities = objProyeccionEstudianteRepository
             .findByCodigoEstudianteAndObjPeriodoAcademico_Id(proyeccion.getCodigoEstudiante(), periodoId);
         if (entities == null || entities.isEmpty()) {
+            LOG.warn("guardarProyeccionEstudiante: no se encontró entidad para código={} y periodoId={}",
+                proyeccion.getCodigoEstudiante(), periodoId);
             return null;
         }
+        LOG.info("guardarProyeccionEstudiante: encontradas {} entidades, actualizando entityId={}",
+            entities.size(), entities.get(0).getId());
         ProyeccionEstudianteEntity entity = entities.get(0);
         entity.setEstaPago(proyeccion.getEstaPago());
         entity.setPorcentajeVotacion(proyeccion.getPorcentajeVotacion());
         entity.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
         entity.setPorcentajeEgresado(proyeccion.getPorcentajeEgresado());
         entity = objProyeccionEstudianteRepository.save(entity);
+        LOG.info("guardarProyeccionEstudiante: save() completado, entityId={}, estaPago={}",
+            entity.getId(), entity.getEstaPago());
         return objProyeccionEstudianteMapper.mappearDeEntityAProyeccionEstudiante(entity);
     }
     
@@ -205,6 +221,16 @@ public class GestionarReporteEstudiantesGatewayImplAdapter implements GestionarR
         return configuracionActualizada;
     }
     
+    @Override
+    @Transactional(readOnly = true)
+    public Long obtenerIdConfiguracionPorPeriodo(Integer periodo, Integer año) {
+        Optional<PeriodoAcademicoEntity> periodoEntity = objPeriodoAcademico.findByPeriodoAndAño(periodo, año);
+        if (periodoEntity.isEmpty()) return null;
+        return objConfiguracionReporteRepository.findByObjPeriodoAcademicoId(periodoEntity.get().getId())
+            .map(config -> config.getId())
+            .orElse(null);
+    }
+
     @Override
     public Boolean existePeriodoAcademico(PeriodoAcademico periodo) {
         // Usar findByPeriodoAndAño en lugar de existsByPeriodoAndAño

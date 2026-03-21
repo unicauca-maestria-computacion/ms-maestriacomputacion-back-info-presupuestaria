@@ -52,20 +52,32 @@ public class ReporteEstudiantesRestController {
     @PutMapping("/configuracion-proyeccion")
     public ResponseEntity<ConfiguracionReporteFinancieroDTORespuesta> actualizarConfiguracionProyeccion(
             @RequestBody ConfiguracionReporteFinancieroDTOPeticion configuracion) {
-        if (configuracion == null || configuracion.getId() == null) {
+        if (configuracion == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        
-        ConfiguracionReporteFinanciero configuracionDomain = 
+
+        // Si no viene id, resolverlo a partir del periodo académico
+        Long id = configuracion.getId();
+        if (id == null && configuracion.getObjPeriodoAcademico() != null) {
+            id = objGestionarReporteEstudiantesCUInt.obtenerIdConfiguracionPorPeriodo(
+                configuracion.getObjPeriodoAcademico().getPeriodo(),
+                configuracion.getObjPeriodoAcademico().getAño());
+        }
+        if (id == null) {
+            LOG.warn("actualizarConfiguracionProyeccion: no se pudo determinar el id de la configuración");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        ConfiguracionReporteFinanciero configuracionDomain =
             objMapperConfiguracionReporteFinanciero.mappearDePeticionAConfiguracionReporteFinanciero(configuracion);
-        ConfiguracionReporteFinanciero configuracionActualizada = 
-            objGestionarReporteEstudiantesCUInt.actualizarConfiguracionProyeccion(configuracion.getId(), configuracionDomain);
-        
+        ConfiguracionReporteFinanciero configuracionActualizada =
+            objGestionarReporteEstudiantesCUInt.actualizarConfiguracionProyeccion(id, configuracionDomain);
+
         if (configuracionActualizada == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        
-        ConfiguracionReporteFinancieroDTORespuesta respuesta = 
+
+        ConfiguracionReporteFinancieroDTORespuesta respuesta =
             objMapperConfiguracionReporteFinanciero.mappearDeConfiguracionReporteFinancieroARespuesta(configuracionActualizada);
         return ResponseEntity.ok(respuesta);
     }

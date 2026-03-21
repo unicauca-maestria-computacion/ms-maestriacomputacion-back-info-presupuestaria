@@ -46,6 +46,11 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
     }
     
     @Override
+    public Long obtenerIdConfiguracionPorPeriodo(Integer periodo, Integer año) {
+        return objGestionarReporteEstudiantes.obtenerIdConfiguracionPorPeriodo(periodo, año);
+    }
+
+    @Override
     public ReporteEstudiantes actualizarProyeccionEstudiante(ProyeccionEstudiante proyeccion) {
         if (proyeccion == null || proyeccion.getCodigoEstudiante() == null) {
             objFormateadorResultados.errorEntidadNoExiste("La proyección o el código de estudiante no pueden ser nulos");
@@ -231,6 +236,10 @@ public class GestionarReporteEstudiantesCUAdapter implements GestionarReporteEst
                 proyeccion.setPorcentajeEgresado(datosProyeccion.getPorcentajeEgresado());
                 proyeccion.setGrupoInvestigacion(datosProyeccion.getGrupoInvestigacion());
                 proyeccion.setEstadoProyeccion(datosProyeccion.getEstadoProyeccion());
+                // estaPago de proyeccion_estudiante tiene prioridad sobre matricula_financiera
+                if (datosProyeccion.getEstaPago() != null) {
+                    proyeccion.setEstaPago(datosProyeccion.getEstaPago());
+                }
             } else {
                 proyeccion.setPorcentajeVotacion(null);
                 proyeccion.setPorcentajeBeca(null);

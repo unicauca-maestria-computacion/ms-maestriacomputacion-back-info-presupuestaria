@@ -20,6 +20,7 @@ public interface GestionarReporteEstudiantesGatewayIntPort {
     Boolean existeProyeccionPorCodigoEstudiante(String codigo);
     ConfiguracionReporteFinanciero obtenerConfiguracionReporteFinanciero(PeriodoAcademico periodo);
     ConfiguracionReporteFinanciero actualizarConfiguracionReporteFinanciero(Long id, ConfiguracionReporteFinanciero configuracion);
+    Long obtenerIdConfiguracionPorPeriodo(Integer periodo, Integer año);
     Boolean existePeriodoAcademico(PeriodoAcademico periodo);
     List<MatriculaFinanciera> obtenerMatriculasFinancieras(PeriodoAcademico periodo);
     Boolean finalizarProyeccion();

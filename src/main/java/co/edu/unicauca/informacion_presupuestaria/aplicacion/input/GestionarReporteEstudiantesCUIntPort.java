@@ -8,6 +8,7 @@ import co.edu.unicauca.informacion_presupuestaria.dominio.models.ProyeccionEstud
 
 public interface GestionarReporteEstudiantesCUIntPort {
     ConfiguracionReporteFinanciero actualizarConfiguracionProyeccion(Long id, ConfiguracionReporteFinanciero configuracion);
+    Long obtenerIdConfiguracionPorPeriodo(Integer periodo, Integer año);
     ReporteEstudiantes actualizarProyeccionEstudiante(ProyeccionEstudiante proyeccion);
     ReporteEstudiantes obtenerReporteFinanciero(PeriodoAcademico periodo);
     ReporteEstudiantes obtenerProyeccionEstudiantes();

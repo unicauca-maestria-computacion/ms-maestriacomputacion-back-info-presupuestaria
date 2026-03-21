@@ -8,6 +8,24 @@
 -- fallar si la restricción ya existe; en ese caso ignorar o comentar esa línea.
 -- ============================================
 
+-- Limpiar duplicados en proyeccion_estudiante (mantener solo el id más bajo por combinación)
+DELETE pe1 FROM proyeccion_estudiante pe1
+INNER JOIN proyeccion_estudiante pe2
+ON pe1.codigo_estudiante = pe2.codigo_estudiante
+AND pe1.periodo_academico_id = pe2.periodo_academico_id
+AND pe1.id > pe2.id;
+
+-- Agregar UNIQUE constraint si no existe (para que INSERT IGNORE funcione)
+SET @constraint_exists = (SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'proyeccion_estudiante'
+    AND CONSTRAINT_TYPE = 'UNIQUE' AND CONSTRAINT_NAME = 'uk_proyeccion_est_periodo');
+SET @sql = IF(@constraint_exists = 0,
+    'ALTER TABLE proyeccion_estudiante ADD CONSTRAINT uk_proyeccion_est_periodo UNIQUE (codigo_estudiante, periodo_academico_id)',
+    'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
 -- Ajuste de esquema: columnas estudiante.codigo y *_estudiante_codigo en VARCHAR(20)
 -- para evitar error "Referencing column and referenced column in foreign key are incompatible"
 -- (MySQL no permite MODIFY con FK activos; se eliminan, se alteran, se recrean)

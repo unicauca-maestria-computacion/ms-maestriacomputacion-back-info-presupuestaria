@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "proyeccion_estudiante")
+@Table(name = "proyeccion_estudiante", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"codigo_estudiante", "periodo_academico_id"})
+})
 @Data
 public class ProyeccionEstudianteEntity {
     @Id
