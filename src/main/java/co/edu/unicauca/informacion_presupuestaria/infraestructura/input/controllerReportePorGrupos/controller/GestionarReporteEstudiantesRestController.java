@@ -176,13 +176,18 @@ public class GestionarReporteEstudiantesRestController {
     }
 
     /**
-     * Después de una actualización, re-consulta el reporte completo para retornar
-     * la estructura ObtenerReportePorGruposDTORespuesta que el frontend espera.
+     * Después de una actualización, re-consulta el reporte completo del periodo activo
+     * para retornar la estructura ObtenerReportePorGruposDTORespuesta que el frontend espera.
      */
     private ObtenerReportePorGruposDTORespuesta reConsultarReporteCompleto(ReportePorGrupos reporte) {
+        // Intentar obtener el periodo desde el reporte
         PeriodoAcademico periodo = null;
         if (reporte.getObjConfiguracionReporteGrupos() != null) {
             periodo = reporte.getObjConfiguracionReporteGrupos().getObjPeriodoAcademico();
+        }
+        // Si no tiene periodo, obtener el periodo activo directamente
+        if (periodo == null) {
+            periodo = objGestionarReportePorGruposCUInt.obtenerPeriodoActivo();
         }
         if (periodo != null) {
             ConsultaReportePorGrupos consulta = objGestionarReportePorGruposCUInt.obtenerReporteGrupos(periodo);

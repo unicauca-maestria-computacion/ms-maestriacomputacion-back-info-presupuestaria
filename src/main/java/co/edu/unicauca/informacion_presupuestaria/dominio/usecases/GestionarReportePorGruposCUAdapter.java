@@ -292,4 +292,9 @@ public class GestionarReportePorGruposCUAdapter implements GestionarReportePorGr
     public Boolean finalizarReporteGrupos() {
         return objGestionarReportePorGrupos.finalizarReporteGrupos();
     }
+
+    @Override
+    public PeriodoAcademico obtenerPeriodoActivo() {
+        return objGestionarReportePorGrupos.obtenerPeriodoActivo();
+    }
 }

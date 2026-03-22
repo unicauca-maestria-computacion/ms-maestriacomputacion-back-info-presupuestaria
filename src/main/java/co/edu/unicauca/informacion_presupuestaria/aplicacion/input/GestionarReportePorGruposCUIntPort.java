@@ -24,4 +24,5 @@ public interface GestionarReportePorGruposCUIntPort {
     ReportePorGrupos actualizarPorcentajeImprevistos(Float nuevoValor);
     ReportePorGrupos actualizarValorVigenciasAnteriores(List<ValorGrupo> valoresGrupo);
     Boolean finalizarReporteGrupos();
+    PeriodoAcademico obtenerPeriodoActivo();
 }

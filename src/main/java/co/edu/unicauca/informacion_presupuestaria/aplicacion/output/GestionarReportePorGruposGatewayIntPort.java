@@ -26,4 +26,5 @@ public interface GestionarReportePorGruposGatewayIntPort {
     ReportePorGrupos actualizarVigenciasAnterioresPorGrupoId(Long grupoId, Float valor);
     ReportePorGrupos actualizarPorcentajeVigenciasAnterioresGrupo(String nombreGrupo, Float nuevoValor);
     Boolean finalizarReporteGrupos();
+    PeriodoAcademico obtenerPeriodoActivo();
 }

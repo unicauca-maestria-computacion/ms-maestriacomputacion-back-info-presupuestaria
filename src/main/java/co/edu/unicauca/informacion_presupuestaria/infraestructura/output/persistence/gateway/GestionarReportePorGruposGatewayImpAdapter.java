@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class GestionarReportePorGruposGatewayImpAdapter implements GestionarReportePorGruposGatewayIntPort {
-    
+
     private final ReportePorGruposRepositoryInt objReportePorGruposRepository;
     private final PeriodoAcademicoRepositoryInt objPeriodoAcademico;
     private final ConfiguracionReporteGruposRepositoryInt objConfiguracionReporteGrupos;
@@ -71,35 +71,39 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         this.objGastoGeneralMapper = objGastoGeneralMapper;
         this.objReportePorGrupos = objReportePorGrupos;
     }
-    
+
     @Override
     public Boolean existePeriodoAcademico(PeriodoAcademico periodo) {
         return objPeriodoAcademico.existsByPeriodoAndAño(periodo.getPeriodo(), periodo.getAño());
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public ConsultaReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
         if (periodo == null || periodo.getPeriodo() == null || periodo.getAño() == null) {
             return null;
         }
-        Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findByPeriodoAndAño(periodo.getPeriodo(), periodo.getAño());
+        Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findByPeriodoAndAño(periodo.getPeriodo(),
+                periodo.getAño());
         if (periodoOpt.isEmpty()) {
             return null;
         }
         Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoId);
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         ConfiguracionReporteGruposEntity configEntity = configList.get(0);
         ConfiguracionReporteGrupos configDomain = mappearConfigEntityADominio(configEntity);
-        // Calcular "Ingresos Totales Después de Descuentos" desde proyecciones del período
+        // Calcular "Ingresos Totales Después de Descuentos" desde proyecciones del
+        // período
         objConfiguracionReporteFinanciero.findByObjPeriodoAcademicoId(periodoId).ifPresent(rf -> {
             float matriculaValor = orZero(rf.getValorMatricula()) * orZero(rf.getValorSMLV());
-            float recursosComp   = orZero(rf.getRecursosComputacionales());
-            float biblioteca     = orZero(rf.getBiblioteca());
-            List<ProyeccionEstudianteEntity> proyecciones = objReportePorGruposRepositoryRepository.findByObjPeriodoAcademicoId(periodoId);
+            float recursosComp = orZero(rf.getRecursosComputacionales());
+            float biblioteca = orZero(rf.getBiblioteca());
+            List<ProyeccionEstudianteEntity> proyecciones = objReportePorGruposRepositoryRepository
+                    .findByObjPeriodoAcademicoId(periodoId);
             Map<String, ProyeccionEstudianteEntity> uniqueMap = new LinkedHashMap<>();
             for (ProyeccionEstudianteEntity p : proyecciones) {
                 uniqueMap.putIfAbsent(p.getCodigoEstudiante(), p);
@@ -107,15 +111,18 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             Collection<ProyeccionEstudianteEntity> unique = uniqueMap.values();
             float total = 0f;
             for (ProyeccionEstudianteEntity est : unique) {
-                float beca     = toRatio(orZero(est.getPorcentajeBeca()));
+                float beca = toRatio(orZero(est.getPorcentajeBeca()));
                 float egresado = toRatio(orZero(est.getPorcentajeEgresado()));
                 float votacion = toRatio(orZero(est.getPorcentajeVotacion()));
                 float descuentos = (beca + egresado + votacion) * matriculaValor;
                 total += matriculaValor + recursosComp + biblioteca - descuentos;
             }
             configDomain.setIngresosNetos(total);
+            // IMPORTANTE: Recalcular auiValor y valorADistribuir con el nuevo ingresosNetos
+            recalcularValoresDistribucion(configDomain);
         });
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(configEntity.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposId(configEntity.getId());
         List<ReportePorGrupos> reportesPorGrupos = Collections.emptyList();
         if (reporteList != null && !reporteList.isEmpty()) {
             reportesPorGrupos = reporteList.stream()
@@ -137,13 +144,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     }
 
     private Grupo mappearGrupoEntityADominio(GrupoEntity entity) {
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         Grupo grupo = new Grupo();
         grupo.setId(entity.getId());
         grupo.setNombre(entity.getNombre());
         return grupo;
     }
-    
+
     private ConfiguracionReporteGrupos mappearConfigEntityADominio(ConfiguracionReporteGruposEntity entity) {
         ConfiguracionReporteGrupos config = new ConfiguracionReporteGrupos();
         config.setId(entity.getId());
@@ -156,7 +164,8 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         config.setItem2(entity.getItem2());
         config.setImprevistos(entity.getImprevistos());
         if (entity.getObjPeriodoAcademico() != null) {
-            config.setObjPeriodoAcademico(objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(entity.getObjPeriodoAcademico()));
+            config.setObjPeriodoAcademico(
+                    objPeriodoAcademicoMapper.mappearDeEntityAPeriodoAcademico(entity.getObjPeriodoAcademico()));
         }
         if (entity.getGastosGenerales() != null && !entity.getGastosGenerales().isEmpty()) {
             config.setGastosGenerales(entity.getGastosGenerales().stream()
@@ -167,7 +176,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         return config;
     }
-    
+
     @Override
     public ReportePorGrupos actualizarPorcentajeParticipacionPrimerSemestreGrupo(String nombreGrupo, Float nuevoValor) {
         Optional<GrupoEntity> grupoOpt = objGrupoRepository.findByNombre(nombreGrupo);
@@ -176,7 +185,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         return actualizarPorcentajeParticipacionPrimerSemestrePorGrupoId(grupoOpt.get().getId(), nuevoValor);
     }
-    
+
     @Override
     public Boolean existeGrupoPorId(Long id) {
         return id != null && objGrupoRepository.existsById(id);
@@ -189,12 +198,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoId);
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         Long configId = configList.get(0).getId();
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
         if (reporteList == null || reporteList.isEmpty()) {
             return null;
         }
@@ -216,12 +227,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoId);
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         Long configId = configList.get(0).getId();
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
         if (reporteList == null || reporteList.isEmpty()) {
             return null;
         }
@@ -230,16 +243,18 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ReportePorGruposEntity saved = objReportePorGruposRepository.save(reporte);
         return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
     }
-    
+
     @Override
-    public ReportePorGrupos actualizarPorcentajeParticipacionSegundoSemestreGrupo(String nombreGrupo, Float nuevoValor) {
+    public ReportePorGrupos actualizarPorcentajeParticipacionSegundoSemestreGrupo(String nombreGrupo,
+            Float nuevoValor) {
         Optional<GrupoEntity> grupoOpt = objGrupoRepository.findByNombre(nombreGrupo);
         if (grupoOpt.isEmpty()) {
             return null;
         }
         return actualizarPorcentajeParticipacionSegundoSemestrePorGrupoId(grupoOpt.get().getId(), nuevoValor);
     }
-    
+
+    @Transactional
     @Override
     public ReportePorGrupos actualizarPorcentajeAUIUniversidad(Float nuevoValor) {
         Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findPeriodoAcademicoActivo();
@@ -247,20 +262,29 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoId);
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         ConfiguracionReporteGruposEntity config = configList.get(0);
-        config.setAUIPorcentaje(nuevoValor);
+
+        // Normalizar el valor: si viene en formato porcentaje (>=1), convertirlo a
+        // ratio (0-1)
+        // Esto maneja tanto valores como 10 (10%) como 0.1 (10% ratio)
+        Float valorNormalizado = normalizarPorcentaje(nuevoValor);
+        config.setAUIPorcentaje(valorNormalizado);
+        recalcularValoresDistribucion(config);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
         return null;
     }
-    
+
+    @Transactional
     @Override
     public ReportePorGrupos actualizarValorExcedentesMaestria(Float nuevoValor) {
         Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findPeriodoAcademicoActivo();
@@ -268,20 +292,67 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoId);
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setExcedentesMaestria(nuevoValor);
+        recalcularValoresDistribucion(config);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
         return null;
     }
-    
+
+    /**
+     * Recalcula aUIValor y valorADistribuir a partir de los valores actuales de la
+     * configuración (versión para Entity).
+     */
+    private void recalcularValoresDistribucion(ConfiguracionReporteGruposEntity config) {
+        float ingresosNetos = config.getIngresosNetos() != null ? config.getIngresosNetos() : 0f;
+        float auiPorcentaje = config.getAUIPorcentaje() != null ? config.getAUIPorcentaje() : 0f;
+        float excedentesMaestria = config.getExcedentesMaestria() != null ? config.getExcedentesMaestria() : 0f;
+
+        float auiValor = ingresosNetos * auiPorcentaje;
+        config.setAUIValor(auiValor);
+
+        float totalGastos = 0f;
+        if (config.getGastosGenerales() != null) {
+            for (GastoGeneralEntity gasto : config.getGastosGenerales()) {
+                totalGastos += gasto.getMonto() != null ? gasto.getMonto() : 0f;
+            }
+        }
+
+        config.setValorADistribuir(ingresosNetos - auiValor - excedentesMaestria - totalGastos);
+    }
+
+    /**
+     * Recalcula aUIValor y valorADistribuir a partir de los valores actuales de la
+     * configuración (versión para dominio).
+     */
+    private void recalcularValoresDistribucion(ConfiguracionReporteGrupos config) {
+        float ingresosNetos = config.getIngresosNetos() != null ? config.getIngresosNetos() : 0f;
+        float auiPorcentaje = config.getaUIPorcentaje() != null ? config.getaUIPorcentaje() : 0f;
+        float excedentesMaestria = config.getExcedentesMaestria() != null ? config.getExcedentesMaestria() : 0f;
+
+        float auiValor = ingresosNetos * auiPorcentaje;
+        config.setaUIValor(auiValor);
+
+        float totalGastos = 0f;
+        if (config.getGastosGenerales() != null) {
+            for (GastoGeneral gasto : config.getGastosGenerales()) {
+                totalGastos += gasto.getMonto() != null ? gasto.getMonto() : 0f;
+            }
+        }
+
+        config.setValorADistribuir(ingresosNetos - auiValor - excedentesMaestria - totalGastos);
+    }
+
     @Override
     public GastoGeneral actualizarGastoGeneral(GastoGeneral gasto) {
         if (gasto.getIdGastoGeneral() != null) {
@@ -303,7 +374,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         return null;
     }
-    
+
     @Override
     public GastoGeneral crearGastoGeneral(GastoGeneral gasto) {
         Long configId = gasto.getObjConfiguracionReporteGrupos() != null
@@ -323,7 +394,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         GastoGeneralEntity saved = objGastoGeneral.save(entity);
         return objGastoGeneralMapper.mappearDeEntityAGastoGeneral(saved);
     }
-    
+
     @Override
     public Boolean eliminarGastoGeneral(Integer idGastoGeneral) {
         if (objGastoGeneral.existsById(idGastoGeneral)) {
@@ -332,21 +403,23 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         return false;
     }
-    
+
     @Override
     public ReportePorGrupos actualizarPorcentajeItem1(Float nuevoValor) {
         Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findPeriodoAcademicoActivo();
         if (periodoOpt.isEmpty()) {
             return null;
         }
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoOpt.get().getId());
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoOpt.get().getId());
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setItem1(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
@@ -359,20 +432,22 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         if (periodoOpt.isEmpty()) {
             return null;
         }
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoOpt.get().getId());
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoOpt.get().getId());
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setItem2(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
         return null;
     }
-    
+
     @Override
     public ReportePorGrupos actualizarPorcentajeImprevistos(Float nuevoValor) {
         Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findPeriodoAcademicoActivo();
@@ -380,20 +455,22 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoId);
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setImprevistos(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposId(config.getId());
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
             return objReportePorGrupos.mappearDeEntityAReportePorGrupos(reporteList.get(0));
         }
         return null;
     }
-    
+
     @Override
     public ReportePorGrupos actualizarVigenciasAnterioresPorGrupoId(Long grupoId, Float valor) {
         Optional<PeriodoAcademicoEntity> periodoOpt = objPeriodoAcademico.findPeriodoAcademicoActivo();
@@ -401,12 +478,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return null;
         }
         Long periodoId = periodoOpt.get().getId();
-        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos.findByObjPeriodoAcademicoId(periodoId);
+        List<ConfiguracionReporteGruposEntity> configList = objConfiguracionReporteGrupos
+                .findByObjPeriodoAcademicoId(periodoId);
         if (configList == null || configList.isEmpty()) {
             return null;
         }
         Long configId = configList.get(0).getId();
-        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository.findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
         if (reporteList == null || reporteList.isEmpty()) {
             return null;
         }
@@ -431,6 +510,13 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         return false;
     }
 
+    @Override
+    public PeriodoAcademico obtenerPeriodoActivo() {
+        return objPeriodoAcademico.findPeriodoAcademicoActivo()
+                .map(objPeriodoAcademicoMapper::mappearDeEntityAPeriodoAcademico)
+                .orElse(null);
+    }
+
     private float orZero(Float value) {
         return value != null ? value : 0f;
     }
@@ -438,5 +524,24 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     private float toRatio(float value) {
         return value > 1f ? value / 100f : value;
     }
-}
 
+    /**
+     * Normaliza el valor del porcentaje al formato ratio (0-1).
+     * Si el valor es > 1, se asume que está en formato porcentaje (ej: 10 para 10%)
+     * y se convierte a ratio (0.1). Si el valor está entre 0 y 1, se deja igual.
+     * Si el valor es > 100, se divide por 100 (caso excepcional).
+     *
+     * CORRECCIÓN: El valor 0.748 que resultó en $748,000 sugiere que el porcentaje
+     * se estaba guardando incorrectamente. Esta normalización evita que valores
+     * como 10 se guarden como 10 (incorrecto) en lugar de 0.1 (correcto).
+     */
+    private Float normalizarPorcentaje(Float valor) {
+        if (valor == null)
+            return 0f;
+        if (valor > 1f) {
+            // El valor viene como porcentaje (ej: 10 para 10%), convertir a ratio
+            return valor / 100f;
+        }
+        return valor;
+    }
+}
