@@ -61,7 +61,8 @@ public class GestionMatriculaFinancieraRestController {
     @GetMapping("/obtener-estudiante/{codigo}")
     public ResponseEntity<EstudianteMFDTORespuesta> obtenerEstudiante(@PathVariable String codigo) {
         Estudiante est = useCase.obtenerEstudiante(codigo);
-        if (est == null) return ResponseEntity.notFound().build();
+        if (est == null)
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok(toDTO(est));
     }
 
@@ -99,7 +100,8 @@ public class GestionMatriculaFinancieraRestController {
 
     private List<MatriculaFinancieraMFDTORespuesta> toMatriculasFinancierasDTO(List<MatriculaFinanciera> list) {
         List<MatriculaFinancieraMFDTORespuesta> result = new ArrayList<>();
-        if (list == null) return result;
+        if (list == null)
+            return result;
         for (MatriculaFinanciera mf : list) {
             MatriculaFinancieraMFDTORespuesta dto = new MatriculaFinancieraMFDTORespuesta();
             dto.setFechaMatricula(mf.getFechaMatricula());
@@ -113,12 +115,13 @@ public class GestionMatriculaFinancieraRestController {
 
     private List<DescuentosMFDTORespuesta> toDescuentosDTO(List<Descuentos> list) {
         List<DescuentosMFDTORespuesta> result = new ArrayList<>();
-        if (list == null) return result;
+        if (list == null)
+            return result;
         for (Descuentos d : list) {
             DescuentosMFDTORespuesta dto = new DescuentosMFDTORespuesta();
-            dto.setTipoDescuento(d.getTipoDescuento());
-            dto.setEstado(d.getEstado());
-            dto.setPorcentaje(derivarPorcentaje(d.getTipoDescuento()));
+            dto.setTipodes(d.getTipodes());
+            dto.setEstado(d.getEstado() != null && d.getEstado() ? "ACTIVO" : "INACTIVO");
+            dto.setPorcentajedes(d.getPorcentajedes() != null ? d.getPorcentajedes().floatValue() : 0f);
             result.add(dto);
         }
         return result;
@@ -126,12 +129,15 @@ public class GestionMatriculaFinancieraRestController {
 
     private List<BecasMFDTORespuesta> toBecasDTO(List<Becas> list) {
         List<BecasMFDTORespuesta> result = new ArrayList<>();
-        if (list == null) return result;
+        if (list == null)
+            return result;
         for (Becas b : list) {
             BecasMFDTORespuesta dto = new BecasMFDTORespuesta();
-            dto.setTipo(b.getTipo());
+            dto.setDedicacion(b.getDedicacion());
             dto.setEntidadAsociada(b.getEntidadAsociada());
-            dto.setResolucion(null);
+            dto.setEsOfrecidaPorUnicauca(b.getEsOfrecidaPorUnicauca());
+            dto.setTipo(b.getTipo());
+            dto.setTitulo(b.getTitulo());
             dto.setPorcentaje(0f);
             result.add(dto);
         }
@@ -140,7 +146,8 @@ public class GestionMatriculaFinancieraRestController {
 
     private List<MatriculaAcademicaMFDTORespuesta> toMatriculasAcademicasDTO(List<MatriculaAcademica> list) {
         List<MatriculaAcademicaMFDTORespuesta> result = new ArrayList<>();
-        if (list == null) return result;
+        if (list == null)
+            return result;
         for (MatriculaAcademica ma : list) {
             MatriculaAcademicaMFDTORespuesta dto = new MatriculaAcademicaMFDTORespuesta();
             dto.setSemestre(ma.getSemestre());
@@ -153,7 +160,8 @@ public class GestionMatriculaFinancieraRestController {
 
     private List<MateriaMFDTORespuesta> toMateriasDTO(List<Materia> list) {
         List<MateriaMFDTORespuesta> result = new ArrayList<>();
-        if (list == null) return result;
+        if (list == null)
+            return result;
         for (Materia m : list) {
             MateriaMFDTORespuesta dto = new MateriaMFDTORespuesta();
             dto.setCodigo_oid(m.getCodigoOid());
@@ -167,14 +175,16 @@ public class GestionMatriculaFinancieraRestController {
     }
 
     private DocenteMFDTORespuesta toDocenteDTO(Docente d) {
-        if (d == null) return null;
+        if (d == null)
+            return null;
         DocenteMFDTORespuesta dto = new DocenteMFDTORespuesta();
         dto.setNombre(d.getNombre());
         return dto;
     }
 
     private PeriodoMFDTORespuesta toPeriodoDTO(PeriodoAcademico p) {
-        if (p == null) return null;
+        if (p == null)
+            return null;
         PeriodoMFDTORespuesta dto = new PeriodoMFDTORespuesta();
         dto.setPeriodo(p.getPeriodo());
         dto.setAño(p.getAño());
@@ -183,10 +193,13 @@ public class GestionMatriculaFinancieraRestController {
     }
 
     private Float derivarPorcentaje(String tipoDescuento) {
-        if (tipoDescuento == null) return 0f;
+        if (tipoDescuento == null)
+            return 0f;
         String lower = tipoDescuento.toLowerCase();
-        if (lower.contains("votac")) return 10f;
-        if (lower.contains("egresad")) return 5f;
+        if (lower.contains("votac"))
+            return 10f;
+        if (lower.contains("egresad"))
+            return 5f;
         return 0f;
     }
 }

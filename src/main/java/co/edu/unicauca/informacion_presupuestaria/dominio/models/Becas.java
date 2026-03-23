@@ -1,30 +1,32 @@
 package co.edu.unicauca.informacion_presupuestaria.dominio.models;
 
 public class Becas {
-    private String dedicador;
+    private String dedicacion;
     private String entidadAsociada;
+    private String esOfrecidaPorUnicauca;
     private String tipo;
     private String titulo;
     private Estudiante estudiante;
 
-    
     public Becas() {
     }
 
-    public Becas(String dedicador, String entidadAsociada, String tipo, String titulo, Estudiante estudiante) {
-        this.dedicador = dedicador;
+    public Becas(String dedicacion, String entidadAsociada, String esOfrecidaPorUnicauca, String tipo,
+            String titulo, Estudiante estudiante) {
+        this.dedicacion = dedicacion;
         this.entidadAsociada = entidadAsociada;
+        this.esOfrecidaPorUnicauca = esOfrecidaPorUnicauca;
         this.tipo = tipo;
         this.titulo = titulo;
         this.estudiante = estudiante;
     }
 
-    public String getDedicador() {
-        return dedicador;
+    public String getDedicacion() {
+        return dedicacion;
     }
 
-    public void setDedicador(String dedicador) {
-        this.dedicador = dedicador;
+    public void setDedicacion(String dedicacion) {
+        this.dedicacion = dedicacion;
     }
 
     public String getEntidadAsociada() {
@@ -33,6 +35,14 @@ public class Becas {
 
     public void setEntidadAsociada(String entidadAsociada) {
         this.entidadAsociada = entidadAsociada;
+    }
+
+    public String getEsOfrecidaPorUnicauca() {
+        return esOfrecidaPorUnicauca;
+    }
+
+    public void setEsOfrecidaPorUnicauca(String esOfrecidaPorUnicauca) {
+        this.esOfrecidaPorUnicauca = esOfrecidaPorUnicauca;
     }
 
     public String getTipo() {

@@ -78,7 +78,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ConsultaReportePorGrupos obtenerReporteGrupos(PeriodoAcademico periodo) {
         if (periodo == null || periodo.getPeriodo() == null || periodo.getAño() == null) {
             return null;
@@ -118,8 +118,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
                 total += matriculaValor + recursosComp + biblioteca - descuentos;
             }
             configDomain.setIngresosNetos(total);
-            // IMPORTANTE: Recalcular auiValor y valorADistribuir con el nuevo ingresosNetos
             recalcularValoresDistribucion(configDomain);
+
+            // Persistir ingresosNetos y valorADistribuir en el entity para que
+            // los cálculos de items/imprevistos lean siempre el valor correcto
+            configEntity.setIngresosNetos(total);
+            recalcularValoresDistribucion(configEntity);
+            objConfiguracionReporteGrupos.save(configEntity);
+            recalcularPresupuestosPorGrupo(configEntity);
         });
         List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
                 .findByObjConfiguracionReporteGruposId(configEntity.getId());
@@ -211,7 +217,11 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         ReportePorGruposEntity reporte = reporteList.get(0);
         reporte.setParticipacionPrimerSemestre(nuevoValor);
-        ReportePorGruposEntity saved = objReportePorGruposRepository.save(reporte);
+        objReportePorGruposRepository.save(reporte);
+        recalcularPresupuestosPorGrupo(configList.get(0));
+        List<ReportePorGruposEntity> updated = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        ReportePorGruposEntity saved = updated.get(0);
         return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
     }
 
@@ -240,7 +250,11 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         }
         ReportePorGruposEntity reporte = reporteList.get(0);
         reporte.setParticipacionSegundoSemestre(nuevoValor);
-        ReportePorGruposEntity saved = objReportePorGruposRepository.save(reporte);
+        objReportePorGruposRepository.save(reporte);
+        recalcularPresupuestosPorGrupo(configList.get(0));
+        List<ReportePorGruposEntity> updated = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposIdAndObjGrupoId(configId, grupoId);
+        ReportePorGruposEntity saved = updated.get(0);
         return objReportePorGrupos.mappearDeEntityAReportePorGrupos(saved);
     }
 
@@ -354,21 +368,17 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     }
 
     @Override
+    @Transactional
     public GastoGeneral actualizarGastoGeneral(GastoGeneral gasto) {
         if (gasto.getIdGastoGeneral() != null) {
             Optional<GastoGeneralEntity> entityOpt = objGastoGeneral.findById(gasto.getIdGastoGeneral());
             if (entityOpt.isPresent()) {
                 GastoGeneralEntity entity = entityOpt.get();
-                if (gasto.getCategoria() != null) {
-                    entity.setCategoria(gasto.getCategoria());
-                }
-                if (gasto.getDescripcion() != null) {
-                    entity.setDescripcion(gasto.getDescripcion());
-                }
-                if (gasto.getMonto() != null) {
-                    entity.setMonto(gasto.getMonto());
-                }
+                if (gasto.getCategoria() != null) entity.setCategoria(gasto.getCategoria());
+                if (gasto.getDescripcion() != null) entity.setDescripcion(gasto.getDescripcion());
+                if (gasto.getMonto() != null) entity.setMonto(gasto.getMonto());
                 GastoGeneralEntity saved = objGastoGeneral.save(entity);
+                recalcularYPersistirDistribucion(entity.getObjConfiguracionReporteGrupos().getId());
                 return objGastoGeneralMapper.mappearDeEntityAGastoGeneral(saved);
             }
         }
@@ -376,32 +386,32 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     }
 
     @Override
+    @Transactional
     public GastoGeneral crearGastoGeneral(GastoGeneral gasto) {
         Long configId = gasto.getObjConfiguracionReporteGrupos() != null
                 ? gasto.getObjConfiguracionReporteGrupos().getId()
                 : null;
-        if (configId == null) {
-            return null;
-        }
+        if (configId == null) return null;
         Optional<ConfiguracionReporteGruposEntity> configOpt = objConfiguracionReporteGrupos.findById(configId);
-        if (configOpt.isEmpty()) {
-            return null;
-        }
+        if (configOpt.isEmpty()) return null;
         ConfiguracionReporteGruposEntity config = configOpt.get();
         GastoGeneralEntity entity = objGastoGeneralMapper.mappearGastoGeneralAEntity(gasto);
         entity.setObjConfiguracionReporteGrupos(config);
         entity.setIdGastoGeneral(null);
         GastoGeneralEntity saved = objGastoGeneral.save(entity);
+        recalcularYPersistirDistribucion(configId);
         return objGastoGeneralMapper.mappearDeEntityAGastoGeneral(saved);
     }
 
     @Override
+    @Transactional
     public Boolean eliminarGastoGeneral(Integer idGastoGeneral) {
-        if (objGastoGeneral.existsById(idGastoGeneral)) {
-            objGastoGeneral.deleteById(idGastoGeneral);
-            return true;
-        }
-        return false;
+        Optional<GastoGeneralEntity> gastoOpt = objGastoGeneral.findById(idGastoGeneral);
+        if (gastoOpt.isEmpty()) return false;
+        Long configId = gastoOpt.get().getObjConfiguracionReporteGrupos().getId();
+        objGastoGeneral.deleteById(idGastoGeneral);
+        recalcularYPersistirDistribucion(configId);
+        return true;
     }
 
     @Override
@@ -418,6 +428,10 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setItem1(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
+
+        // Recalcular presupuestos por grupo basados en el nuevo item1
+        recalcularPresupuestosPorGrupo(config);
+
         List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
                 .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
@@ -440,6 +454,10 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setItem2(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
+
+        // Recalcular presupuestos por grupo basados en el nuevo item2
+        recalcularPresupuestosPorGrupo(config);
+
         List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
                 .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
@@ -463,6 +481,7 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         ConfiguracionReporteGruposEntity config = configList.get(0);
         config.setImprevistos(nuevoValor);
         objConfiguracionReporteGrupos.save(config);
+        recalcularPresupuestosPorGrupo(config);
         List<ReportePorGruposEntity> reporteList = objReportePorGruposRepository
                 .findByObjConfiguracionReporteGruposId(config.getId());
         if (reporteList != null && !reporteList.isEmpty()) {
@@ -543,5 +562,73 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             return valor / 100f;
         }
         return valor;
+    }
+
+    /**
+     * Recarga el config desde BD (para obtener lista de gastos actualizada),
+     * recalcula valorADistribuir, lo persiste y recalcula presupuestos por grupo.
+     */
+    @Transactional
+    private void recalcularYPersistirDistribucion(Long configId) {
+        objConfiguracionReporteGrupos.findById(configId).ifPresent(freshConfig -> {
+            recalcularValoresDistribucion(freshConfig);
+            objConfiguracionReporteGrupos.save(freshConfig);
+            recalcularPresupuestosPorGrupo(freshConfig);
+        });
+    }
+
+    /**
+     * Recalcula los presupuestos por grupo basados en los valores actuales de item1
+     * e item2
+     */
+    private void recalcularPresupuestosPorGrupo(ConfiguracionReporteGruposEntity config) {
+        List<ReportePorGruposEntity> reportes = objReportePorGruposRepository
+                .findByObjConfiguracionReporteGruposId(config.getId());
+
+        if (reportes != null && !reportes.isEmpty()) {
+            float valorADistribuir = config.getValorADistribuir() != null ? config.getValorADistribuir() : 0f;
+            float item1 = config.getItem1() != null ? config.getItem1() : 0f;
+            float item2 = config.getItem2() != null ? config.getItem2() : 0f;
+            float imprevistosRatio = config.getImprevistos() != null ? config.getImprevistos() : 0f;
+
+            // Convertir items de ratio a porcentaje si están en formato ratio (0-1)
+            if (item1 <= 1f) item1 = item1 * 100f;
+            if (item2 <= 1f) item2 = item2 * 100f;
+            // imprevistos se guarda como ratio (0-1)
+            if (imprevistosRatio > 1f) imprevistosRatio /= 100f;
+
+            int numGrupos = reportes.size();
+
+            for (ReportePorGruposEntity reporte : reportes) {
+                // Recalcular participacionPorAño desde p1 y p2 (ambos en ratio 0-1 en BD)
+                float p1 = reporte.getParticipacionPrimerSemestre() != null ? reporte.getParticipacionPrimerSemestre() : 0f;
+                float p2 = reporte.getParticipacionSegundoSemestre() != null ? reporte.getParticipacionSegundoSemestre() : 0f;
+                if (p1 > 1f) p1 /= 100f;
+                if (p2 > 1f) p2 /= 100f;
+                float participacionPorAño = (p1 + p2) / 2f;
+                reporte.setParticipacionPorAño(participacionPorAño);
+
+                // Item1: distribución IGUAL entre todos los grupos
+                float presupuestoItem1 = numGrupos > 0 ? (valorADistribuir * (item1 / 100f)) / numGrupos : 0f;
+                reporte.setPresupuestoPorGrupoItem1(presupuestoItem1);
+
+                // Item2: distribución PROPORCIONAL según participación del grupo
+                float presupuestoItem2 = (valorADistribuir * (item2 / 100f)) * participacionPorAño;
+                reporte.setPresupuestoPorGrupoItem2(presupuestoItem2);
+
+                // Presupuesto total por grupo (item1 + item2)
+                float presupuestoTotal = presupuestoItem1 + presupuestoItem2;
+                reporte.setPresupuestoPorGrupo(presupuestoTotal);
+
+                // Imprevistos: monto = presupuestoTotal * imprevistosRatio
+                float imprevistosAmount = presupuestoTotal * imprevistosRatio;
+                reporte.setImprevistos(imprevistosAmount);
+
+                // Presupuesto por grupo con imprevistos incluidos
+                reporte.setPresupuestoPorGrupoImprevistos(presupuestoTotal + imprevistosAmount);
+
+                objReportePorGruposRepository.save(reporte);
+            }
+        }
     }
 }

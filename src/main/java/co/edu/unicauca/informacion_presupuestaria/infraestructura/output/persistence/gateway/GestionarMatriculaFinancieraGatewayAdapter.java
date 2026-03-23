@@ -53,15 +53,18 @@ public class GestionarMatriculaFinancieraGatewayAdapter implements GestionarMatr
     @Transactional(readOnly = true)
     public List<Estudiante> obtenerEstudiantesPorPeriodo(Integer periodo, Integer anio) {
         Optional<PeriodoAcademicoEntity> periodoOpt = periodoRepo.findByPeriodoAndAño(periodo, anio);
-        if (periodoOpt.isEmpty()) return List.of();
+        if (periodoOpt.isEmpty())
+            return List.of();
 
-        List<MatriculaFinancieraEntity> matriculas = matriculaRepo.findByObjPeriodoAcademicoId(periodoOpt.get().getId());
+        List<MatriculaFinancieraEntity> matriculas = matriculaRepo
+                .findByObjPeriodoAcademicoId(periodoOpt.get().getId());
 
         // Deduplicate: one entry per student, include only the current-period matricula
         Map<String, Estudiante> estudiantesMap = new LinkedHashMap<>();
         for (MatriculaFinancieraEntity mf : matriculas) {
             EstudianteEntity e = mf.getObjEstudiante();
-            if (e == null) continue;
+            if (e == null)
+                continue;
             if (estudiantesMap.containsKey(e.getCodigo())) {
                 // Add this matricula to the already-created student
                 estudiantesMap.get(e.getCodigo()).getMatriculasFinancieras().add(mapearMatricula(mf));
@@ -122,19 +125,20 @@ public class GestionarMatriculaFinancieraGatewayAdapter implements GestionarMatr
     @Override
     @Transactional(readOnly = true)
     public List<Estudiante> obtenerEstudiantesDesdeProyeccion(PeriodoAcademico periodo) {
-        Optional<PeriodoAcademicoEntity> periodoOpt = periodoRepo.findByPeriodoAndAño(periodo.getPeriodo(), periodo.getAño());
-        if (periodoOpt.isEmpty()) return List.of();
+        Optional<PeriodoAcademicoEntity> periodoOpt = periodoRepo.findByPeriodoAndAño(periodo.getPeriodo(),
+                periodo.getAño());
+        if (periodoOpt.isEmpty())
+            return List.of();
 
         List<Estudiante> resultado = new ArrayList<>();
-        proyeccionRepo.findByObjPeriodoAcademicoId(periodoOpt.get().getId()).forEach(proy ->
-            estudianteRepo.findByCodigo(proy.getCodigoEstudiante()).ifPresent(e -> {
-                Estudiante est = buildEstudiante(e);
-                est.setMatriculasFinancieras(List.of());
-                est.setDescuentos(mapearDescuentos(e));
-                est.setBecas(List.of());
-                resultado.add(est);
-            })
-        );
+        proyeccionRepo.findByObjPeriodoAcademicoId(periodoOpt.get().getId())
+                .forEach(proy -> estudianteRepo.findByCodigo(proy.getCodigoEstudiante()).ifPresent(e -> {
+                    Estudiante est = buildEstudiante(e);
+                    est.setMatriculasFinancieras(List.of());
+                    est.setDescuentos(mapearDescuentos(e));
+                    est.setBecas(List.of());
+                    resultado.add(est);
+                }));
         return resultado;
     }
 
@@ -142,12 +146,14 @@ public class GestionarMatriculaFinancieraGatewayAdapter implements GestionarMatr
     @Transactional
     public void guardarMatriculaFinanciera(MatriculaFinanciera matricula) {
         if (matricula == null || matricula.getObjEstudiante() == null
-                || matricula.getObjPeriodoAcademico() == null) return;
+                || matricula.getObjPeriodoAcademico() == null)
+            return;
 
         Optional<PeriodoAcademicoEntity> periodoOpt = periodoRepo.findByPeriodoAndAño(
                 matricula.getObjPeriodoAcademico().getPeriodo(),
                 matricula.getObjPeriodoAcademico().getAño());
-        if (periodoOpt.isEmpty()) return;
+        if (periodoOpt.isEmpty())
+            return;
 
         estudianteRepo.findByCodigo(matricula.getObjEstudiante().getCodigo()).ifPresent(e -> {
             MatriculaFinancieraEntity entity = new MatriculaFinancieraEntity();
@@ -165,8 +171,8 @@ public class GestionarMatriculaFinancieraGatewayAdapter implements GestionarMatr
     public void guardarDescuento(String codigoEstudiante, String tipoDescuento) {
         estudianteRepo.findByCodigo(codigoEstudiante).ifPresent(e -> {
             DescuentosEntity desc = new DescuentosEntity();
-            desc.setTipoDescuento(tipoDescuento);
-            desc.setEstado("ACTIVO");
+            desc.setTipodes(tipoDescuento);
+            desc.setEstado(true);
             desc.setObjEstudiante(e);
             descuentosRepo.save(desc);
         });
@@ -177,8 +183,7 @@ public class GestionarMatriculaFinancieraGatewayAdapter implements GestionarMatr
     private Estudiante buildEstudiante(EstudianteEntity e) {
         return new Estudiante(
                 e.getId(), e.getIdentificacion(), e.getApellido(), e.getNombre(),
-                e.getCodigo(), e.getCohorte(), e.getPeriodoIngreso(), e.getSemestreFinanciero()
-        );
+                e.getCodigo(), e.getCohorte(), e.getPeriodoIngreso(), e.getSemestreFinanciero());
     }
 
     private MatriculaFinanciera mapearMatricula(MatriculaFinancieraEntity mf) {
@@ -198,13 +203,20 @@ public class GestionarMatriculaFinancieraGatewayAdapter implements GestionarMatr
 
     private List<Descuentos> mapearDescuentos(EstudianteEntity e) {
         List<Descuentos> lista = new ArrayList<>();
-        if (e.getDescuentos() == null) return lista;
+        if (e.getDescuentos() == null)
+            return lista;
         for (DescuentosEntity d : e.getDescuentos()) {
             Descuentos desc = new Descuentos();
-            desc.setTipoDescuento(d.getTipoDescuento());
+            desc.setTipodes(d.getTipodes());
+            desc.setPorcentajedes(d.getPorcentajedes());
             desc.setEstado(d.getEstado());
-            desc.setFechaInicio(d.getFechaInicio());
-            desc.setFechaFin(d.getFechaFin());
+            desc.setFechainiciodes(d.getFechainiciodes());
+            desc.setFechafindes(d.getFechafindes());
+            desc.setNumactades(d.getNumactades());
+            desc.setFechaactades(d.getFechaactades());
+            desc.setNumresoldes(d.getNumresoldes());
+            desc.setResoluciondes(d.getResoluciondes());
+            desc.setPoliza(d.getPoliza());
             lista.add(desc);
         }
         return lista;

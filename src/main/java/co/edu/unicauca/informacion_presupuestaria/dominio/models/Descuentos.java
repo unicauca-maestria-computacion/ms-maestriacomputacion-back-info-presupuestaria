@@ -4,68 +4,99 @@ import java.util.Date;
 
 public class Descuentos {
 
-    private Date fechaInicio;
-    private Date fechaFin;
-    private String tipoDescuento;
-    private String numActaDes;
-    private Date fechaActaDes;
+    private Date fechainiciodes;
+    private Date fechafindes;
+    private String tipodes;
+    private Integer porcentajedes;
+    private String numactades;
+    private Date fechaactades;
+    private String numresoldes;
+    private String resoluciondes;
     private String poliza;
-    private String estado;
+    private Boolean estado;
     private Estudiante estudiante;
 
     public Descuentos() {
     }
 
-    public Descuentos(Date fechaInicio, Date fechaFin, String tipoDescuento, String numActaDes, 
-                     Date fechaActaDes, String poliza, String estado, Estudiante estudiante) {
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.tipoDescuento = tipoDescuento;
-        this.numActaDes = numActaDes;
-        this.fechaActaDes = fechaActaDes;
+    public Descuentos(Date fechainiciodes, Date fechafindes, String tipodes, Integer porcentajedes,
+            String numactades, Date fechaactades, String numresoldes, String resoluciondes,
+            String poliza, Boolean estado, Estudiante estudiante) {
+        this.fechainiciodes = fechainiciodes;
+        this.fechafindes = fechafindes;
+        this.tipodes = tipodes;
+        this.porcentajedes = porcentajedes;
+        this.numactades = numactades;
+        this.fechaactades = fechaactades;
+        this.numresoldes = numresoldes;
+        this.resoluciondes = resoluciondes;
         this.poliza = poliza;
         this.estado = estado;
         this.estudiante = estudiante;
     }
 
-    public Date getFechaInicio() {
-        return fechaInicio;
+    public Date getFechainiciodes() {
+        return fechainiciodes;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setFechainiciodes(Date fechainiciodes) {
+        this.fechainiciodes = fechainiciodes;
     }
 
-    public Date getFechaFin() {
-        return fechaFin;
+    public Date getFechafindes() {
+        return fechafindes;
     }
 
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
+    public void setFechafindes(Date fechafindes) {
+        this.fechafindes = fechafindes;
     }
 
-    public String getTipoDescuento() {
-        return tipoDescuento;
+    public String getTipodes() {
+        return tipodes;
     }
 
-    public void setTipoDescuento(String tipoDescuento) {
-        this.tipoDescuento = tipoDescuento;
+    public void setTipodes(String tipodes) {
+        this.tipodes = tipodes;
     }
 
-    public String getNumActaDes() {
-        return numActaDes;
+    public Integer getPorcentajedes() {
+        return porcentajedes;
     }
 
-    public void setNumActaDes(String numActaDes) {
-        this.numActaDes = numActaDes;
+    public void setPorcentajedes(Integer porcentajedes) {
+        this.porcentajedes = porcentajedes;
     }
 
-    public Date getFechaActaDes() {
-        return fechaActaDes;
+    public String getNumactades() {
+        return numactades;
     }
 
-    public void setFechaActaDes(Date fechaActaDes) {
-        this.fechaActaDes = fechaActaDes;
+    public void setNumactades(String numactades) {
+        this.numactades = numactades;
+    }
+
+    public Date getFechaactades() {
+        return fechaactades;
+    }
+
+    public void setFechaactades(Date fechaactades) {
+        this.fechaactades = fechaactades;
+    }
+
+    public String getNumresoldes() {
+        return numresoldes;
+    }
+
+    public void setNumresoldes(String numresoldes) {
+        this.numresoldes = numresoldes;
+    }
+
+    public String getResoluciondes() {
+        return resoluciondes;
+    }
+
+    public void setResoluciondes(String resoluciondes) {
+        this.resoluciondes = resoluciondes;
     }
 
     public String getPoliza() {
@@ -76,11 +107,11 @@ public class Descuentos {
         this.poliza = poliza;
     }
 
-    public String getEstado() {
+    public Boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Boolean estado) {
         this.estado = estado;
     }
 
