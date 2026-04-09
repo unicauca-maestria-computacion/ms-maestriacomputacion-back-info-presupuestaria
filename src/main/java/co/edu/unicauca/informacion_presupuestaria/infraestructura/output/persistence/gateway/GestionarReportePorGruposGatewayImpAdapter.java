@@ -111,11 +111,14 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
             Collection<ProyeccionEstudianteEntity> unique = uniqueMap.values();
             float total = 0f;
             for (ProyeccionEstudianteEntity est : unique) {
-                float beca = toRatio(orZero(est.getPorcentajeBeca()));
-                float egresado = toRatio(orZero(est.getPorcentajeEgresado()));
-                float votacion = toRatio(orZero(est.getPorcentajeVotacion()));
-                float descuentos = (beca + egresado + votacion) * matriculaValor;
-                total += matriculaValor + recursosComp + biblioteca - descuentos;
+                // Solo sumar proyecciones que han sido marcadas como pagadas
+                if (Boolean.TRUE.equals(est.getEstaPago())) {
+                    float beca = toRatio(orZero(est.getPorcentajeBeca()));
+                    float egresado = toRatio(orZero(est.getPorcentajeEgresado()));
+                    float votacion = toRatio(orZero(est.getPorcentajeVotacion()));
+                    float descuentos = (beca + egresado + votacion) * matriculaValor;
+                    total += matriculaValor + recursosComp + biblioteca - descuentos;
+                }
             }
             configDomain.setIngresosNetos(total);
             recalcularValoresDistribucion(configDomain);
