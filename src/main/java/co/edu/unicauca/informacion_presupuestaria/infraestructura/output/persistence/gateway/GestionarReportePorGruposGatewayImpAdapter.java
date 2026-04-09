@@ -398,6 +398,12 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
         GastoGeneralEntity entity = objGastoGeneralMapper.mappearGastoGeneralAEntity(gasto);
         entity.setObjConfiguracionReporteGrupos(config);
         entity.setIdGastoGeneral(null);
+        
+        // Agregar a la colección para asegurar que el recálculo sea correcto en la misma transacción
+        if (config.getGastosGenerales() != null) {
+            config.getGastosGenerales().add(entity);
+        }
+
         GastoGeneralEntity saved = objGastoGeneral.save(entity);
         recalcularYPersistirDistribucion(configId);
         return objGastoGeneralMapper.mappearDeEntityAGastoGeneral(saved);
@@ -408,8 +414,17 @@ public class GestionarReportePorGruposGatewayImpAdapter implements GestionarRepo
     public Boolean eliminarGastoGeneral(Integer idGastoGeneral) {
         Optional<GastoGeneralEntity> gastoOpt = objGastoGeneral.findById(idGastoGeneral);
         if (gastoOpt.isEmpty()) return false;
-        Long configId = gastoOpt.get().getObjConfiguracionReporteGrupos().getId();
-        objGastoGeneral.deleteById(idGastoGeneral);
+        
+        GastoGeneralEntity gasto = gastoOpt.get();
+        ConfiguracionReporteGruposEntity config = gasto.getObjConfiguracionReporteGrupos();
+        Long configId = config.getId();
+        
+        // Eliminar de la colección del padre para evitar ObjectDeletedException al guardar el padre
+        if (config.getGastosGenerales() != null) {
+            config.getGastosGenerales().remove(gasto);
+        }
+        
+        objGastoGeneral.delete(gasto);
         recalcularYPersistirDistribucion(configId);
         return true;
     }
