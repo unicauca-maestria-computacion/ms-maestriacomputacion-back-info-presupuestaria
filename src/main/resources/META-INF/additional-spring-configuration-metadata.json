@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "matricula.financiera.base-url",
+      "type": "java.lang.String",
+      "description": "Base URL del microservicio ms-matricula-financiera."
+    },
+    {
+      "name": "matricula.financiera.connect-timeout-ms",
+      "type": "java.lang.Long",
+      "description": "Timeout de conexión en milisegundos para el cliente HTTP de ms-matricula-financiera."
+    },
+    {
+      "name": "matricula.financiera.read-timeout-ms",
+      "type": "java.lang.Long",
+      "description": "Timeout de lectura en milisegundos para el cliente HTTP de ms-matricula-financiera."
+    }
+  ]
+}

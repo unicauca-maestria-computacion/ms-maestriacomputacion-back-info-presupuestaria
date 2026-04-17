@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: informacion_presupuestaria
+  profiles:
+    active: dev
+  messages:
+    basename: ValidationMessages
+    encoding: UTF-8
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+  sql:
+    init:
+      continue-on-error: true
+  devtools:
+    restart:
+      log-condition-evaluation-delta: false
+
+server:
+  port: 8091
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+matricula:
+  financiera:
+    base-url: http://localhost:8092
+    connect-timeout-ms: 5000
+    read-timeout-ms: 30000

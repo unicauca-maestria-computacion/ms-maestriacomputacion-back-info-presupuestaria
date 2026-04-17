@@ -1,41 +1,50 @@
 HELP.md
+
+# Maven build output
 target/
-.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Maven wrapper jar (se descarga automáticamente)
+.mvn/wrapper/maven-wrapper.jar
 
-### IntelliJ IDEA ###
-.idea
+# ArchUnit frozen violations store (runtime-generated, no es código fuente)
+.archunit_store/
+
+# jqwik property test database (runtime-generated)
+.jqwik-database
+
+# IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
 
-### VS Code ###
+# VS Code
 .vscode/
 
-### Temporary and OS files ###
-*.tmp.*
+# OS
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
 *.tmp
 *.bak
 *~
-.DS_Store
-Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Credenciales locales hardcodeadas (usar variables de entorno en su lugar)
+application-local.properties
+application-local.yml
