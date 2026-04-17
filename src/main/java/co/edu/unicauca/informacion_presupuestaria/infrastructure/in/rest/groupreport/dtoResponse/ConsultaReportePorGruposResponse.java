@@ -7,6 +7,7 @@ public class ConsultaReportePorGruposResponse {
 
     private PeriodoAcademicoResponseDto periodo;
     private Integer anio;
+    private Boolean esEditable;
     private BigDecimal ingresoPeriodo1;
     private BigDecimal ingresoPeriodo2;
     private BigDecimal auiPorcentaje;
@@ -38,6 +39,14 @@ public class ConsultaReportePorGruposResponse {
 
     public void setAnio(Integer anio) {
         this.anio = anio;
+    }
+
+    public Boolean getEsEditable() {
+        return esEditable;
+    }
+
+    public void setEsEditable(Boolean esEditable) {
+        this.esEditable = esEditable;
     }
 
     public BigDecimal getIngresoPeriodo1() {

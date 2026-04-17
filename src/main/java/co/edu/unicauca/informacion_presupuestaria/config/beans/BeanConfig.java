@@ -13,6 +13,7 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentProjec
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinancialReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.FinancialEnrollmentClientMapper;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.FinancialEnrollmentHttpAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,25 +44,33 @@ public class BeanConfig {
     }
 
     @Bean
+    public FinancialCalculationService financialCalculationService() {
+        return new FinancialCalculationService();
+    }
+
+    @Bean
     public ManageStudentProjectionUseCase manageStudentProjectionUseCase(
             StudentProjectionGatewayPort gateway,
-            FinancialEnrollmentClientPort financialEnrollmentClient) {
-        return new ManageStudentProjectionUseCaseImpl(gateway, financialEnrollmentClient);
+            FinancialEnrollmentClientPort financialEnrollmentClient,
+            FinancialCalculationService calculationService) {
+        return new ManageStudentProjectionUseCaseImpl(gateway, financialEnrollmentClient, calculationService);
     }
 
     @Bean
     public ManageStudentFinancialReportUseCase manageStudentFinancialReportUseCase(
             StudentFinancialReportGatewayPort gateway,
-            FinancialEnrollmentClientPort financialEnrollmentClient) {
-        return new ManageStudentFinancialReportUseCaseImpl(gateway, financialEnrollmentClient);
+            FinancialEnrollmentClientPort financialEnrollmentClient,
+            FinancialCalculationService calculationService) {
+        return new ManageStudentFinancialReportUseCaseImpl(gateway, financialEnrollmentClient, calculationService);
     }
 
     @Bean
     public ManageGroupReportUseCase manageGroupReportUseCase(
             GroupReportGatewayPort gateway,
             StudentFinancialReportGatewayPort reporteEstudiantesGateway,
-            FinancialEnrollmentClientPort financialEnrollmentClient) {
+            FinancialEnrollmentClientPort financialEnrollmentClient,
+            FinancialCalculationService calculationService) {
         return new ManageGroupReportUseCaseImpl(
-                gateway, reporteEstudiantesGateway, financialEnrollmentClient);
+                gateway, reporteEstudiantesGateway, financialEnrollmentClient, calculationService);
     }
 }

@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageGroupReportUseCase;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinancialReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportQuery;
@@ -18,6 +18,7 @@ import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupParticipatio
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReport;
+import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.EntityNotFoundException;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.BusinessRuleViolatedException;
 
@@ -26,14 +27,17 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
     private final GroupReportGatewayPort gateway;
     private final StudentFinancialReportGatewayPort reporteEstudiantesGateway;
     private final FinancialEnrollmentClientPort matriculaFinancieraClient;
+    private final FinancialCalculationService calculationService;
 
     public ManageGroupReportUseCaseImpl(
             GroupReportGatewayPort gateway,
             StudentFinancialReportGatewayPort reporteEstudiantesGateway,
-            FinancialEnrollmentClientPort matriculaFinancieraClient) {
+            FinancialEnrollmentClientPort matriculaFinancieraClient,
+            FinancialCalculationService calculationService) {
         this.gateway = gateway;
         this.reporteEstudiantesGateway = reporteEstudiantesGateway;
         this.matriculaFinancieraClient = matriculaFinancieraClient;
+        this.calculationService = calculationService;
     }
 
     @Override
@@ -78,12 +82,17 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         List<GroupReport> reportesPorGrupo = calcularReportesPorGrupo(
                 config.getParticipaciones(), valorADistribuir, config);
 
+        boolean esEditable = periodosDelAnio.stream()
+                .anyMatch(p -> AcademicPeriodStatus.ACTIVO.equals(p.getEstado())
+                        || (p.getFechaFin() != null && !java.time.LocalDate.now().isAfter(p.getFechaFin())));
+
         GroupReportQuery result = new GroupReportQuery();
         result.setAnio(anio);
         result.setPeriodoPrimerSemestre(periodo1);
         result.setPeriodoSegundoSemestre(periodo2);
         result.setPeriodo(periodoConfig);
         result.setConfiguracion(config);
+        result.setEsEditable(esEditable);
         result.setIngresoPeriodo1(ingreso1);
         result.setIngresoPeriodo2(ingreso2);
         result.setTotalIngresos(totalIngresos);
@@ -260,13 +269,13 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
     }
 
     private BigDecimal calcularTotalIngresos(AcademicPeriod periodo) {
-        FinancialReportConfig configFinanciero = reporteEstudiantesGateway
+        FinancialReportConfig config = reporteEstudiantesGateway
                 .obtenerConfiguracionReporteFinanciero(periodo.getId())
                 .orElse(null);
 
-        if (configFinanciero == null
-                || configFinanciero.getValorSMLV() == null
-                || configFinanciero.getValorSMLV().compareTo(BigDecimal.ZERO) <= 0) {
+        if (config == null
+                || config.getValorSMLV() == null
+                || config.getValorSMLV().compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
 
@@ -276,50 +285,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         List<StudentProjection> proyecciones =
                 reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(periodo.getId(), null)
                         .stream()
-                        .filter(p -> Boolean.TRUE.equals(p.getEstaPago()))
                         .filter(p -> p.getCodigoEstudiante() != null)
                         .collect(Collectors.toList());
 
-        BigDecimal totalNeto = proyecciones.stream()
-                .map(p -> {
-                    Integer valorEnSMLV = estudiantes.stream()
-                            .filter(e -> e.getCodigo() != null && e.getCodigo().equals(p.getCodigoEstudiante()))
-                            .map(Student::getValorEnSMLV)
-                            .filter(v -> v != null)
-                            .findFirst()
-                            .orElse(null);
-                    if (valorEnSMLV == null) return BigDecimal.ZERO;
-                    return configFinanciero.getValorSMLV()
-                            .multiply(BigDecimal.valueOf(valorEnSMLV));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-
-        BigDecimal totalDescuentos = proyecciones.stream()
-                .map(p -> {
-                    Integer valorEnSMLV = estudiantes.stream()
-                            .filter(e -> e.getCodigo() != null && e.getCodigo().equals(p.getCodigoEstudiante()))
-                            .map(Student::getValorEnSMLV)
-                            .filter(v -> v != null)
-                            .findFirst()
-                            .orElse(null);
-                    if (valorEnSMLV == null) return BigDecimal.ZERO;
-                    BigDecimal valorMatricula = configFinanciero.getValorSMLV()
-                            .multiply(BigDecimal.valueOf(valorEnSMLV));
-                    BigDecimal totalPorcentaje = BigDecimal.ZERO;
-                    if (p.getPorcentajeBeca() != null) totalPorcentaje = totalPorcentaje.add(p.getPorcentajeBeca());
-                    BigDecimal pctVotacion = configFinanciero.getPorcentajeVotacionFijo() != null
-                            ? configFinanciero.getPorcentajeVotacionFijo() : new BigDecimal("0.10");
-                    BigDecimal pctEgresado = configFinanciero.getPorcentajeEgresadoFijo() != null
-                            ? configFinanciero.getPorcentajeEgresadoFijo() : new BigDecimal("0.05");
-                    if (Boolean.TRUE.equals(p.getAplicaVotacion())) totalPorcentaje = totalPorcentaje.add(pctVotacion);
-                    if (Boolean.TRUE.equals(p.getAplicaEgresado())) totalPorcentaje = totalPorcentaje.add(pctEgresado);
-                    return valorMatricula.multiply(totalPorcentaje).setScale(2, RoundingMode.HALF_UP);
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-
-        return totalNeto.subtract(totalDescuentos).setScale(2, RoundingMode.HALF_UP);
+        return calculationService.calcular(proyecciones, estudiantes, config).getTotalIngresos();
     }
 
     private List<GroupReport> calcularReportesPorGrupo(

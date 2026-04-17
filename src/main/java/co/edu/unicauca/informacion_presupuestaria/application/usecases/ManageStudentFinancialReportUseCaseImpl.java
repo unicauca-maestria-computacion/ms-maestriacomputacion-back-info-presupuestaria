@@ -1,7 +1,6 @@
 package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +12,7 @@ import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
+import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.EntityNotFoundException;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.BusinessRuleViolatedException;
 
@@ -20,12 +20,15 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
 
     private final StudentFinancialReportGatewayPort gateway;
     private final FinancialEnrollmentClientPort matriculaFinancieraClient;
+    private final FinancialCalculationService calculationService;
 
     public ManageStudentFinancialReportUseCaseImpl(
             StudentFinancialReportGatewayPort gateway,
-            FinancialEnrollmentClientPort matriculaFinancieraClient) {
+            FinancialEnrollmentClientPort matriculaFinancieraClient,
+            FinancialCalculationService calculationService) {
         this.gateway = gateway;
         this.matriculaFinancieraClient = matriculaFinancieraClient;
+        this.calculationService = calculationService;
     }
 
     @Override
@@ -61,18 +64,16 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
 
         List<StudentProjection> proyecciones = gateway.obtenerProyeccionesPorPeriodo(
                 periodoSolicitado.getId(), null);
-
         List<Student> estudiantes = matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(
                 tagPeriodo, anio);
 
         List<StudentProjection> enriquecidas = enriquecerProyecciones(proyecciones, estudiantes);
 
-        BigDecimal totalNeto = calcularTotalNeto(enriquecidas, estudiantes, config.getValorSMLV());
-        BigDecimal totalDescuentos = calcularTotalDescuentos(enriquecidas, estudiantes, config.getValorSMLV(), config);
-        BigDecimal totalIngresos = totalNeto.subtract(totalDescuentos);
+        FinancialCalculationService.Totales totales = calculationService.calcular(
+                enriquecidas, estudiantes, config);
 
         return new StudentFinancialReport(enriquecidas, config, periodoSolicitado,
-                totalNeto, totalDescuentos, totalIngresos);
+                totales.getTotalNeto(), totales.getTotalDescuentos(), totales.getTotalIngresos());
     }
 
     @Override
@@ -82,7 +83,6 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
                 .orElseThrow(() -> new EntityNotFoundException(
                         "No existe una configuración con el ID: " + id,
                         "ENTIDAD_NO_ENCONTRADA"));
-
         configuracion.setId(id);
         return gateway.guardarConfiguracionReporteFinanciero(configuracion);
     }
@@ -93,7 +93,6 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
                 .orElseThrow(() -> new EntityNotFoundException(
                         "No existe el período académico " + tagPeriodo + "-" + anio,
                         "ENTIDAD_NO_ENCONTRADA"));
-
         return gateway.obtenerConfiguracionReporteFinanciero(periodo.getId())
                 .map(FinancialReportConfig::getId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -102,9 +101,7 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
     }
 
     private boolean esPeriodoAnterior(AcademicPeriod solicitado, AcademicPeriod proyeccion) {
-        if (solicitado.getAño() < proyeccion.getAño()) {
-            return true;
-        }
+        if (solicitado.getAño() < proyeccion.getAño()) return true;
         if (solicitado.getAño().equals(proyeccion.getAño())) {
             return solicitado.getTagPeriodo() < proyeccion.getTagPeriodo();
         }
@@ -125,54 +122,5 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
                     });
             return p;
         }).filter(p -> p.getValorEnSMLV() != null).collect(Collectors.toList());
-    }
-
-    private BigDecimal calcularTotalNeto(List<StudentProjection> proyecciones,
-                                         List<Student> estudiantes,
-                                         BigDecimal valorSMLV) {
-        return proyecciones.stream()
-                .filter(p -> Boolean.TRUE.equals(p.getEstaPago()) && p.getCodigoEstudiante() != null)
-                .map(p -> {
-                    Integer valorEnSMLV = estudiantes.stream()
-                            .filter(e -> e.getCodigo() != null && e.getCodigo().equals(p.getCodigoEstudiante()))
-                            .map(Student::getValorEnSMLV)
-                            .filter(v -> v != null)
-                            .findFirst()
-                            .orElse(null);
-                    if (valorEnSMLV == null) return BigDecimal.ZERO;
-                    return valorSMLV.multiply(BigDecimal.valueOf(valorEnSMLV));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
-
-    private BigDecimal calcularTotalDescuentos(List<StudentProjection> proyecciones,
-                                                List<Student> estudiantes,
-                                                BigDecimal valorSMLV,
-                                                FinancialReportConfig config) {
-        BigDecimal pctVotacion = config.getPorcentajeVotacionFijo() != null
-                ? config.getPorcentajeVotacionFijo() : new BigDecimal("0.10");
-        BigDecimal pctEgresado = config.getPorcentajeEgresadoFijo() != null
-                ? config.getPorcentajeEgresadoFijo() : new BigDecimal("0.05");
-
-        return proyecciones.stream()
-                .filter(p -> Boolean.TRUE.equals(p.getEstaPago()) && p.getCodigoEstudiante() != null)
-                .map(p -> {
-                    Integer valorEnSMLV = estudiantes.stream()
-                            .filter(e -> e.getCodigo() != null && e.getCodigo().equals(p.getCodigoEstudiante()))
-                            .map(Student::getValorEnSMLV)
-                            .filter(v -> v != null)
-                            .findFirst()
-                            .orElse(null);
-                    if (valorEnSMLV == null) return BigDecimal.ZERO;
-                    BigDecimal valorMatricula = valorSMLV.multiply(BigDecimal.valueOf(valorEnSMLV));
-                    BigDecimal totalPorcentaje = BigDecimal.ZERO;
-                    if (Boolean.TRUE.equals(p.getAplicaVotacion())) totalPorcentaje = totalPorcentaje.add(pctVotacion);
-                    if (p.getPorcentajeBeca() != null) totalPorcentaje = totalPorcentaje.add(p.getPorcentajeBeca());
-                    if (Boolean.TRUE.equals(p.getAplicaEgresado())) totalPorcentaje = totalPorcentaje.add(pctEgresado);
-                    return valorMatricula.multiply(totalPorcentaje).setScale(2, RoundingMode.HALF_UP);
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
     }
 }

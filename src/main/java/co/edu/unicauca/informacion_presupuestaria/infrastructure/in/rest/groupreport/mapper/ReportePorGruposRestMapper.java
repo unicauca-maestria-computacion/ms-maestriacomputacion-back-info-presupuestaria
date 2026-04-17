@@ -30,6 +30,7 @@ public class ReportePorGruposRestMapper {
         ConsultaReportePorGruposResponse dto = new ConsultaReportePorGruposResponse();
         dto.setPeriodo(periodoMapper.toResponse(consulta.getPeriodo()));
         dto.setAnio(consulta.getAnio());
+        dto.setEsEditable(consulta.getEsEditable());
         dto.setIngresoPeriodo1(consulta.getIngresoPeriodo1());
         dto.setIngresoPeriodo2(consulta.getIngresoPeriodo2());
         dto.setTotalIngresos(consulta.getTotalIngresos());

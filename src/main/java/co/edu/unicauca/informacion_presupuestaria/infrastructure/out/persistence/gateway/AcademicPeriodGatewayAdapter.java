@@ -42,7 +42,7 @@ public class AcademicPeriodGatewayAdapter implements AcademicPeriodGatewayPort {
 
     @Override
     public List<AcademicPeriod> obtenerPeriodosActivos() {
-        return periodoRepository.findByEstado(AcademicPeriodStatus.ACTIVO).stream()
+        return periodoRepository.findByEstadoOrderByFechaInicioDesc(AcademicPeriodStatus.ACTIVO).stream()
                 .map(periodoMapper::toDomain)
                 .collect(Collectors.toList());
     }

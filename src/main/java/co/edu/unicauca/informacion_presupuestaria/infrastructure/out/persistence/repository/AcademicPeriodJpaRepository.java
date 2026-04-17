@@ -23,8 +23,6 @@ public interface AcademicPeriodJpaRepository extends JpaRepository<AcademicPerio
             @Param("tagPeriodo") Integer tagPeriodo,
             @Param("anio") Integer anio);
 
-    List<AcademicPeriodEntity> findByEstado(AcademicPeriodStatus estado);
-
     @Query("SELECT p FROM AcademicPeriodEntity p WHERE p.estado = :estado ORDER BY p.fechaInicio DESC")
     List<AcademicPeriodEntity> findByEstadoOrderByFechaInicioDesc(@Param("estado") AcademicPeriodStatus estado);
 

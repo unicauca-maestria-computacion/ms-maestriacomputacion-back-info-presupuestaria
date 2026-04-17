@@ -18,6 +18,7 @@ public class GroupReportQuery {
     /** Mantiene compatibilidad: apunta al primer período disponible */
     private AcademicPeriod periodo;
     private GroupReportConfig configuracion;
+    private Boolean esEditable;
     private BigDecimal ingresoPeriodo1;
     private BigDecimal ingresoPeriodo2;
     private BigDecimal totalIngresos;
