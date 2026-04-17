@@ -24,9 +24,18 @@ public class FinancialCalculationService {
      * Calcula totalNeto, totalDescuentos y totalIngresos a partir de las proyecciones
      * enriquecidas (con valorEnSMLV ya asignado) y la configuración financiera del período.
      *
+     * Fórmula por estudiante (estaPago = true):
+     *   valorMatricula     = valorSMLV × valorEnSMLV
+     *   valorTotal         = valorMatricula + biblioteca + recursosComputacionales
+     *   descuento          = valorMatricula × (pctVotacion + pctBeca + pctEgresado)
+     *   ingresoNeto        = valorTotal − descuento
+     *
+     * Nota: los descuentos se aplican solo sobre valorMatricula (SMLV), no sobre
+     * biblioteca ni recursos computacionales.
+     *
      * @param proyecciones lista de proyecciones ya enriquecidas con datos del estudiante
      * @param estudiantes  lista de estudiantes del período (para resolver valorEnSMLV)
-     * @param config       configuración financiera del período (valorSMLV, porcentajes fijos)
+     * @param config       configuración financiera del período
      * @return trío de totales: [totalNeto, totalDescuentos, totalIngresos]
      */
     public Totales calcular(List<StudentProjection> proyecciones,
@@ -40,6 +49,10 @@ public class FinancialCalculationService {
         }
 
         BigDecimal valorSMLV = config.getValorSMLV();
+        BigDecimal biblioteca = config.getBiblioteca() != null
+                ? config.getBiblioteca() : BigDecimal.ZERO;
+        BigDecimal recursosComp = config.getRecursosComputacionales() != null
+                ? config.getRecursosComputacionales() : BigDecimal.ZERO;
         BigDecimal pctVotacion = config.getPorcentajeVotacionFijo() != null
                 ? config.getPorcentajeVotacionFijo() : new BigDecimal("0.10");
         BigDecimal pctEgresado = config.getPorcentajeEgresadoFijo() != null
@@ -50,15 +63,19 @@ public class FinancialCalculationService {
                         && p.getCodigoEstudiante() != null)
                 .toList();
 
+        // totalNeto = Σ (valorMatricula + biblioteca + recursosComputacionales)
         BigDecimal totalNeto = pagados.stream()
                 .map(p -> {
                     Integer smlvs = resolverValorEnSMLV(p, estudiantes);
                     if (smlvs == null) return BigDecimal.ZERO;
-                    return valorSMLV.multiply(BigDecimal.valueOf(smlvs));
+                    BigDecimal valorMatricula = valorSMLV.multiply(BigDecimal.valueOf(smlvs));
+                    return valorMatricula.add(biblioteca).add(recursosComp);
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(2, RoundingMode.HALF_UP);
 
+        // totalDescuentos = Σ (valorMatricula × pctDescuento)
+        // Los descuentos se aplican solo sobre el valor SMLV, no sobre biblioteca ni recursos
         BigDecimal totalDescuentos = pagados.stream()
                 .map(p -> {
                     Integer smlvs = resolverValorEnSMLV(p, estudiantes);

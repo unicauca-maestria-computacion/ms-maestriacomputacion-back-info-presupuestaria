@@ -14,8 +14,11 @@ public class ReportePorGrupoResponse {
     private BigDecimal presupuestoPorGrupo;
     private BigDecimal presupuestoPorGrupoItem1;
     private BigDecimal presupuestoPorGrupoItem2;
+    /** Subtotal = item1PorGrupo + item2PorGrupo */
+    private BigDecimal subtotalPorGrupo;
     private BigDecimal imprevistosValor;
-    private BigDecimal presupuestoPorGrupoImprevistos;
+    /** Total neto del período actual (sin vigencias anteriores) */
+    private BigDecimal totalNetoPeriodo;
     private BigDecimal totalNeto;
     private BigDecimal aportePrimerSemestre;
     private BigDecimal aporteSegundoSemestre;
@@ -96,6 +99,14 @@ public class ReportePorGrupoResponse {
         this.presupuestoPorGrupoItem2 = presupuestoPorGrupoItem2;
     }
 
+    public BigDecimal getSubtotalPorGrupo() {
+        return subtotalPorGrupo;
+    }
+
+    public void setSubtotalPorGrupo(BigDecimal subtotalPorGrupo) {
+        this.subtotalPorGrupo = subtotalPorGrupo;
+    }
+
     public BigDecimal getImprevistosValor() {
         return imprevistosValor;
     }
@@ -104,12 +115,12 @@ public class ReportePorGrupoResponse {
         this.imprevistosValor = imprevistosValor;
     }
 
-    public BigDecimal getPresupuestoPorGrupoImprevistos() {
-        return presupuestoPorGrupoImprevistos;
+    public BigDecimal getTotalNetoPeriodo() {
+        return totalNetoPeriodo;
     }
 
-    public void setPresupuestoPorGrupoImprevistos(BigDecimal presupuestoPorGrupoImprevistos) {
-        this.presupuestoPorGrupoImprevistos = presupuestoPorGrupoImprevistos;
+    public void setTotalNetoPeriodo(BigDecimal totalNetoPeriodo) {
+        this.totalNetoPeriodo = totalNetoPeriodo;
     }
 
     public BigDecimal getTotalNeto() {

@@ -26,6 +26,9 @@ public interface StudentFinancialReportGatewayPort {
      */
     Optional<AcademicPeriod> obtenerPeriodoPorTagYAnio(Integer tagPeriodo, Integer anio);
 
+    /** Retorna el período académico inmediatamente anterior al período dado (por fecha_inicio). */
+    Optional<AcademicPeriod> obtenerPeriodoAnterior(Long periodoId);
+
     /**
      * Retorna las proyecciones de un período filtradas por estado.
      * Si estado es null, retorna todas las proyecciones del período.

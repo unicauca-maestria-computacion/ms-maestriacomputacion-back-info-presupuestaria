@@ -15,6 +15,9 @@ public interface AcademicPeriodJpaRepository extends JpaRepository<AcademicPerio
 
     Optional<AcademicPeriodEntity> findTopByOrderByFechaInicioDesc();
 
+    @Query("SELECT p FROM AcademicPeriodEntity p WHERE p.fechaInicio < :fechaInicio ORDER BY p.fechaInicio DESC LIMIT 1")
+    Optional<AcademicPeriodEntity> findPeriodoAnterior(@Param("fechaInicio") java.time.LocalDate fechaInicio);
+
     @Query("SELECT p FROM AcademicPeriodEntity p ORDER BY p.fechaInicio DESC")
     List<AcademicPeriodEntity> findAllOrderByFechaInicioDesc();
 

@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 public class ActualizarParticipacionRequest {
 
     @NotNull
+    private Long periodoAcademicoId;
+
+    @NotNull
     private Long grupoId;
 
     @NotNull
@@ -19,6 +22,14 @@ public class ActualizarParticipacionRequest {
     private String semestre;
 
     public ActualizarParticipacionRequest() {
+    }
+
+    public Long getPeriodoAcademicoId() {
+        return periodoAcademicoId;
+    }
+
+    public void setPeriodoAcademicoId(Long periodoAcademicoId) {
+        this.periodoAcademicoId = periodoAcademicoId;
     }
 
     public Long getGrupoId() {

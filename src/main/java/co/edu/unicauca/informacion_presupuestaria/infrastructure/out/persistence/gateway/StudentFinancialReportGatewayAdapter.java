@@ -54,6 +54,14 @@ public class StudentFinancialReportGatewayAdapter implements StudentFinancialRep
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerPeriodoAnterior(Long periodoId) {
+        return periodoRepository.findById(periodoId)
+                .flatMap(p -> periodoRepository.findPeriodoAnterior(p.getFechaInicio()))
+                .map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<AcademicPeriod> obtenerPeriodoPorTagYAnio(Integer tagPeriodo, Integer anio) {
         return periodoRepository.findByTagPeriodoAndAnio(tagPeriodo, anio)
                 .map(periodoMapper::toDomain);

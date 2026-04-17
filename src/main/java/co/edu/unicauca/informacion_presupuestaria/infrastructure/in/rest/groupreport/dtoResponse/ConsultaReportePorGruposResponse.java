@@ -6,6 +6,8 @@ import java.util.List;
 public class ConsultaReportePorGruposResponse {
 
     private PeriodoAcademicoResponseDto periodo;
+    private PeriodoAcademicoResponseDto periodoPrimerSemestre;
+    private PeriodoAcademicoResponseDto periodoSegundoSemestre;
     private Integer anio;
     private Boolean esEditable;
     private BigDecimal ingresoPeriodo1;
@@ -31,6 +33,22 @@ public class ConsultaReportePorGruposResponse {
 
     public void setPeriodo(PeriodoAcademicoResponseDto periodo) {
         this.periodo = periodo;
+    }
+
+    public PeriodoAcademicoResponseDto getPeriodoPrimerSemestre() {
+        return periodoPrimerSemestre;
+    }
+
+    public void setPeriodoPrimerSemestre(PeriodoAcademicoResponseDto periodoPrimerSemestre) {
+        this.periodoPrimerSemestre = periodoPrimerSemestre;
+    }
+
+    public PeriodoAcademicoResponseDto getPeriodoSegundoSemestre() {
+        return periodoSegundoSemestre;
+    }
+
+    public void setPeriodoSegundoSemestre(PeriodoAcademicoResponseDto periodoSegundoSemestre) {
+        this.periodoSegundoSemestre = periodoSegundoSemestre;
     }
 
     public Integer getAnio() {

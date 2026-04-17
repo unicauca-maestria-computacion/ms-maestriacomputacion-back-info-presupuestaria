@@ -67,6 +67,22 @@ public class GroupReportGatewayAdapter implements GroupReportGatewayPort {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerPeriodoAnterior(Long periodoId) {
+        return periodoRepository.findById(periodoId)
+                .flatMap(p -> periodoRepository.findPeriodoAnterior(p.getFechaInicio()))
+                .map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerPeriodoPorId(Long periodoId) {
+        if (periodoId == null) return Optional.empty();
+        return periodoRepository.findById(periodoId)
+                .map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<AcademicPeriod> obtenerPeriodoPorTagYAnio(Integer tagPeriodo, Integer anio) {
         return periodoRepository.findByTagPeriodoAndAnio(tagPeriodo, anio)
                 .map(periodoMapper::toDomain);
@@ -172,6 +188,14 @@ public class GroupReportGatewayAdapter implements GroupReportGatewayPort {
     public Optional<ResearchGroup> obtenerGrupoPorId(Long grupoId) {
         return grupoRepository.findById(grupoId)
                 .map(e -> new ResearchGroup(e.getId(), e.getNombre()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResearchGroup> obtenerTodosLosGrupos() {
+        return grupoRepository.findAll().stream()
+                .map(e -> new ResearchGroup(e.getId(), e.getNombre()))
+                .collect(Collectors.toList());
     }
 
     @Override

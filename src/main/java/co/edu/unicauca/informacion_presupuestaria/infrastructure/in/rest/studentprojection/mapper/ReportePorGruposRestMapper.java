@@ -83,8 +83,9 @@ public class ReportePorGruposRestMapper {
         dto.setPresupuestoPorGrupo(reporte.getPresupuestoPorGrupo());
         dto.setPresupuestoPorGrupoItem1(reporte.getPresupuestoPorGrupoItem1());
         dto.setPresupuestoPorGrupoItem2(reporte.getPresupuestoPorGrupoItem2());
+        dto.setSubtotalPorGrupo(reporte.getSubtotalPorGrupo());
         dto.setImprevistosValor(reporte.getImprevistosValor());
-        dto.setPresupuestoPorGrupoImprevistos(reporte.getPresupuestoPorGrupoImprevistos());
+        dto.setTotalNetoPeriodo(reporte.getTotalNetoPeriodo());
         dto.setTotalNeto(reporte.getTotalNeto());
         dto.setAportePrimerSemestre(reporte.getAportePrimerSemestre());
         dto.setAporteSegundoSemestre(reporte.getAporteSegundoSemestre());

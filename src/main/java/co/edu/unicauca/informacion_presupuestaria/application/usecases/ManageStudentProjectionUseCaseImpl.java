@@ -88,14 +88,50 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             return p;
         }).filter(p -> p.getValorEnSMLV() != null).collect(Collectors.toList());
 
-        Optional<FinancialReportConfig> configOpt =
-                gateway.obtenerConfiguracionReporteFinanciero(periodo.getId());
-        FinancialReportConfig config = configOpt.orElse(null);
+        FinancialReportConfig config = gateway
+                .obtenerConfiguracionReporteFinanciero(periodo.getId())
+                .orElseGet(() -> inicializarConfiguracionFinanciera(periodo));
 
         FinancialCalculationService.Totales totales = calculationService.calcular(
                 enriquecidas, estudiantes, config);
 
         return new StudentFinancialReport(enriquecidas, config, periodo,
                 totales.getTotalNeto(), totales.getTotalDescuentos(), totales.getTotalIngresos());
+    }
+
+    /**
+     * Crea una FinancialReportConfig copiando los valores del período anterior si existe,
+     * o con valores por defecto si no hay período anterior.
+     * El coordinador solo necesita ajustar el SMLV para el nuevo período.
+     */
+    private FinancialReportConfig inicializarConfiguracionFinanciera(AcademicPeriod periodo) {
+        // Intentar copiar del período anterior
+        Optional<AcademicPeriod> periodoAnteriorOpt = gateway.obtenerPeriodoAnterior(periodo.getId());
+        if (periodoAnteriorOpt.isPresent()) {
+            Optional<FinancialReportConfig> configAnteriorOpt =
+                    gateway.obtenerConfiguracionReporteFinanciero(periodoAnteriorOpt.get().getId());
+            if (configAnteriorOpt.isPresent()) {
+                FinancialReportConfig anterior = configAnteriorOpt.get();
+                FinancialReportConfig config = new FinancialReportConfig();
+                config.setAcademicPeriod(periodo);
+                config.setBiblioteca(anterior.getBiblioteca());
+                config.setRecursosComputacionales(anterior.getRecursosComputacionales());
+                config.setValorSMLV(anterior.getValorSMLV());
+                config.setEsReporteFinal(false);
+                config.setPorcentajeVotacionFijo(anterior.getPorcentajeVotacionFijo());
+                config.setPorcentajeEgresadoFijo(anterior.getPorcentajeEgresadoFijo());
+                return gateway.guardarConfiguracionReporteFinanciero(config);
+            }
+        }
+        // Sin período anterior: valores por defecto
+        FinancialReportConfig config = new FinancialReportConfig();
+        config.setAcademicPeriod(periodo);
+        config.setBiblioteca(java.math.BigDecimal.ZERO);
+        config.setRecursosComputacionales(java.math.BigDecimal.ZERO);
+        config.setValorSMLV(java.math.BigDecimal.ZERO);
+        config.setEsReporteFinal(false);
+        config.setPorcentajeVotacionFijo(new java.math.BigDecimal("0.10"));
+        config.setPorcentajeEgresadoFijo(new java.math.BigDecimal("0.05"));
+        return gateway.guardarConfiguracionReporteFinanciero(config);
     }
 }

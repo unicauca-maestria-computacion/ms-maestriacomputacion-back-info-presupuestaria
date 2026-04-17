@@ -3,6 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinancialReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportQuery;
@@ -57,6 +58,9 @@ class BugConditionExplorationTest {
     @Mock
     private FinancialEnrollmentClientPort matriculaFinancieraClient;
 
+    @Mock
+    private FinancialCalculationService calculationService;
+
     @Example
     @Label("Caso 1 — estaPago=false incluido en reporte final pero excluido en reporte por grupos")
     void caso1_estaPagoFalseIncluidoEnReporteFinalExcluidoEnReporteGrupos() {
@@ -84,9 +88,9 @@ class BugConditionExplorationTest {
                 .thenReturn(Optional.of(configGrupos));
 
         ManageStudentFinancialReportUseCaseImpl adapterFinal =
-                new ManageStudentFinancialReportUseCaseImpl(reporteEstudiantesGateway, matriculaFinancieraClient);
+                new ManageStudentFinancialReportUseCaseImpl(reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
         ManageGroupReportUseCaseImpl adapterGrupos =
-                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient);
+                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
 
         StudentFinancialReport reporteFinal = adapterFinal.obtenerReporteFinanciero(1, 2023);
         GroupReportQuery reporteGrupos = adapterGrupos.obtenerReporteGrupos(2023);
@@ -131,9 +135,9 @@ class BugConditionExplorationTest {
                 .thenReturn(Optional.of(configGrupos));
 
         ManageStudentFinancialReportUseCaseImpl adapterFinal =
-                new ManageStudentFinancialReportUseCaseImpl(reporteEstudiantesGateway, matriculaFinancieraClient);
+                new ManageStudentFinancialReportUseCaseImpl(reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
         ManageGroupReportUseCaseImpl adapterGrupos =
-                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient);
+                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
 
         StudentFinancialReport reporteFinal = adapterFinal.obtenerReporteFinanciero(1, 2023);
         GroupReportQuery reporteGrupos = adapterGrupos.obtenerReporteGrupos(2023);
@@ -174,9 +178,9 @@ class BugConditionExplorationTest {
                 .thenReturn(Optional.of(configGrupos));
 
         ManageStudentFinancialReportUseCaseImpl adapterFinal =
-                new ManageStudentFinancialReportUseCaseImpl(reporteEstudiantesGateway, matriculaFinancieraClient);
+                new ManageStudentFinancialReportUseCaseImpl(reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
         ManageGroupReportUseCaseImpl adapterGrupos =
-                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient);
+                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
 
         StudentFinancialReport reporteFinal = adapterFinal.obtenerReporteFinanciero(1, 2023);
         GroupReportQuery reporteGrupos = adapterGrupos.obtenerReporteGrupos(2023);
@@ -214,7 +218,7 @@ class BugConditionExplorationTest {
                 .thenReturn(List.of(estudiante));
 
         ManageGroupReportUseCaseImpl adapterGrupos =
-                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient);
+                new ManageGroupReportUseCaseImpl(reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
 
         GroupReportQuery reporteConNull = adapterGrupos.obtenerReporteGrupos(2023);
 

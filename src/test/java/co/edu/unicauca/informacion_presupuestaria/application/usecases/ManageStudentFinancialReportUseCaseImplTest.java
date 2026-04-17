@@ -2,6 +2,7 @@ package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinancialReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.DiscountResponse;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
@@ -36,11 +37,14 @@ class ManageStudentFinancialReportUseCaseImplTest {
     @Mock
     private FinancialEnrollmentClientPort matriculaFinancieraClient;
 
+    @Mock
+    private FinancialCalculationService calculationService;
+
     private ManageStudentFinancialReportUseCaseImpl useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new ManageStudentFinancialReportUseCaseImpl(gateway, matriculaFinancieraClient);
+        useCase = new ManageStudentFinancialReportUseCaseImpl(gateway, matriculaFinancieraClient, calculationService);
     }
 
     @Test

@@ -3,6 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinancialReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportQuery;
@@ -60,6 +61,9 @@ class PreservationPropertyTest {
 
     @Mock
     private FinancialEnrollmentClientPort matriculaFinancieraClient;
+
+    @Mock
+    private FinancialCalculationService calculationService;
 
     @Example
     @Label("Test A — Baseline observado: un estudiante con estaPago=true y porcentajeBeca=0.10 produce totalIngresos=3,510,000")
@@ -207,7 +211,7 @@ class PreservationPropertyTest {
 
     private ManageGroupReportUseCaseImpl buildGruposAdapter() {
         return new ManageGroupReportUseCaseImpl(
-                reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient);
+                reportePorGruposGateway, reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
     }
 
     private void setupGruposMocks(FinancialReportConfig configFinanciero,

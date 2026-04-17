@@ -3,6 +3,7 @@ package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinancialReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportQuery;
@@ -27,6 +28,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,12 +44,15 @@ class ManageGroupReportUseCaseImplTest {
     @Mock
     private FinancialEnrollmentClientPort matriculaFinancieraClient;
 
+    @Mock
+    private FinancialCalculationService calculationService;
+
     private ManageGroupReportUseCaseImpl useCase;
 
     @BeforeEach
     void setUp() {
         useCase = new ManageGroupReportUseCaseImpl(
-                gateway, reporteEstudiantesGateway, matriculaFinancieraClient);
+                gateway, reporteEstudiantesGateway, matriculaFinancieraClient, calculationService);
     }
 
     @Test
@@ -62,13 +68,20 @@ class ManageGroupReportUseCaseImplTest {
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1300000.00"), false, periodo, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
 
         Student est = buildEstudiante("EST001", 8);
+        BigDecimal totalIngresosEsperado = new BigDecimal("10400000.00");
 
         when(gateway.obtenerPeriodosPorAnio(2024)).thenReturn(List.of(periodo));
+        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
         when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(config));
         when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(1L))
                 .thenReturn(Optional.of(configFinanciero));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2024))
                 .thenReturn(List.of(est));
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(any(), any()))
+                .thenReturn(Collections.emptyList());
+        when(calculationService.calcular(anyList(), anyList(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        totalIngresosEsperado, BigDecimal.ZERO, totalIngresosEsperado));
 
         // Act
         GroupReportQuery resultado = useCase.obtenerReporteGrupos(2024);
@@ -92,13 +105,20 @@ class ManageGroupReportUseCaseImplTest {
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"), false, periodo, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
 
         Student est = buildEstudiante("EST001", 5);
+        BigDecimal totalIngresosEsperado = new BigDecimal("5000000.00");
 
         when(gateway.obtenerPeriodosPorAnio(2024)).thenReturn(List.of(periodo));
+        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
         when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(config));
         when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(1L))
                 .thenReturn(Optional.of(configFinanciero));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2024))
                 .thenReturn(List.of(est));
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(any(), any()))
+                .thenReturn(Collections.emptyList());
+        when(calculationService.calcular(anyList(), anyList(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        totalIngresosEsperado, BigDecimal.ZERO, totalIngresosEsperado));
 
         // Act
         GroupReportQuery resultado = useCase.obtenerReporteGrupos(2024);
@@ -130,13 +150,20 @@ class ManageGroupReportUseCaseImplTest {
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"), false, periodo, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
 
         Student est = buildEstudiante("EST001", 10);
+        BigDecimal totalIngresosEsperado = new BigDecimal("10000000.00");
 
         when(gateway.obtenerPeriodosPorAnio(2024)).thenReturn(List.of(periodo));
+        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
         when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(config));
         when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(1L))
                 .thenReturn(Optional.of(configFinanciero));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2024))
                 .thenReturn(List.of(est));
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(any(), any()))
+                .thenReturn(Collections.emptyList());
+        when(calculationService.calcular(anyList(), anyList(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        totalIngresosEsperado, BigDecimal.ZERO, totalIngresosEsperado));
 
         // Act
         GroupReportQuery resultado = useCase.obtenerReporteGrupos(2024);
@@ -157,12 +184,12 @@ class ManageGroupReportUseCaseImplTest {
         GroupReportConfig config = buildConfig(1L, new BigDecimal("0.1"),
                 BigDecimal.ZERO, periodo, Collections.emptyList());
 
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
+        when(gateway.obtenerPeriodoPorId(1L)).thenReturn(Optional.of(periodo));
         when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(config));
         when(gateway.obtenerParticipacionGrupo(1L, 999L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThatThrownBy(() -> useCase.actualizarPorcentajeParticipacion(999L, new BigDecimal("0.3")))
+        assertThatThrownBy(() -> useCase.actualizarPorcentajeParticipacion(1L, 999L, new BigDecimal("0.3"), null))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("999");
     }
@@ -178,11 +205,17 @@ class ManageGroupReportUseCaseImplTest {
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1300000.00"), false, periodo, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
 
         when(gateway.obtenerPeriodosPorAnio(2024)).thenReturn(List.of(periodo));
+        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
         when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(config));
         when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(1L))
                 .thenReturn(Optional.of(configFinanciero));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2024))
                 .thenReturn(Collections.emptyList());
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(any(), any()))
+                .thenReturn(Collections.emptyList());
+        when(calculationService.calcular(anyList(), anyList(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
 
         // Act
         GroupReportQuery resultado = useCase.obtenerReporteGrupos(2024);

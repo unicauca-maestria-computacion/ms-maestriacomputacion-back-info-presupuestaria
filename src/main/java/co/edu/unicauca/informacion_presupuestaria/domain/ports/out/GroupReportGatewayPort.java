@@ -13,7 +13,12 @@ public interface GroupReportGatewayPort {
 
     Optional<AcademicPeriod> obtenerUltimoPeriodo();
 
+    Optional<AcademicPeriod> obtenerPeriodoPorId(Long periodoId);
+
     Optional<AcademicPeriod> obtenerPeriodoPorTagYAnio(Integer tagPeriodo, Integer anio);
+
+    /** Retorna el período académico inmediatamente anterior al período dado (por fecha_inicio). */
+    Optional<AcademicPeriod> obtenerPeriodoAnterior(Long periodoId);
 
     /** Retorna todos los períodos de un año dado ordenados por tagPeriodo ASC. */
     List<AcademicPeriod> obtenerPeriodosPorAnio(Integer anio);
@@ -29,6 +34,8 @@ public interface GroupReportGatewayPort {
     boolean existeGrupoPorId(Long grupoId);
 
     Optional<ResearchGroup> obtenerGrupoPorId(Long grupoId);
+
+    List<ResearchGroup> obtenerTodosLosGrupos();
 
     GeneralExpense guardarGastoGeneral(GeneralExpense gasto);
 

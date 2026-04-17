@@ -7,6 +7,7 @@ import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection
 import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.AcademicPeriodEntity;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.StudentProjectionEntity;
+import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.FinancialReportConfigEntity;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.mapper.FinancialReportConfigPersistenceMapper;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.mapper.AcademicPeriodPersistenceMapper;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.mapper.StudentProjectionPersistenceMapper;
@@ -48,6 +49,14 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
     @Transactional(readOnly = true)
     public Optional<AcademicPeriod> obtenerUltimoPeriodo() {
         return periodoRepository.findTopByOrderByFechaInicioDesc()
+                .map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerPeriodoAnterior(Long periodoId) {
+        return periodoRepository.findById(periodoId)
+                .flatMap(p -> periodoRepository.findPeriodoAnterior(p.getFechaInicio()))
                 .map(periodoMapper::toDomain);
     }
 
@@ -123,5 +132,34 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
             Long periodoAcademicoId) {
         return configRepository.findByObjPeriodoAcademicoId(periodoAcademicoId)
                 .map(configMapper::toDomain);
+    }
+
+    @Override
+    @Transactional
+    public FinancialReportConfig guardarConfiguracionReporteFinanciero(
+            FinancialReportConfig configuracion) {
+        if (configuracion == null) {
+            return null;
+        }
+        FinancialReportConfigEntity entity;
+        if (configuracion.getId() != null) {
+            entity = configRepository.findById(configuracion.getId())
+                    .orElse(new FinancialReportConfigEntity());
+        } else {
+            entity = new FinancialReportConfigEntity();
+        }
+        entity.setBiblioteca(configuracion.getBiblioteca());
+        entity.setRecursosComputacionales(configuracion.getRecursosComputacionales());
+        entity.setValorSMLV(configuracion.getValorSMLV());
+        entity.setEsReporteFinal(configuracion.getEsReporteFinal());
+        if (configuracion.getAcademicPeriod() != null
+                && configuracion.getAcademicPeriod().getId() != null) {
+            AcademicPeriodEntity periodoEntity = periodoRepository
+                    .findById(configuracion.getAcademicPeriod().getId())
+                    .orElse(null);
+            entity.setObjPeriodoAcademico(periodoEntity);
+        }
+        FinancialReportConfigEntity saved = configRepository.save(entity);
+        return configMapper.toDomain(saved);
     }
 }

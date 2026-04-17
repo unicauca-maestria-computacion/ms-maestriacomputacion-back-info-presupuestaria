@@ -20,8 +20,12 @@ public class GroupReport {
     private BigDecimal presupuestoPorGrupo;
     private BigDecimal presupuestoPorGrupoItem1;
     private BigDecimal presupuestoPorGrupoItem2;
+    /** Subtotal = item1PorGrupo + item2PorGrupo (base para imprevistos) */
+    private BigDecimal subtotalPorGrupo;
     private BigDecimal imprevistosValor;
-    private BigDecimal presupuestoPorGrupoImprevistos;
+    /** totalNetoPeriodo = subtotalPorGrupo + imprevistosValor */
+    private BigDecimal totalNetoPeriodo;
+    /** totalNeto = totalNetoPeriodo + vigenciasAnteriores */
     private BigDecimal totalNeto;
     private BigDecimal aportePrimerSemestre;
     private BigDecimal aporteSegundoSemestre;
