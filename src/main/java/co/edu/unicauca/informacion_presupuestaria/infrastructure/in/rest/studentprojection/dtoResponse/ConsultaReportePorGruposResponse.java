@@ -14,6 +14,7 @@ public class ConsultaReportePorGruposResponse {
     private BigDecimal totalIngresos;
     private BigDecimal auiValor;
     private BigDecimal valorADistribuir;
+    private BigDecimal transferenciaUnicauca;
     private List<ReportePorGrupoResponse> reportesPorGrupo;
     private List<GastoGeneralResponseDto> gastosGenerales;
     private Long idConfiguracionReporteGrupos;
@@ -91,6 +92,14 @@ public class ConsultaReportePorGruposResponse {
 
     public void setValorADistribuir(BigDecimal valorADistribuir) {
         this.valorADistribuir = valorADistribuir;
+    }
+
+    public BigDecimal getTransferenciaUnicauca() {
+        return transferenciaUnicauca;
+    }
+
+    public void setTransferenciaUnicauca(BigDecimal transferenciaUnicauca) {
+        this.transferenciaUnicauca = transferenciaUnicauca;
     }
 
     public List<ReportePorGrupoResponse> getReportesPorGrupo() {

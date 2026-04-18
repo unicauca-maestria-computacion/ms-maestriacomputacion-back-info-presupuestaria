@@ -24,19 +24,15 @@ public class FinancialCalculationService {
      * Calcula totalNeto, totalDescuentos y totalIngresos a partir de las proyecciones
      * enriquecidas (con valorEnSMLV ya asignado) y la configuración financiera del período.
      *
-     * Fórmula por estudiante (estaPago = true):
-     *   valorMatricula     = valorSMLV × valorEnSMLV
-     *   valorTotal         = valorMatricula + biblioteca + recursosComputacionales
-     *   descuento          = valorMatricula × (pctVotacion + pctBeca + pctEgresado)
-     *   ingresoNeto        = valorTotal − descuento
+     * Fórmula por estudiante (estaPago = true), replicando el Excel:
+     *   valorMatricula  = valorSMLV × valorEnSMLV
+     *   descuentoVoto   = MROUND(valorMatricula × pctVotacion, 1000)  ← redondeado al millar
+     *   descuentoBeca   = (valorMatricula - descuentoVoto) × pctBeca  ← base es matrícula - voto
+     *   totalDescuento  = descuentoVoto + descuentoBeca
+     *   ingresoNeto     = valorMatricula - totalDescuento + derechosComplementarios
      *
-     * Nota: los descuentos se aplican solo sobre valorMatricula (SMLV), no sobre
-     * biblioteca ni recursos computacionales.
-     *
-     * @param proyecciones lista de proyecciones ya enriquecidas con datos del estudiante
-     * @param estudiantes  lista de estudiantes del período (para resolver valorEnSMLV)
-     * @param config       configuración financiera del período
-     * @return trío de totales: [totalNeto, totalDescuentos, totalIngresos]
+     * Los derechos complementarios (biblioteca + recursosComputacionales) se suman
+     * al ingreso neto pero NO participan en la base de descuentos.
      */
     public Totales calcular(List<StudentProjection> proyecciones,
                             List<Student> estudiantes,
@@ -53,6 +49,8 @@ public class FinancialCalculationService {
                 ? config.getBiblioteca() : BigDecimal.ZERO;
         BigDecimal recursosComp = config.getRecursosComputacionales() != null
                 ? config.getRecursosComputacionales() : BigDecimal.ZERO;
+        BigDecimal derechosComplementarios = biblioteca.add(recursosComp);
+
         BigDecimal pctVotacion = config.getPorcentajeVotacionFijo() != null
                 ? config.getPorcentajeVotacionFijo() : new BigDecimal("0.10");
         BigDecimal pctEgresado = config.getPorcentajeEgresadoFijo() != null
@@ -63,37 +61,57 @@ public class FinancialCalculationService {
                         && p.getCodigoEstudiante() != null)
                 .toList();
 
-        // totalNeto = Σ (valorMatricula + biblioteca + recursosComputacionales)
-        BigDecimal totalNeto = pagados.stream()
-                .map(p -> {
-                    Integer smlvs = resolverValorEnSMLV(p, estudiantes);
-                    if (smlvs == null) return BigDecimal.ZERO;
-                    BigDecimal valorMatricula = valorSMLV.multiply(BigDecimal.valueOf(smlvs));
-                    return valorMatricula.add(biblioteca).add(recursosComp);
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
+        BigDecimal totalNeto = BigDecimal.ZERO;
+        BigDecimal totalDescuentos = BigDecimal.ZERO;
+
+        for (StudentProjection p : pagados) {
+            Integer smlvs = resolverValorEnSMLV(p, estudiantes);
+            if (smlvs == null) continue;
+
+            BigDecimal valorMatricula = valorSMLV.multiply(BigDecimal.valueOf(smlvs));
+
+            // Descuento por voto: MROUND(valorMatricula × pctVotacion, 1000)
+            BigDecimal descuentoVoto = BigDecimal.ZERO;
+            if (Boolean.TRUE.equals(p.getAplicaVotacion())) {
+                descuentoVoto = mround(valorMatricula.multiply(pctVotacion), BigDecimal.valueOf(1000));
+            }
+
+            // Descuento por beca/egresado: se aplica sobre (valorMatricula - descuentoVoto)
+            BigDecimal baseParaBeca = valorMatricula.subtract(descuentoVoto);
+            BigDecimal pctBeca = BigDecimal.ZERO;
+            if (p.getPorcentajeBeca() != null) pctBeca = pctBeca.add(p.getPorcentajeBeca());
+            if (Boolean.TRUE.equals(p.getAplicaEgresado())) pctBeca = pctBeca.add(pctEgresado);
+            BigDecimal descuentoBeca = baseParaBeca.multiply(pctBeca)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            BigDecimal descuentoTotal = descuentoVoto.add(descuentoBeca);
+
+            totalNeto = totalNeto.add(valorMatricula);
+            totalDescuentos = totalDescuentos.add(descuentoTotal);
+        }
+
+        // Derechos complementarios: se cobran a los estudiantes con estaPago = true,
+        // igual que el resto de los cálculos de matrícula.
+        BigDecimal totalDerechosComplementarios = BigDecimal.valueOf(pagados.size())
+                .multiply(derechosComplementarios)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        // totalDescuentos = Σ (valorMatricula × pctDescuento)
-        // Los descuentos se aplican solo sobre el valor SMLV, no sobre biblioteca ni recursos
-        BigDecimal totalDescuentos = pagados.stream()
-                .map(p -> {
-                    Integer smlvs = resolverValorEnSMLV(p, estudiantes);
-                    if (smlvs == null) return BigDecimal.ZERO;
-                    BigDecimal valorMatricula = valorSMLV.multiply(BigDecimal.valueOf(smlvs));
-                    BigDecimal pct = BigDecimal.ZERO;
-                    if (Boolean.TRUE.equals(p.getAplicaVotacion())) pct = pct.add(pctVotacion);
-                    if (p.getPorcentajeBeca() != null)              pct = pct.add(p.getPorcentajeBeca());
-                    if (Boolean.TRUE.equals(p.getAplicaEgresado())) pct = pct.add(pctEgresado);
-                    return valorMatricula.multiply(pct).setScale(2, RoundingMode.HALF_UP);
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-
+        totalNeto = totalNeto.setScale(2, RoundingMode.HALF_UP);
+        totalDescuentos = totalDescuentos.setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalIngresos = totalNeto.subtract(totalDescuentos)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        return new Totales(totalNeto, totalDescuentos, totalIngresos);
+        return new Totales(totalNeto, totalDescuentos, totalIngresos, totalDerechosComplementarios);
+    }
+
+    /**
+     * Equivalente a MROUND de Excel: redondea al múltiplo más cercano.
+     * MROUND(valor, 1000) → redondea al millar más cercano.
+     */
+    private BigDecimal mround(BigDecimal valor, BigDecimal multiplo) {
+        if (multiplo.compareTo(BigDecimal.ZERO) == 0) return valor;
+        BigDecimal divided = valor.divide(multiplo, 0, RoundingMode.HALF_UP);
+        return divided.multiply(multiplo);
     }
 
     private Integer resolverValorEnSMLV(StudentProjection proyeccion, List<Student> estudiantes) {
@@ -116,15 +134,23 @@ public class FinancialCalculationService {
         private final BigDecimal totalNeto;
         private final BigDecimal totalDescuentos;
         private final BigDecimal totalIngresos;
+        private final BigDecimal totalDerechosComplementarios;
 
         public Totales(BigDecimal totalNeto, BigDecimal totalDescuentos, BigDecimal totalIngresos) {
+            this(totalNeto, totalDescuentos, totalIngresos, BigDecimal.ZERO);
+        }
+
+        public Totales(BigDecimal totalNeto, BigDecimal totalDescuentos, BigDecimal totalIngresos,
+                       BigDecimal totalDerechosComplementarios) {
             this.totalNeto = totalNeto;
             this.totalDescuentos = totalDescuentos;
             this.totalIngresos = totalIngresos;
+            this.totalDerechosComplementarios = totalDerechosComplementarios;
         }
 
-        public BigDecimal getTotalNeto()       { return totalNeto; }
-        public BigDecimal getTotalDescuentos() { return totalDescuentos; }
-        public BigDecimal getTotalIngresos()   { return totalIngresos; }
+        public BigDecimal getTotalNeto()                    { return totalNeto; }
+        public BigDecimal getTotalDescuentos()              { return totalDescuentos; }
+        public BigDecimal getTotalIngresos()                { return totalIngresos; }
+        public BigDecimal getTotalDerechosComplementarios() { return totalDerechosComplementarios; }
     }
 }

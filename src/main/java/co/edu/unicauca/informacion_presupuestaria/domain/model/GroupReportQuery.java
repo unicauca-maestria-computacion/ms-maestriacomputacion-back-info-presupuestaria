@@ -23,6 +23,12 @@ public class GroupReportQuery {
     private BigDecimal ingresoPeriodo2;
     private BigDecimal totalIngresos;
     private BigDecimal auiValor;
+    /** Ingresos netos = totalIngresos - auiValor - excedentesMaestria */
+    private BigDecimal ingresosNetos;
+    /** Suma de todos los gastos generales globales de la maestría */
+    private BigDecimal totalGastosGenerales;
     private BigDecimal valorADistribuir;
+    /** Transferencia a la universidad por derechos complementarios (J87 en Excel) */
+    private BigDecimal transferenciaUnicauca;
     private List<GroupReport> reportesPorGrupo;
 }

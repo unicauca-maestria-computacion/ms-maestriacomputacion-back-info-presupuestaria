@@ -19,7 +19,12 @@ public class ConsultaReportePorGruposResponse {
     private BigDecimal imprevistos;
     private BigDecimal totalIngresos;
     private BigDecimal auiValor;
+    /** Ingresos netos = totalIngresos - auiValor - excedentesMaestria */
+    private BigDecimal ingresosNetos;
+    /** Suma de gastos generales globales de la maestría */
+    private BigDecimal totalGastosGenerales;
     private BigDecimal valorADistribuir;
+    private BigDecimal transferenciaUnicauca;
     private List<ReportePorGrupoResponse> reportesPorGrupo;
     private List<GastoGeneralResponseDto> gastosGenerales;
     private Long idConfiguracionReporteGrupos;
@@ -139,12 +144,36 @@ public class ConsultaReportePorGruposResponse {
         this.auiValor = auiValor;
     }
 
+    public BigDecimal getIngresosNetos() {
+        return ingresosNetos;
+    }
+
+    public void setIngresosNetos(BigDecimal ingresosNetos) {
+        this.ingresosNetos = ingresosNetos;
+    }
+
+    public BigDecimal getTotalGastosGenerales() {
+        return totalGastosGenerales;
+    }
+
+    public void setTotalGastosGenerales(BigDecimal totalGastosGenerales) {
+        this.totalGastosGenerales = totalGastosGenerales;
+    }
+
     public BigDecimal getValorADistribuir() {
         return valorADistribuir;
     }
 
     public void setValorADistribuir(BigDecimal valorADistribuir) {
         this.valorADistribuir = valorADistribuir;
+    }
+
+    public BigDecimal getTransferenciaUnicauca() {
+        return transferenciaUnicauca;
+    }
+
+    public void setTransferenciaUnicauca(BigDecimal transferenciaUnicauca) {
+        this.transferenciaUnicauca = transferenciaUnicauca;
     }
 
     public List<ReportePorGrupoResponse> getReportesPorGrupo() {

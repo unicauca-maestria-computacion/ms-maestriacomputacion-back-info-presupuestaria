@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -29,5 +28,4 @@ public class GroupReport {
     private BigDecimal totalNeto;
     private BigDecimal aportePrimerSemestre;
     private BigDecimal aporteSegundoSemestre;
-    private List<GeneralExpense> gastosGenerales;
 }

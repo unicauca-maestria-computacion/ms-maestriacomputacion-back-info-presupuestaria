@@ -37,7 +37,10 @@ public class ReportePorGruposRestMapper {
         dto.setIngresoPeriodo2(consulta.getIngresoPeriodo2());
         dto.setTotalIngresos(consulta.getTotalIngresos());
         dto.setAuiValor(consulta.getAuiValor());
+        dto.setIngresosNetos(consulta.getIngresosNetos());
+        dto.setTotalGastosGenerales(consulta.getTotalGastosGenerales());
         dto.setValorADistribuir(consulta.getValorADistribuir());
+        dto.setTransferenciaUnicauca(consulta.getTransferenciaUnicauca());
 
         GroupReportConfig config = consulta.getConfiguracion();
         if (config != null) {
@@ -49,9 +52,10 @@ public class ReportePorGruposRestMapper {
             dto.setIdConfiguracionReporteGrupos(config.getId());
         }
 
-        List<GeneralExpense> gastos = consulta.getReportesPorGrupo() != null
-                && !consulta.getReportesPorGrupo().isEmpty()
-                ? consulta.getReportesPorGrupo().get(0).getGastosGenerales()
+        // Gastos generales globales de la maestría (vienen de la configuración, no de los grupos)
+        List<GeneralExpense> gastos = consulta.getConfiguracion() != null
+                && consulta.getConfiguracion().getGastosGenerales() != null
+                ? consulta.getConfiguracion().getGastosGenerales()
                 : Collections.emptyList();
         dto.setGastosGenerales(toGastoGeneralResponseList(gastos));
 
@@ -95,7 +99,6 @@ public class ReportePorGruposRestMapper {
         dto.setTotalNeto(reporte.getTotalNeto());
         dto.setAportePrimerSemestre(reporte.getAportePrimerSemestre());
         dto.setAporteSegundoSemestre(reporte.getAporteSegundoSemestre());
-        dto.setGastosGenerales(toGastoGeneralResponseList(reporte.getGastosGenerales()));
 
         return dto;
     }
