@@ -17,7 +17,7 @@ spring:
       log-condition-evaluation-delta: false
 
 server:
-  port: 8091
+  port: 8094
 
 management:
   endpoints:

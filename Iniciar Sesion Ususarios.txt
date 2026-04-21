@@ -1,0 +1,50 @@
+// === ESTUDIANTE: Juan Perez ===
+localStorage.setItem('mockAuth', 'true');
+localStorage.setItem('loggedInUser', JSON.stringify({
+  id: 1,
+  username: 'jperez',
+  email: 'jperez@unicauca.edu.co',
+  role: ['ROLE_ESTUDIANTE'],
+  phoneNumber: '3110000001',
+  academicCode: '702026001',
+  firstName: 'JUAN',
+  lastName: 'PEREZ',
+  idType: 'CEDULA_CIUDADANIA',
+  idNumber: '1061700001'
+}));
+localStorage.setItem('token', 'mock-token-estudiante');
+location.reload();
+
+// === DOCENTE/TUTOR: Carlos Tutor ===
+localStorage.setItem('mockAuth', 'true');
+localStorage.setItem('loggedInUser', JSON.stringify({
+  id: 3,
+  username: 'ctutor',
+  email: 'ctutor@unicauca.edu.co',
+  role: ['ROLE_DOCENTE'],
+  phoneNumber: '3110000015',
+  academicCode: 'DOC003',
+  firstName: 'CARLOS',
+  lastName: 'TUTOR',
+  idType: 'CEDULA_CIUDADANIA',
+  idNumber: '1061700015'
+}));
+localStorage.setItem('token', 'mock-token-docente');
+location.reload();
+
+// === COORDINADOR: Alberto Docente ===
+localStorage.setItem('mockAuth', 'true');
+localStorage.setItem('loggedInUser', JSON.stringify({
+  id: 1,
+  username: 'alberto',
+  email: 'alberto@unicauca.edu.co',
+  role: ['ROLE_COORDINADOR'],
+  phoneNumber: '3110000000',
+  academicCode: 'DOC001',
+  firstName: 'ALBERTO',
+  lastName: 'DOCENTE',
+  idType: 'CEDULA_CIUDADANIA',
+  idNumber: '1061700000'
+}));
+localStorage.setItem('token', 'mock-token-coordinador');
+location.reload();
