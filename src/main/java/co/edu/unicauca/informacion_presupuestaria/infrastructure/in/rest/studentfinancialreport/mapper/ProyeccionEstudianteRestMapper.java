@@ -38,9 +38,17 @@ public class ProyeccionEstudianteRestMapper {
         dto.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
         dto.setAplicaEgresado(Boolean.TRUE.equals(proyeccion.getAplicaEgresado()));
         dto.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
-        dto.setEstadoProyeccion(proyeccion.getProjectionStatus() != null
-                ? proyeccion.getProjectionStatus().name() : null);
         dto.setValorEnSMLV(proyeccion.getValorEnSMLV());
+        
+        // Mapeo de campos calculados
+        dto.setValorMatricula(proyeccion.getValorMatricula());
+        dto.setValorDescuentoVoto(proyeccion.getValorDescuentoVoto());
+        dto.setValorDescuentoBeca(proyeccion.getValorDescuentoBeca());
+        dto.setValorDescuentoEgresado(proyeccion.getValorDescuentoEgresado());
+        dto.setTotalDescuentos(proyeccion.getTotalDescuentos());
+        dto.setValorNeto(proyeccion.getValorNeto());
+        dto.setTotalNetoConDerechos(proyeccion.getTotalNetoConDerechos());
+
         dto.setMaterias(toMateriaResponseList(proyeccion.getMaterias()));
 
         return dto;
@@ -67,6 +75,7 @@ public class ProyeccionEstudianteRestMapper {
         dto.setTotalNeto(reporte.getTotalNeto());
         dto.setTotalDescuentos(reporte.getTotalDescuentos());
         dto.setTotalIngresos(reporte.getTotalIngresos());
+        dto.setTotalDerechosComplementarios(reporte.getTotalDerechosComplementarios());
 
         return dto;
     }

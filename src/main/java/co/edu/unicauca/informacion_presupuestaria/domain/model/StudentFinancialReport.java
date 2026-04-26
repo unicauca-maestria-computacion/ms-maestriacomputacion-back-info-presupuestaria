@@ -18,4 +18,5 @@ public class StudentFinancialReport {
     private BigDecimal totalNeto;
     private BigDecimal totalDescuentos;
     private BigDecimal totalIngresos;
+    private BigDecimal totalDerechosComplementarios;
 }

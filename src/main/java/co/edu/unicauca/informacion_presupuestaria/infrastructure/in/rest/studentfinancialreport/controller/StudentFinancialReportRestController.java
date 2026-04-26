@@ -4,9 +4,7 @@ import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportCo
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageStudentFinancialReportUseCase;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.dtoRequest.ActualizarConfiguracionFinancieraRequest;
-import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.dtoResponse.ConfiguracionReporteFinancieroResponse;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.dtoResponse.ReporteEstudiantesResponse;
-import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.mapper.PeriodoAcademicoRestMapper;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.mapper.ProyeccionEstudianteRestMapper;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -28,14 +26,11 @@ public class StudentFinancialReportRestController {
 
     private final ManageStudentFinancialReportUseCase useCase;
     private final ProyeccionEstudianteRestMapper proyeccionMapper;
-    private final PeriodoAcademicoRestMapper periodoMapper;
 
     public StudentFinancialReportRestController(ManageStudentFinancialReportUseCase useCase,
-                                                ProyeccionEstudianteRestMapper proyeccionMapper,
-                                                PeriodoAcademicoRestMapper periodoMapper) {
+            ProyeccionEstudianteRestMapper proyeccionMapper) {
         this.useCase = useCase;
         this.proyeccionMapper = proyeccionMapper;
-        this.periodoMapper = periodoMapper;
     }
 
     @GetMapping("/reporte-financiero")
@@ -50,13 +45,19 @@ public class StudentFinancialReportRestController {
     }
 
     @PutMapping("/configuracion-reporte-financiero/{id}")
-    public ResponseEntity<ConfiguracionReporteFinancieroResponse> actualizarConfiguracionReporteFinanciero(
+    public ResponseEntity<ReporteEstudiantesResponse> actualizarConfiguracionReporteFinanciero(
             @PathVariable Long id,
             @Valid @RequestBody ActualizarConfiguracionFinancieraRequest request) {
         LOG.info("PUT /api/configuracion-reporte-financiero/{}", id);
         FinancialReportConfig configuracion = toDomain(request);
         FinancialReportConfig actualizada = useCase.actualizarConfiguracionProyeccion(id, configuracion);
-        return ResponseEntity.ok(toConfiguracionResponse(actualizada));
+
+        // Tras actualizar la configuración, obtenemos el reporte completo recalculado
+        StudentFinancialReport reporte = useCase.obtenerReporteFinanciero(
+                actualizada.getAcademicPeriod().getTagPeriodo(),
+                actualizada.getAcademicPeriod().getAño());
+
+        return ResponseEntity.ok(proyeccionMapper.toReporteResponse(reporte));
     }
 
     @GetMapping("/configuracion-reporte-financiero/periodo")
@@ -82,18 +83,4 @@ public class StudentFinancialReportRestController {
         return config;
     }
 
-    private ConfiguracionReporteFinancieroResponse toConfiguracionResponse(
-            FinancialReportConfig config) {
-        if (config == null) {
-            return null;
-        }
-        ConfiguracionReporteFinancieroResponse dto = new ConfiguracionReporteFinancieroResponse();
-        dto.setId(config.getId());
-        dto.setBiblioteca(config.getBiblioteca());
-        dto.setRecursosComputacionales(config.getRecursosComputacionales());
-        dto.setValorSMLV(config.getValorSMLV());
-        dto.setEsReporteFinal(config.getEsReporteFinal());
-        dto.setPeriodo(periodoMapper.toResponse(config.getAcademicPeriod()));
-        return dto;
-    }
 }

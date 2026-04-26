@@ -20,7 +20,10 @@ public class Student {
     private Integer semestreFinanciero;
     private Integer semestreAcademico;
     private Integer valorEnSMLV;
+    private Boolean esEgresadoUnicauca;
+    private Boolean aplicaVotacion;
     private List<SubjectResponse> materias;
-    private List<ScholarshipResponse> becas;
-    private List<DiscountResponse> descuentos;
+    private List<BecaDescuentoInfo> becasDescuentos;
+    private Boolean estaPago;
+    private String grupoNombre;
 }

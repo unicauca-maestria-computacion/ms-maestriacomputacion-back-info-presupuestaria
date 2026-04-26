@@ -1,11 +1,11 @@
 package co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient;
 
-import co.edu.unicauca.informacion_presupuestaria.domain.model.ScholarshipResponse;
-import co.edu.unicauca.informacion_presupuestaria.domain.model.DiscountResponse;
+import co.edu.unicauca.informacion_presupuestaria.domain.model.BecaDescuentoInfo;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.SubjectResponse;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus;
+import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.dto.BecaDescuentoInfoResponse;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.dto.PeriodoAcademicoResponse;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.dto.StudentResponse;
 
@@ -14,6 +14,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FinancialEnrollmentClientMapper {
+
+    public BecaDescuentoInfo toDomain(BecaDescuentoInfoResponse dto) {
+        if (dto == null) return null;
+        return new BecaDescuentoInfo(
+                dto.getTipo(),
+                dto.getPorcentaje(),
+                dto.getResolucion(),
+                dto.getEstado(),
+                dto.getAvaladoConcejo()
+        );
+    }
 
     public Student toDomain(StudentResponse response) {
         if (response == null) {
@@ -26,17 +37,9 @@ public class FinancialEnrollmentClientMapper {
                         .collect(Collectors.toList())
                 : Collections.emptyList();
 
-        List<ScholarshipResponse> becas = response.getBecas() != null
-                ? response.getBecas().stream()
-                        .map(b -> new ScholarshipResponse(
-                                b.getTipo(), b.getTitulo(), b.getDedicacion(),
-                                b.getEntidadAsociada(), b.getEsOfrecidaPorUnicauca()))
-                        .collect(Collectors.toList())
-                : Collections.emptyList();
-
-        List<DiscountResponse> descuentos = response.getDescuentos() != null
-                ? response.getDescuentos().stream()
-                        .map(d -> new DiscountResponse(d.getTipo(), d.getPorcentaje()))
+        List<BecaDescuentoInfo> becasDescuentos = response.getBecasDescuentos() != null
+                ? response.getBecasDescuentos().stream()
+                        .map(this::toDomain)
                         .collect(Collectors.toList())
                 : Collections.emptyList();
 
@@ -50,9 +53,12 @@ public class FinancialEnrollmentClientMapper {
                 response.getSemestreFinanciero(),
                 response.getSemestreAcademico(),
                 response.getValorEnSMLV(),
+                response.getEsEgresadoUnicauca(),
+                response.getAplicaVotacion(),
                 materias,
-                becas,
-                descuentos);
+                becasDescuentos,
+                response.getEstaPago(),
+                response.getGrupoNombre());
     }
 
     public List<Student> toDomainList(List<StudentResponse> responses) {

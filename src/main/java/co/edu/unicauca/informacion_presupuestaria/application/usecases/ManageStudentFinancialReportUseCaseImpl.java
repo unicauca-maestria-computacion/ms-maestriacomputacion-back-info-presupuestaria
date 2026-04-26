@@ -1,6 +1,7 @@
 package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,42 +39,41 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
                         "No existe el período académico " + tagPeriodo + "-" + anio,
                         "ENTIDAD_NO_ENCONTRADA"));
 
-        AcademicPeriod periodoProyeccion = gateway.obtenerUltimoPeriodo()
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "No existe ningún período académico registrado",
-                        "ENTIDAD_NO_ENCONTRADA"));
-
-        if (!esPeriodoAnterior(periodoSolicitado, periodoProyeccion)) {
-            throw new BusinessRuleViolatedException(
-                    String.format(
-                            "Solo se pueden consultar reportes de períodos anteriores al período de proyección actual (%d-%d). El período solicitado (%d-%d) es el período actual o posterior.",
-                            periodoProyeccion.getTagPeriodo(), periodoProyeccion.getAño(),
-                            tagPeriodo, anio));
-        }
+        // Si la fecha de fin no ha pasado, se considera Proyección (incluye futuro y presente)
+        LocalDate hoy = LocalDate.now();
+        boolean esActivo = periodoSolicitado.getFechaFin() == null || !hoy.isAfter(periodoSolicitado.getFechaFin());
 
         FinancialReportConfig config = gateway
                 .obtenerConfiguracionReporteFinanciero(periodoSolicitado.getId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "No existe configuración de reporte financiero para el período " + tagPeriodo + "-" + anio,
-                        "ENTIDAD_NO_ENCONTRADA"));
+                .orElseGet(() -> inicializarConfiguracionReporteFinanciero(periodoSolicitado));
+        
+        config.setEsReporteFinal(!esActivo);
 
         if (config.getValorSMLV() == null || config.getValorSMLV().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessRuleViolatedException(
                     "El valor del SMLV debe ser mayor a cero para generar el reporte financiero");
         }
 
-        List<StudentProjection> proyecciones = gateway.obtenerProyeccionesPorPeriodo(
-                periodoSolicitado.getId(), null);
+        List<StudentProjection> proyecciones;
+        if (esActivo) {
+            // Caso Proyección Activa: Usamos la tabla de simulación
+            proyecciones = gateway.obtenerProyeccionesPorPeriodo(periodoSolicitado.getId());
+        } else {
+            // Caso Reporte Final: Ignoramos proyecciones y usamos datos reales
+            proyecciones = List.of();
+        }
+
         List<Student> estudiantes = matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(
                 tagPeriodo, anio);
 
-        List<StudentProjection> enriquecidas = enriquecerProyecciones(proyecciones, estudiantes);
+        List<StudentProjection> enriquecidas = enriquecerProyecciones(proyecciones, estudiantes, periodoSolicitado);
 
         FinancialCalculationService.Totales totales = calculationService.calcular(
                 enriquecidas, estudiantes, config);
 
         return new StudentFinancialReport(enriquecidas, config, periodoSolicitado,
-                totales.getTotalNeto(), totales.getTotalDescuentos(), totales.getTotalIngresos());
+                totales.getTotalNeto(), totales.getTotalDescuentos(), totales.getTotalIngresos(),
+                totales.getTotalDerechosComplementarios());
     }
 
     @Override
@@ -95,32 +95,95 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
                         "ENTIDAD_NO_ENCONTRADA"));
         return gateway.obtenerConfiguracionReporteFinanciero(periodo.getId())
                 .map(FinancialReportConfig::getId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "No existe configuración de reporte financiero para el período " + tagPeriodo + "-" + anio,
-                        "ENTIDAD_NO_ENCONTRADA"));
+                .orElseGet(() -> inicializarConfiguracionReporteFinanciero(periodo).getId());
     }
 
-    private boolean esPeriodoAnterior(AcademicPeriod solicitado, AcademicPeriod proyeccion) {
-        if (solicitado.getAño() < proyeccion.getAño()) return true;
-        if (solicitado.getAño().equals(proyeccion.getAño())) {
-            return solicitado.getTagPeriodo() < proyeccion.getTagPeriodo();
+    private FinancialReportConfig inicializarConfiguracionReporteFinanciero(AcademicPeriod periodo) {
+        // Buscar config del período anterior para copiar
+        FinancialReportConfig anterior = gateway.obtenerPeriodoAnterior(periodo.getId())
+                .flatMap(p -> gateway.obtenerConfiguracionReporteFinanciero(p.getId()))
+                .orElse(null);
+
+        FinancialReportConfig config = new FinancialReportConfig();
+        config.setAcademicPeriod(periodo);
+        if (anterior != null) {
+            config.setBiblioteca(anterior.getBiblioteca());
+            config.setRecursosComputacionales(anterior.getRecursosComputacionales());
+            config.setValorSMLV(anterior.getValorSMLV());
+            config.setEsReporteFinal(false); // Por defecto no es final
+        } else {
+            // Valores por defecto aproximados (según Excel de presupuesto)
+            config.setBiblioteca(new BigDecimal("85000"));
+            config.setRecursosComputacionales(new BigDecimal("165000"));
+            config.setValorSMLV(new BigDecimal("1423500"));
+            config.setEsReporteFinal(false);
         }
-        return false;
+        return gateway.guardarConfiguracionReporteFinanciero(config);
     }
+
 
     private List<StudentProjection> enriquecerProyecciones(
-            List<StudentProjection> proyecciones, List<Student> estudiantes) {
-        return proyecciones.stream().map(p -> {
-            estudiantes.stream()
-                    .filter(e -> e.getCodigo() != null && e.getCodigo().equals(p.getCodigoEstudiante()))
-                    .findFirst()
-                    .ifPresent(e -> {
-                        p.setNombre(e.getNombre());
-                        p.setApellido(e.getApellido());
-                        p.setIdentificacion(e.getIdentificacion());
-                        p.setValorEnSMLV(e.getValorEnSMLV());
-                    });
-            return p;
-        }).filter(p -> p.getValorEnSMLV() != null).collect(Collectors.toList());
+            List<StudentProjection> proyecciones, List<Student> estudiantes, AcademicPeriod periodo) {
+        
+        LocalDate hoy = LocalDate.now();
+        boolean esReporteReal = periodo.getFechaFin() != null && hoy.isAfter(periodo.getFechaFin());
+
+        return estudiantes.stream()
+                .filter(e -> e.getValorEnSMLV() != null)
+                .map(e -> {
+                    // 1. Buscar si ya existe una proyeccion (solo aplica si es periodo ACTIVO)
+                    StudentProjection p = proyecciones.stream()
+                            .filter(proj -> e.getCodigo().equals(proj.getCodigoEstudiante()))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (p == null) {
+                        p = new StudentProjection();
+                        p.setCodigoEstudiante(e.getCodigo());
+                        p.setAcademicPeriod(periodo);
+                    }
+
+                    // 2. Definir fuente de verdad para beneficios y PAGO
+                    if (esReporteReal) {
+                        // REPORTE FINAL: Datos reales
+                        p.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
+                        
+                        BigDecimal porcentajeBecaReal = BigDecimal.ZERO;
+                        if (e.getBecasDescuentos() != null) {
+                            porcentajeBecaReal = e.getBecasDescuentos().stream()
+                                    .filter(b -> b.getTipo() != null && b.getTipo().toUpperCase().contains("BECA"))
+                                    .map(b -> {
+                                        if (b.getPorcentaje() == null) return BigDecimal.ZERO;
+                                        return BigDecimal.valueOf(b.getPorcentaje().doubleValue());
+                                    })
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                        }
+                        p.setPorcentajeBeca(porcentajeBecaReal);
+                        p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
+                        p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
+                    } else {
+                        // PROYECCION ACTIVA: 
+                        if (p.getId() == null) {
+                            // Si es una proyección "virtual" (nueva), heredamos el pago real como punto de partida
+                            p.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
+                            p.setPorcentajeBeca(BigDecimal.ZERO);
+                            p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
+                            p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
+                        } else {
+                            // Si p.getId() != null, respetamos el pago SIMULADO que el usuario haya editado
+                            // (Ya viene seteado en 'p' por el mapper desde findFullProjectionsByPeriodo)
+                        }
+                    }
+
+                    // 3. Siempre actualizar datos maestros (grupo, identificación, etc)
+                    p.setGrupoInvestigacion(e.getGrupoNombre());
+                    p.setIdentificacion(e.getIdentificacion());
+                    p.setNombre(e.getNombre());
+                    p.setApellido(e.getApellido());
+                    p.setValorEnSMLV(e.getValorEnSMLV());
+                    
+                    return p;
+                })
+                .collect(Collectors.toList());
     }
 }

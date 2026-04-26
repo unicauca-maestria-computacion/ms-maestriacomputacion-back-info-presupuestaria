@@ -10,10 +10,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Property-based tests for FinancialEnrollmentClientMapper.
- * Validates: Requisito 3.6, 10.3
- */
 class MatriculaFinancieraClientMapperPropertyTest {
 
     private final FinancialEnrollmentClientMapper mapper = new FinancialEnrollmentClientMapper();
@@ -28,33 +24,27 @@ class MatriculaFinancieraClientMapperPropertyTest {
                 "EST001", "Juan", "Pérez", 12345678L,
                 2020, 3, 3, "2020-1",
                 valorEnSMLV,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+                false, true, "Grupo A", Collections.emptyList(),
+                Collections.emptyList(), true);
 
         Student student = mapper.toDomain(response);
 
-        assertThat(student.getValorEnSMLV())
-                .as("valorEnSMLV debe mapearse directamente sin recalcular")
-                .isEqualTo(valorEnSMLV);
+        assertThat(student.getValorEnSMLV()).isEqualTo(valorEnSMLV);
     }
 
     /**
-     * Property: el código del Student se mapea sin modificación.
-     * Validates: Requisito 3.6
+     * Property: Codigo de estudiante se mantiene durante el mapeo.
      */
     @Property(tries = 100)
-    void codigoEstudianteSeMapeaSinModificacion(
-            @ForAll @IntRange(min = 0, max = 20) Integer valorEnSMLV) {
-        String codigoEsperado = "EST" + valorEnSMLV;
+    void codigoEstudianteSeMantiene(@ForAll String codigo) {
         StudentResponse response = new StudentResponse(
-                codigoEsperado, "Juan", "Pérez", 12345678L,
-                2020, 3, 3, "2020-1",
-                valorEnSMLV,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+                codigo, "Juan", "Pérez", 12345678L,
+                2020, 3, 3, "2020-1", 2,
+                false, true, "Grupo A", Collections.emptyList(),
+                Collections.emptyList(), true);
 
         Student student = mapper.toDomain(response);
 
-        assertThat(student.getCodigo())
-                .as("código debe mapearse sin modificación")
-                .isEqualTo(codigoEsperado);
+        assertThat(student.getCodigo()).isEqualTo(codigo);
     }
 }

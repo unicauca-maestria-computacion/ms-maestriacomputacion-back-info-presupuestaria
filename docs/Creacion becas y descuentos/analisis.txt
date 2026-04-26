@@ -1,0 +1,32 @@
+1. Flujo de Creación (Frontend -> Backend)
+El proceso inicia cuando un estudiante ingresa al módulo de radicación de solicitudes.
+
+Datos "Quemados" en el Frontend: En el componente BecaDescuentoComponent, existen los siguientes tipos de beneficios predefinidos:
+Beca - Trabajo (Requiere justificación obligatoria).
+Beca - Mejor promedio en pregrado (Requiere adjuntar documento).
+Beca - Convenio (cidesco) (Requiere adjuntar documento).
+Descuento en la matrícula (Requiere justificación obligatoria).
+Generación de Documento: El frontend utiliza la estrategia SolicitudDeBeca para generar un PDF dinámico que incluye la información del estudiante, el tipo de beca y la justificación. Este documento es el que se firma digitalmente.
+2. Tablas de la Base de Datos Tocadas
+Durante el ciclo de vida de la solicitud, se interactúa con las siguientes tablas:
+
+Tabla	Propósito	Datos Principales
+solicitudes	Registro maestro de la solicitud.	id_estudiante, id_tutor, estado, radicado, fecha_creacion.
+solicitud_beca_descuento	Almacena los datos específicos de la beca.	tipo, motivo (justificación), formato_solicitud (PDF base64).
+firma_solicitud	Control de firmas digitales.	firma_estudiante, firma_tutor, firma_director.
+historial_estado_solicitudes	Auditoría de cambios de estado.	id_solicitud, estado_anterior, nuevo_estado, fecha.
+solicitudes_en_comite	Registro de la sesión del Comité.	numero_acta, fecha_aval, concepto_comite, avalado_comite.
+solicitudes_en_concejo	Registro de la sesión del Consejo.	numero_acta, fecha_aval, concepto_concejo, documentos_concejo.
+3. Estados y Transiciones
+El flujo de estados garantiza que la solicitud pase por todas las instancias legales:
+
+RADICADA: El estudiante envía la solicitud. Se crea el registro en solicitudes y solicitud_beca_descuento.
+PENDIENTE AVAL: La solicitud espera la firma del Tutor (y Director si aplica).
+AVALADA: Una vez firmada por los docentes, la solicitud es visible para la Coordinación.
+EN COMITÉ: El Coordinador envía la solicitud al Comité de Programa. Se registra en solicitudes_en_comite.
+EN CONCEJO: Si el comité da aval positivo, se envía al Consejo de Facultad para la decisión final. Se registra en solicitudes_en_concejo.
+RESUELTA: Estado final. Puede terminar como APROBADA o NO_APROBADA tras la decisión del Consejo.
+4. ¿Por qué se llena con estos datos?
+Justificación/Motivo: Es un requisito legal para las becas de trabajo o descuentos por situación socioeconómica, donde el estudiante debe explicar su necesidad.
+Formato FA (Adjunto): Para convenios (como CIDESCO) o méritos académicos, se requiere el soporte documental que valide que el estudiante cumple con los requisitos externos.
+Actas y Fechas: Son fundamentales para la validez administrativa; ninguna beca puede otorgarse sin un número de acta de comité o consejo que lo respalde ante una auditoría.

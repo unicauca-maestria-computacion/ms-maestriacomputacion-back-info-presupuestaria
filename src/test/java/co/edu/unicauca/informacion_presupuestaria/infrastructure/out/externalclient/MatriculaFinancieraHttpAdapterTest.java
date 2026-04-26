@@ -41,7 +41,8 @@ class MatriculaFinancieraHttpAdapterTest {
         StudentResponse response = new StudentResponse(
                 "EST001", "Juan", "Pérez", 12345678L,
                 2020, 3, 3, "2020-1", 3,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+                false, true, "Grupo A", Collections.emptyList(), 
+                Collections.emptyList(), true);
 
         Student student = mapper.toDomain(response);
 
@@ -53,7 +54,8 @@ class MatriculaFinancieraHttpAdapterTest {
         StudentResponse response = new StudentResponse(
                 "EST002", "Ana", "García", 87654321L,
                 2021, 1, 1, "2021-1", 0,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+                false, true, "Grupo B", Collections.emptyList(), 
+                Collections.emptyList(), true);
 
         Student student = mapper.toDomain(response);
 

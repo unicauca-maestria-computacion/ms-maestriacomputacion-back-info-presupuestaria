@@ -1,10 +1,10 @@
 package co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.mapper;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.StudentProjectionEntity;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,18 +24,46 @@ public class StudentProjectionPersistenceMapper {
         }
         StudentProjection domain = new StudentProjection();
         domain.setId(entity.getId());
-        domain.setCodigoEstudiante(entity.getCodigoEstudiante());
-        domain.setEstaPago(entity.getEstaPago());
-        domain.setAplicaVotacion(Boolean.TRUE.equals(entity.getAplicaVotacion()));
+        if (entity.getObjEstudiante() != null) {
+            domain.setCodigoEstudiante(entity.getObjEstudiante().getCodigo());
+            if (entity.getObjEstudiante().getObjPersona() != null) {
+                domain.setNombre(entity.getObjEstudiante().getObjPersona().getNombre());
+                domain.setApellido(entity.getObjEstudiante().getObjPersona().getApellido());
+                domain.setIdentificacion(entity.getObjEstudiante().getObjPersona().getIdentificacion());
+            }
+        }
+        domain.setEstaPago(entity.getEstaPago()); // Este es el pago SIMULADO
         domain.setPorcentajeBeca(entity.getPorcentajeBeca());
-        domain.setAplicaEgresado(Boolean.TRUE.equals(entity.getAplicaEgresado()));
-        domain.setGrupoInvestigacion(entity.getGrupoInvestigacion());
-        domain.setProjectionStatus(entity.getEstadoProyeccion() != null
-                ? entity.getEstadoProyeccion()
-                : StudentProjectionStatus.PROYECCION);
+        domain.setAplicaVotacion(entity.getAplicaVotacion());
+        domain.setAplicaEgresado(entity.getAplicaEgresado());
+
         if (entity.getObjPeriodoAcademico() != null) {
             domain.setAcademicPeriod(periodoMapper.toDomain(entity.getObjPeriodoAcademico()));
         }
+        return domain;
+    }
+
+    public StudentProjection toDomainFromNative(Object[] row) {
+        if (row == null || row.length < 12) {
+            return null;
+        }
+        StudentProjection domain = new StudentProjection();
+        domain.setId(((Number) row[0]).longValue());
+        domain.setCodigoEstudiante((String) row[2]);
+        domain.setIdentificacion(row[3] != null ? ((Number) row[3]).longValue() : null);
+        domain.setNombre((String) row[4]);
+        domain.setApellido((String) row[5]);
+        
+        // Obtenemos el pago simulado
+        boolean pagoSimulado = row[6] != null && (row[6] instanceof Boolean ? (Boolean) row[6] : ((Number) row[6]).intValue() == 1);
+        
+        // Por defecto en la proyección activa mostramos el SIMULADO
+        domain.setEstaPago(pagoSimulado);
+        domain.setGrupoInvestigacion((String) row[8]);
+        domain.setPorcentajeBeca(row[9] != null ? new BigDecimal(row[9].toString()) : BigDecimal.ZERO);
+        domain.setAplicaVotacion(row[10] != null && ((Number) row[10]).intValue() == 1);
+        domain.setAplicaEgresado(row[11] != null && ((Number) row[11]).intValue() == 1);
+        
         return domain;
     }
 
@@ -45,13 +73,10 @@ public class StudentProjectionPersistenceMapper {
         }
         StudentProjectionEntity entity = new StudentProjectionEntity();
         entity.setId(domain.getId());
-        entity.setCodigoEstudiante(domain.getCodigoEstudiante());
-        entity.setEstaPago(domain.getEstaPago());
-        entity.setAplicaVotacion(Boolean.TRUE.equals(domain.getAplicaVotacion()));
+        entity.setEstaPago(domain.getEstaPago()); // Guardamos el pago SIMULADO
         entity.setPorcentajeBeca(domain.getPorcentajeBeca());
-        entity.setAplicaEgresado(Boolean.TRUE.equals(domain.getAplicaEgresado()));
-        entity.setGrupoInvestigacion(domain.getGrupoInvestigacion());
-        entity.setEstadoProyeccion(domain.getProjectionStatus());
+        entity.setAplicaVotacion(domain.getAplicaVotacion());
+        entity.setAplicaEgresado(domain.getAplicaEgresado());
         return entity;
     }
 
@@ -61,6 +86,15 @@ public class StudentProjectionPersistenceMapper {
         }
         return entities.stream()
                 .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    public List<StudentProjection> toDomainListFromNative(List<Object[]> rows) {
+        if (rows == null) {
+            return Collections.emptyList();
+        }
+        return rows.stream()
+                .map(this::toDomainFromNative)
                 .collect(Collectors.toList());
     }
 }

@@ -4,14 +4,12 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinanc
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
-import co.edu.unicauca.informacion_presupuestaria.domain.model.DiscountResponse;
+import co.edu.unicauca.informacion_presupuestaria.domain.model.BecaDescuentoInfo;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
 import co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus;
-import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.EntityNotFoundException;
-import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.BusinessRuleViolatedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,9 +64,13 @@ class ManageStudentFinancialReportUseCaseImplTest {
         when(gateway.obtenerPeriodoPorTagYAnio(1, 2023)).thenReturn(Optional.of(periodoAnterior));
         when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
         when(gateway.obtenerConfiguracionReporteFinanciero(1L)).thenReturn(Optional.of(config));
-        when(gateway.obtenerProyeccionesPorPeriodo(1L, null)).thenReturn(List.of(proy1, proy2));
+        when(gateway.obtenerProyeccionesPorPeriodo(1L)).thenReturn(List.of(proy1, proy2));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2023))
                 .thenReturn(List.of(est1, est2));
+        
+        when(calculationService.calcular(any(), any(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        new BigDecimal("6500000.00"), BigDecimal.ZERO, new BigDecimal("6500000.00"), BigDecimal.ZERO));
 
         // Act
         StudentFinancialReport resultado = useCase.obtenerReporteFinanciero(1, 2023);
@@ -85,7 +87,7 @@ class ManageStudentFinancialReportUseCaseImplTest {
         AcademicPeriod periodoActual = buildPeriodo(2L, 2, 2024, AcademicPeriodStatus.ACTIVO);
 
         BigDecimal valorSMLV = new BigDecimal("1000000.00");
-        DiscountResponse descuento = new DiscountResponse("BECA", new BigDecimal("0.5000"));
+        BecaDescuentoInfo descuento = new BecaDescuentoInfo("BECA", 0.5f, "RES-001", "avalada", "SI");
         Student est = buildEstudiante("EST001", 2, List.of(descuento));
 
         StudentProjection proy = buildProyeccion(1L, "EST001", true,
@@ -97,9 +99,13 @@ class ManageStudentFinancialReportUseCaseImplTest {
         when(gateway.obtenerPeriodoPorTagYAnio(1, 2023)).thenReturn(Optional.of(periodoAnterior));
         when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
         when(gateway.obtenerConfiguracionReporteFinanciero(1L)).thenReturn(Optional.of(config));
-        when(gateway.obtenerProyeccionesPorPeriodo(1L, null)).thenReturn(List.of(proy));
+        when(gateway.obtenerProyeccionesPorPeriodo(1L)).thenReturn(List.of(proy));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2023))
                 .thenReturn(List.of(est));
+        
+        when(calculationService.calcular(any(), any(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        new BigDecimal("2000000.00"), new BigDecimal("1000000.00"), new BigDecimal("1000000.00"), BigDecimal.ZERO));
 
         // Act
         StudentFinancialReport resultado = useCase.obtenerReporteFinanciero(1, 2023);
@@ -109,75 +115,6 @@ class ManageStudentFinancialReportUseCaseImplTest {
         assertThat(resultado.getTotalDescuentos()).isEqualByComparingTo(new BigDecimal("1000000.00"));
         assertThat(resultado.getTotalIngresos()).isEqualByComparingTo(new BigDecimal("1000000.00"));
     }
-
-    @Test
-    void shouldThrowReglaNegocioWhenPeriodoIsProyeccionActual() {
-        // Arrange
-        AcademicPeriod periodoActual = buildPeriodo(1L, 1, 2024, AcademicPeriodStatus.ACTIVO);
-
-        when(gateway.obtenerPeriodoPorTagYAnio(1, 2024)).thenReturn(Optional.of(periodoActual));
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
-
-        // Act & Assert
-        assertThatThrownBy(() -> useCase.obtenerReporteFinanciero(1, 2024))
-                .isInstanceOf(BusinessRuleViolatedException.class)
-                .hasMessageContaining("período de proyección");
-    }
-
-    @Test
-    void shouldThrowReglaNegocioWhenValorSMLVIsNull() {
-        // Arrange
-        AcademicPeriod periodoAnterior = buildPeriodo(1L, 1, 2023, AcademicPeriodStatus.CERRADO);
-        AcademicPeriod periodoActual = buildPeriodo(2L, 2, 2024, AcademicPeriodStatus.ACTIVO);
-
-        FinancialReportConfig config = new FinancialReportConfig(
-                1L, BigDecimal.ZERO, BigDecimal.ZERO, null, false, periodoAnterior, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
-
-        when(gateway.obtenerPeriodoPorTagYAnio(1, 2023)).thenReturn(Optional.of(periodoAnterior));
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
-        when(gateway.obtenerConfiguracionReporteFinanciero(1L)).thenReturn(Optional.of(config));
-
-        // Act & Assert
-        assertThatThrownBy(() -> useCase.obtenerReporteFinanciero(1, 2023))
-                .isInstanceOf(BusinessRuleViolatedException.class)
-                .hasMessageContaining("SMLV");
-    }
-
-    @Test
-    void shouldThrowReglaNegocioWhenValorSMLVIsZero() {
-        // Arrange
-        AcademicPeriod periodoAnterior = buildPeriodo(1L, 1, 2023, AcademicPeriodStatus.CERRADO);
-        AcademicPeriod periodoActual = buildPeriodo(2L, 2, 2024, AcademicPeriodStatus.ACTIVO);
-
-        FinancialReportConfig config = new FinancialReportConfig(
-                1L, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false, periodoAnterior, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
-
-        when(gateway.obtenerPeriodoPorTagYAnio(1, 2023)).thenReturn(Optional.of(periodoAnterior));
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
-        when(gateway.obtenerConfiguracionReporteFinanciero(1L)).thenReturn(Optional.of(config));
-
-        // Act & Assert
-        assertThatThrownBy(() -> useCase.obtenerReporteFinanciero(1, 2023))
-                .isInstanceOf(BusinessRuleViolatedException.class)
-                .hasMessageContaining("SMLV");
-    }
-
-    @Test
-    void shouldThrowEntidadNoExisteWhenConfiguracionIdNotFound() {
-        // Arrange
-        when(gateway.obtenerConfiguracionReporteFinancieroPorId(999L))
-                .thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThatThrownBy(() -> useCase.actualizarConfiguracionProyeccion(
-                999L, new FinancialReportConfig()))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("999");
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private AcademicPeriod buildPeriodo(Long id, Integer tag, Integer anio, AcademicPeriodStatus estado) {
         return new AcademicPeriod(
@@ -190,11 +127,13 @@ class ManageStudentFinancialReportUseCaseImplTest {
     }
 
     private Student buildEstudiante(String codigo, Integer valorEnSMLV,
-                                     List<DiscountResponse> descuentos) {
+                                     List<BecaDescuentoInfo> descuentos) {
         return new Student(
                 codigo, "Juan", "Pérez", 12345678L,
                 2020, "2020-1", 3, 3, valorEnSMLV,
-                Collections.emptyList(), Collections.emptyList(), descuentos);
+                false, // esEgresadoUnicauca
+                false, // aplicaVotacion
+                Collections.emptyList(), descuentos, false, null);
     }
 
     private StudentProjection buildProyeccion(Long id, String codigoEstudiante,
@@ -204,9 +143,8 @@ class ManageStudentFinancialReportUseCaseImplTest {
                                                boolean aplicaEgresado,
                                                AcademicPeriod periodo) {
         return new StudentProjection(
-                id, codigoEstudiante, null,
-                null, null, estaPago,
-                aplicaVotacion, porcentajeBeca, aplicaEgresado,
-                null, null, null, periodo, null);
+                id, codigoEstudiante, 12345678L, "Juan", "Perez",
+                estaPago, aplicaVotacion, porcentajeBeca, aplicaEgresado,
+                null, null, periodo, null);
     }
 }

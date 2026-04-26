@@ -1,6 +1,5 @@
 package co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentprojection.mapper;
 
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
@@ -40,8 +39,6 @@ public class ProyeccionEstudianteRestMapper {
         dto.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
         dto.setAplicaEgresado(Boolean.TRUE.equals(proyeccion.getAplicaEgresado()));
         dto.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
-        dto.setEstadoProyeccion(proyeccion.getProjectionStatus() != null
-                ? proyeccion.getProjectionStatus().name() : null);
         dto.setValorEnSMLV(proyeccion.getValorEnSMLV());
         dto.setMaterias(toMateriaResponseList(proyeccion.getMaterias()));
 
@@ -70,13 +67,6 @@ public class ProyeccionEstudianteRestMapper {
         proyeccion.setAplicaEgresado(Boolean.TRUE.equals(request.getAplicaEgresado()));
         proyeccion.setGrupoInvestigacion(request.getGrupoInvestigacion());
 
-        if (request.getEstadoProyeccion() != null) {
-            try {
-                proyeccion.setProjectionStatus(
-                        StudentProjectionStatus.valueOf(request.getEstadoProyeccion()));
-            } catch (IllegalArgumentException ignored) {
-            }
-        }
 
         return proyeccion;
     }

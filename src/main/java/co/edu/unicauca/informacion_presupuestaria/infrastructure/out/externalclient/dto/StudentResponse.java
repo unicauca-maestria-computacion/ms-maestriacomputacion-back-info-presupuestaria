@@ -13,18 +13,21 @@ public class StudentResponse {
     private Integer semestreAcademico;
     private String periodoIngreso;
     private Integer valorEnSMLV;
+    private Boolean esEgresadoUnicauca;
+    private Boolean aplicaVotacion;
+    private String grupoNombre;
     private List<MateriaResponse> materias;
-    private List<BecaResponse> becas;
-    private List<DescuentoResponse> descuentos;
+    private List<BecaDescuentoInfoResponse> becasDescuentos;
+    private Boolean estaPago;
 
     public StudentResponse() {
     }
 
-    public StudentResponse(String codigo, String nombre, String apellido, Long identificacion,
-                           Integer cohorte, Integer semestreFinanciero, Integer semestreAcademico,
-                           String periodoIngreso, Integer valorEnSMLV,
-                           List<MateriaResponse> materias, List<BecaResponse> becas,
-                           List<DescuentoResponse> descuentos) {
+    public StudentResponse(String codigo, String nombre, String apellido, Long identificacion, Integer cohorte, 
+                           Integer semestreFinanciero, Integer semestreAcademico, String periodoIngreso, 
+                           Integer valorEnSMLV, Boolean esEgresadoUnicauca, Boolean aplicaVotacion, 
+                           String grupoNombre, List<MateriaResponse> materias, 
+                           List<BecaDescuentoInfoResponse> becasDescuentos, Boolean estaPago) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -34,9 +37,12 @@ public class StudentResponse {
         this.semestreAcademico = semestreAcademico;
         this.periodoIngreso = periodoIngreso;
         this.valorEnSMLV = valorEnSMLV;
+        this.esEgresadoUnicauca = esEgresadoUnicauca;
+        this.aplicaVotacion = aplicaVotacion;
+        this.grupoNombre = grupoNombre;
         this.materias = materias;
-        this.becas = becas;
-        this.descuentos = descuentos;
+        this.becasDescuentos = becasDescuentos;
+        this.estaPago = estaPago;
     }
 
     public String getCodigo() { return codigo; }
@@ -57,10 +63,16 @@ public class StudentResponse {
     public void setPeriodoIngreso(String periodoIngreso) { this.periodoIngreso = periodoIngreso; }
     public Integer getValorEnSMLV() { return valorEnSMLV; }
     public void setValorEnSMLV(Integer valorEnSMLV) { this.valorEnSMLV = valorEnSMLV; }
+    public Boolean getEsEgresadoUnicauca() { return esEgresadoUnicauca; }
+    public void setEsEgresadoUnicauca(Boolean esEgresadoUnicauca) { this.esEgresadoUnicauca = esEgresadoUnicauca; }
+    public Boolean getAplicaVotacion() { return aplicaVotacion; }
+    public void setAplicaVotacion(Boolean aplicaVotacion) { this.aplicaVotacion = aplicaVotacion; }
+    public String getGrupoNombre() { return grupoNombre; }
+    public void setGrupoNombre(String grupoNombre) { this.grupoNombre = grupoNombre; }
     public List<MateriaResponse> getMaterias() { return materias; }
     public void setMaterias(List<MateriaResponse> materias) { this.materias = materias; }
-    public List<BecaResponse> getBecas() { return becas; }
-    public void setBecas(List<BecaResponse> becas) { this.becas = becas; }
-    public List<DescuentoResponse> getDescuentos() { return descuentos; }
-    public void setDescuentos(List<DescuentoResponse> descuentos) { this.descuentos = descuentos; }
+    public List<BecaDescuentoInfoResponse> getBecasDescuentos() { return becasDescuentos; }
+    public void setBecasDescuentos(List<BecaDescuentoInfoResponse> becasDescuentos) { this.becasDescuentos = becasDescuentos; }
+    public Boolean getEstaPago() { return estaPago; }
+    public void setEstaPago(Boolean estaPago) { this.estaPago = estaPago; }
 }

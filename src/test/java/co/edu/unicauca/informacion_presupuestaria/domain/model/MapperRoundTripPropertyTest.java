@@ -1,7 +1,6 @@
 package co.edu.unicauca.informacion_presupuestaria.domain.model;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus;
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.dtoResponse.PeriodoAcademicoResponseDto;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.dtoResponse.ProyeccionEstudianteResponse;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.mapper.PeriodoAcademicoRestMapper;
@@ -56,7 +55,6 @@ class MapperRoundTripPropertyTest {
         original.setPorcentajeBeca(porcentajeBeca);
         original.setAplicaVotacion(porcentajeVotacion != null && porcentajeVotacion.compareTo(BigDecimal.ZERO) > 0);
         original.setAplicaEgresado(porcentajeEgresado != null && porcentajeEgresado.compareTo(BigDecimal.ZERO) > 0);
-        original.setProjectionStatus(StudentProjectionStatus.PROYECCION);
 
         // Act — domain → response DTO
         ProyeccionEstudianteResponse response = proyeccionMapper.toResponse(original);
@@ -69,7 +67,6 @@ class MapperRoundTripPropertyTest {
         assertThat(response.getPorcentajeBeca()).isEqualByComparingTo(original.getPorcentajeBeca());
         assertThat(response.getAplicaVotacion()).isEqualTo(original.getAplicaVotacion());
         assertThat(response.getAplicaEgresado()).isEqualTo(original.getAplicaEgresado());
-        assertThat(response.getEstadoProyeccion()).isEqualTo("PROYECCION");
     }
 
     /**

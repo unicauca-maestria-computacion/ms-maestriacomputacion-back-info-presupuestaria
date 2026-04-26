@@ -4,7 +4,6 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentFinanc
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.FinancialReportConfigEntity;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.AcademicPeriodEntity;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.StudentProjectionEntity;
@@ -14,6 +13,7 @@ import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.repository.FinancialReportConfigJpaRepository;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.repository.AcademicPeriodJpaRepository;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.repository.StudentProjectionJpaRepository;
+import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.repository.StudentJpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +26,7 @@ public class StudentFinancialReportGatewayAdapter implements StudentFinancialRep
     private final AcademicPeriodJpaRepository periodoRepository;
     private final StudentProjectionJpaRepository proyeccionRepository;
     private final FinancialReportConfigJpaRepository configRepository;
+    private final StudentJpaRepository studentRepository;
     private final AcademicPeriodPersistenceMapper periodoMapper;
     private final StudentProjectionPersistenceMapper proyeccionMapper;
     private final FinancialReportConfigPersistenceMapper configMapper;
@@ -34,12 +35,14 @@ public class StudentFinancialReportGatewayAdapter implements StudentFinancialRep
             AcademicPeriodJpaRepository periodoRepository,
             StudentProjectionJpaRepository proyeccionRepository,
             FinancialReportConfigJpaRepository configRepository,
+            StudentJpaRepository studentRepository,
             AcademicPeriodPersistenceMapper periodoMapper,
             StudentProjectionPersistenceMapper proyeccionMapper,
             FinancialReportConfigPersistenceMapper configMapper) {
         this.periodoRepository = periodoRepository;
         this.proyeccionRepository = proyeccionRepository;
         this.configRepository = configRepository;
+        this.studentRepository = studentRepository;
         this.periodoMapper = periodoMapper;
         this.proyeccionMapper = proyeccionMapper;
         this.configMapper = configMapper;
@@ -54,6 +57,13 @@ public class StudentFinancialReportGatewayAdapter implements StudentFinancialRep
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerPeriodoPorTagYAnio(Integer tagPeriodo, Integer anio) {
+        return periodoRepository.findByTagPeriodoAndAnio(tagPeriodo, anio)
+                .map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<AcademicPeriod> obtenerPeriodoAnterior(Long periodoId) {
         return periodoRepository.findById(periodoId)
                 .flatMap(p -> periodoRepository.findPeriodoAnterior(p.getFechaInicio()))
@@ -62,19 +72,9 @@ public class StudentFinancialReportGatewayAdapter implements StudentFinancialRep
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AcademicPeriod> obtenerPeriodoPorTagYAnio(Integer tagPeriodo, Integer anio) {
-        return periodoRepository.findByTagPeriodoAndAnio(tagPeriodo, anio)
-                .map(periodoMapper::toDomain);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<StudentProjection> obtenerProyeccionesPorPeriodo(
-            Long periodoAcademicoId, StudentProjectionStatus estado) {
-        List<StudentProjectionEntity> entities = estado == null
-                ? proyeccionRepository.findByObjPeriodoAcademicoId(periodoAcademicoId)
-                : proyeccionRepository.findByObjPeriodoAcademicoIdAndEstado(periodoAcademicoId, estado);
-        return proyeccionMapper.toDomainList(entities);
+    public List<StudentProjection> obtenerProyeccionesPorPeriodo(Long periodoAcademicoId) {
+        List<Object[]> results = proyeccionRepository.findFullProjectionsByPeriodo(periodoAcademicoId);
+        return proyeccionMapper.toDomainListFromNative(results);
     }
 
     @Override
@@ -130,31 +130,28 @@ public class StudentFinancialReportGatewayAdapter implements StudentFinancialRep
         if (proyeccion.getCodigoEstudiante() != null
                 && proyeccion.getAcademicPeriod() != null
                 && proyeccion.getAcademicPeriod().getId() != null) {
-            existing = proyeccionRepository.findByCodigoEstudianteAndObjPeriodoAcademicoId(
+            existing = proyeccionRepository.findByObjEstudianteCodigoAndObjPeriodoAcademicoId(
                     proyeccion.getCodigoEstudiante(),
                     proyeccion.getAcademicPeriod().getId());
         }
         StudentProjectionEntity entity;
         if (existing.isPresent()) {
             entity = existing.get();
-            entity.setEstaPago(proyeccion.getEstaPago());
-            entity.setAplicaVotacion(Boolean.TRUE.equals(proyeccion.getAplicaVotacion()));
-            entity.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
-            entity.setAplicaEgresado(Boolean.TRUE.equals(proyeccion.getAplicaEgresado()));
-            entity.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
-            entity.setEstadoProyeccion(proyeccion.getProjectionStatus() != null
-                    ? StudentProjectionStatus.valueOf(proyeccion.getProjectionStatus().name())
-                    : null);
         } else {
-            entity = proyeccionMapper.toEntity(proyeccion);
-            if (proyeccion.getAcademicPeriod() != null
-                    && proyeccion.getAcademicPeriod().getId() != null) {
-                AcademicPeriodEntity periodoEntity = periodoRepository
-                        .findById(proyeccion.getAcademicPeriod().getId())
-                        .orElse(null);
-                entity.setObjPeriodoAcademico(periodoEntity);
+            entity = new StudentProjectionEntity();
+            if (proyeccion.getAcademicPeriod() != null && proyeccion.getAcademicPeriod().getId() != null) {
+                entity.setObjPeriodoAcademico(periodoRepository.findById(proyeccion.getAcademicPeriod().getId()).orElse(null));
+            }
+            if (proyeccion.getCodigoEstudiante() != null) {
+                entity.setObjEstudiante(studentRepository.findByCodigo(proyeccion.getCodigoEstudiante()).orElse(null));
             }
         }
+        
+        entity.setEstaPago(proyeccion.getEstaPago());
+        entity.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
+        entity.setAplicaVotacion(proyeccion.getAplicaVotacion());
+        entity.setAplicaEgresado(proyeccion.getAplicaEgresado());
+                
         StudentProjectionEntity saved = proyeccionRepository.save(entity);
         return proyeccionMapper.toDomain(saved);
     }
@@ -162,7 +159,7 @@ public class StudentFinancialReportGatewayAdapter implements StudentFinancialRep
     @Override
     @Transactional(readOnly = true)
     public boolean existeProyeccion(String codigoEstudiante, Long periodoAcademicoId) {
-        return proyeccionRepository.existsByCodigoEstudianteAndObjPeriodoAcademicoId(
+        return proyeccionRepository.existsByObjEstudianteCodigoAndObjPeriodoAcademicoId(
                 codigoEstudiante, periodoAcademicoId);
     }
 }

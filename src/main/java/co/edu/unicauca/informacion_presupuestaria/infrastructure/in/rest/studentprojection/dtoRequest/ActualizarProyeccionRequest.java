@@ -25,7 +25,6 @@ public class ActualizarProyeccionRequest {
     @Pattern(regexp = "GTI|IDIS|GICO")
     private String grupoInvestigacion;
 
-    private String estadoProyeccion;
 
     public ActualizarProyeccionRequest() {
     }
@@ -42,6 +41,4 @@ public class ActualizarProyeccionRequest {
     public void setAplicaEgresado(Boolean aplicaEgresado) { this.aplicaEgresado = aplicaEgresado; }
     public String getGrupoInvestigacion() { return grupoInvestigacion; }
     public void setGrupoInvestigacion(String grupoInvestigacion) { this.grupoInvestigacion = grupoInvestigacion; }
-    public String getEstadoProyeccion() { return estadoProyeccion; }
-    public void setEstadoProyeccion(String estadoProyeccion) { this.estadoProyeccion = estadoProyeccion; }
 }

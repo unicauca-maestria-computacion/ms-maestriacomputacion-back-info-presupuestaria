@@ -8,7 +8,6 @@ import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.EntityNotFoundException;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.BusinessRuleViolatedException;
@@ -56,12 +55,15 @@ class ManageStudentProjectionUseCaseImplTest {
         Student estudiante = buildEstudiante("EST001");
 
         when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
-        when(gateway.obtenerProyeccionesPorPeriodo(periodo, null))
+        when(gateway.obtenerProyeccionesPorPeriodo(periodo))
                 .thenReturn(List.of(proyeccion));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2024))
                 .thenReturn(List.of(estudiante));
         when(gateway.obtenerConfiguracionReporteFinanciero(1L))
                 .thenReturn(Optional.of(new FinancialReportConfig()));
+        when(calculationService.calcular(any(), any(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
 
         // Act
         StudentFinancialReport resultado = useCase.obtenerProyeccionEstudiantes(null, null);
@@ -90,7 +92,7 @@ class ManageStudentProjectionUseCaseImplTest {
                 1L, 1, 2023,
                 LocalDate.of(2023, 1, 15),
                 LocalDate.of(2023, 6, 30),
-                LocalDate.of(2023, 2, 28),
+                LocalDate.of(2023, 2, 28), // fechaFin
                 "Período 2023-1",
                 AcademicPeriodStatus.CERRADO);
 
@@ -104,21 +106,6 @@ class ManageStudentProjectionUseCaseImplTest {
     }
 
     @Test
-    void shouldThrowEntidadNoExisteWhenCodigoNotFound() {
-        // Arrange
-        AcademicPeriod periodo = buildPeriodoActivo();
-        StudentProjection proyeccion = buildProyeccion("EST_INEXISTENTE", periodo);
-
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
-        when(gateway.existeProyeccion("EST_INEXISTENTE", 1L)).thenReturn(false);
-
-        // Act & Assert
-        assertThatThrownBy(() -> useCase.actualizarProyeccionEstudiante(proyeccion, null, null))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("EST_INEXISTENTE");
-    }
-
-    @Test
     void shouldAllowUpdateWhenPeriodoIsActivo() {
         // Arrange
         AcademicPeriod periodo = buildPeriodoActivo();
@@ -126,14 +113,16 @@ class ManageStudentProjectionUseCaseImplTest {
         Student estudiante = buildEstudiante("EST001");
 
         when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
-        when(gateway.existeProyeccion("EST001", 1L)).thenReturn(true);
         when(gateway.guardarProyeccion(any())).thenReturn(proyeccion);
-        when(gateway.obtenerProyeccionesPorPeriodo(periodo, null))
+        when(gateway.obtenerProyeccionesPorPeriodo(periodo))
                 .thenReturn(List.of(proyeccion));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2024))
                 .thenReturn(List.of(estudiante));
         when(gateway.obtenerConfiguracionReporteFinanciero(1L))
                 .thenReturn(Optional.empty());
+        when(calculationService.calcular(any(), any(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
 
         // Act
         StudentFinancialReport resultado = useCase.actualizarProyeccionEstudiante(proyeccion, null, null);
@@ -141,48 +130,13 @@ class ManageStudentProjectionUseCaseImplTest {
         // Assert
         assertThat(resultado).isNotNull();
     }
-
-    @Test
-    void shouldAllowUpdateWhenNowBeforeFechaFinMatricula() {
-        // Arrange — período INACTIVO pero fecha límite en el futuro
-        AcademicPeriod periodoVigente = new AcademicPeriod(
-                1L, 1, 2099,
-                LocalDate.of(2099, 1, 15),
-                LocalDate.of(2099, 6, 30),
-                LocalDate.of(2099, 12, 31),
-                "Período 2099-1",
-                AcademicPeriodStatus.INACTIVO);
-
-        StudentProjection proyeccion = buildProyeccion("EST001", periodoVigente);
-        Student estudiante = buildEstudiante("EST001");
-
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoVigente));
-        when(gateway.existeProyeccion("EST001", 1L)).thenReturn(true);
-        when(gateway.guardarProyeccion(any())).thenReturn(proyeccion);
-        when(gateway.obtenerProyeccionesPorPeriodo(periodoVigente, null))
-                .thenReturn(List.of(proyeccion));
-        when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2099))
-                .thenReturn(List.of(estudiante));
-        when(gateway.obtenerConfiguracionReporteFinanciero(1L))
-                .thenReturn(Optional.empty());
-
-        // Act
-        StudentFinancialReport resultado = useCase.actualizarProyeccionEstudiante(proyeccion, null, null);
-
-        // Assert
-        assertThat(resultado).isNotNull();
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private AcademicPeriod buildPeriodoActivo() {
         return new AcademicPeriod(
                 1L, 1, 2024,
                 LocalDate.of(2024, 1, 15),
-                LocalDate.of(2024, 6, 30),
-                LocalDate.of(2099, 12, 31),
+                LocalDate.of(2024, 12, 31), // fechaFin futura
+                LocalDate.of(2024, 12, 31), // fechaFinMatricula
                 "Período 2024-1",
                 AcademicPeriodStatus.ACTIVO);
     }
@@ -191,13 +145,15 @@ class ManageStudentProjectionUseCaseImplTest {
         return new StudentProjection(
                 1L, codigo, 12345678L, "Juan", "Pérez",
                 true, false, BigDecimal.ZERO, false,
-                "GTI", StudentProjectionStatus.PROYECCION, null, periodo, null);
+                "GTI", null, periodo, null);
     }
 
     private Student buildEstudiante(String codigo) {
         return new Student(
                 codigo, "Juan", "Pérez", 12345678L,
                 2020, "2020-1", 3, 3, 2,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+                false, // esEgresadoUnicauca
+                false, // aplicaVotacion
+                Collections.emptyList(), Collections.emptyList(), false, null);
     }
 }

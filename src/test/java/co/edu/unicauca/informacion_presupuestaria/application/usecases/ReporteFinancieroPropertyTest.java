@@ -2,7 +2,6 @@ package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Label;
 import net.jqwik.api.Property;
@@ -45,7 +44,6 @@ class ReporteFinancieroPropertyTest {
                     p.setCodigoEstudiante("EST-" + v);
                     p.setEstaPago(true);
                     p.setValorEnSMLV(v);
-                    p.setProjectionStatus(StudentProjectionStatus.PROYECCION);
                     p.setPorcentajeBeca(BigDecimal.ZERO);
                     p.setAplicaVotacion(false);
                     p.setAplicaEgresado(false);
@@ -77,7 +75,7 @@ class ReporteFinancieroPropertyTest {
                 .setScale(2, RoundingMode.HALF_UP);
 
         StudentFinancialReport reporte = new StudentFinancialReport(
-                proyecciones, null, null, totalNeto, totalDescuentos, totalIngresos);
+                proyecciones, null, null, totalNeto, totalDescuentos, totalIngresos, BigDecimal.ZERO);
 
         // Assert — invariant: totalIngresos == totalNeto - totalDescuentos
         assertThat(reporte.getTotalIngresos().compareTo(

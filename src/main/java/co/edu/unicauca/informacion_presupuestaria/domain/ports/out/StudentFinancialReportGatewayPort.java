@@ -6,7 +6,6 @@ import java.util.Optional;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 
 public interface StudentFinancialReportGatewayPort {
 
@@ -37,8 +36,7 @@ public interface StudentFinancialReportGatewayPort {
      * @param estado             filtro de estado (PROYECCION o FINAL); null para todas
      * @return lista de proyecciones del período
      */
-    List<StudentProjection> obtenerProyeccionesPorPeriodo(
-            Long periodoAcademicoId, StudentProjectionStatus estado);
+    List<StudentProjection> obtenerProyeccionesPorPeriodo(Long periodoAcademicoId);
 
     /**
      * Retorna la configuración del reporte financiero para un período.

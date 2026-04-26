@@ -200,6 +200,26 @@ public class GroupReportGatewayAdapter implements GroupReportGatewayPort {
 
     @Override
     @Transactional
+    public ResearchGroup guardarGrupo(ResearchGroup grupo) {
+        if (grupo == null) return null;
+        ResearchGroupEntity entity = new ResearchGroupEntity();
+        if (grupo.getId() != null) {
+            entity = grupoRepository.findById(grupo.getId()).orElse(new ResearchGroupEntity());
+        }
+        entity.setNombre(grupo.getNombre());
+        ResearchGroupEntity saved = grupoRepository.save(entity);
+        return new ResearchGroup(saved.getId(), saved.getNombre());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<ResearchGroup> obtenerGrupoPorNombre(String nombre) {
+        return grupoRepository.findByNombre(nombre)
+                .map(e -> new ResearchGroup(e.getId(), e.getNombre()));
+    }
+
+    @Override
+    @Transactional
     public GeneralExpense guardarGastoGeneral(GeneralExpense gasto) {
         if (gasto == null) {
             return null;

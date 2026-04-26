@@ -336,7 +336,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
      * Se crea una participación para cada grupo existente, copiando los porcentajes anteriores.
      */
     private GroupReportConfig inicializarConfiguracionReporteGrupos(AcademicPeriod periodo) {
-        // Buscar config del período anterior para copiar
+        // Asegurar que existan los grupos bsicos (GTI, IDIS, GICO) si no estn en la BD
+        asegurarGruposBasicos();
+
+        // Buscar config del perodo anterior para copiar
         GroupReportConfig anterior = gateway.obtenerPeriodoAnterior(periodo.getId())
                 .flatMap(p -> gateway.obtenerConfiguracionReporteGrupos(p.getId()))
                 .orElse(null);
@@ -350,11 +353,12 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             config.setItem2(anterior.getItem2());
             config.setImprevistos(anterior.getImprevistos());
         } else {
-            config.setAuiPorcentaje(BigDecimal.ZERO);
+            // Valores por defecto del Excel de presupuesto 2026
+            config.setAuiPorcentaje(new BigDecimal("0.22"));
             config.setExcedentesMaestria(BigDecimal.ZERO);
-            config.setItem1(BigDecimal.ZERO);
-            config.setItem2(BigDecimal.ZERO);
-            config.setImprevistos(BigDecimal.ZERO);
+            config.setItem1(new BigDecimal("0.40"));
+            config.setItem2(new BigDecimal("0.60"));
+            config.setImprevistos(new BigDecimal("0.05"));
         }
         config.setParticipaciones(List.of());
         config.setGastosGenerales(List.of());
@@ -405,21 +409,55 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 .orElse(configGuardada);
     }
 
+    private void asegurarGruposBasicos() {
+        List<String> nombres = List.of("GTI", "IDIS", "GICO");
+        for (String nombre : nombres) {
+            if (gateway.obtenerGrupoPorNombre(nombre).isEmpty()) {
+                gateway.guardarGrupo(new ResearchGroup(null, nombre));
+            }
+        }
+    }
+
+    private void sincronizarGruposFaltantes(GroupReportConfig config) {
+        List<ResearchGroup> todosLosGrupos = gateway.obtenerTodosLosGrupos();
+        for (ResearchGroup grupo : todosLosGrupos) {
+            boolean existe = config.getParticipaciones().stream()
+                    .anyMatch(p -> p.getGrupo() != null && p.getGrupo().getId().equals(grupo.getId()));
+            
+            if (!existe) {
+                GroupParticipation nueva = new GroupParticipation();
+                nueva.setGrupo(grupo);
+                nueva.setGroupReportConfig(config);
+                nueva.setPorcentajeParticipacion(BigDecimal.ZERO);
+                nueva.setPorcentajePrimerSemestre(BigDecimal.ZERO);
+                nueva.setPorcentajeSegundoSemestre(BigDecimal.ZERO);
+                nueva.setVigenciasAnteriores(BigDecimal.ZERO);
+                gateway.guardarParticipacionGrupo(nueva);
+            }
+        }
+    }
+
     private List<ResumenIngresosPeriodo> obtenerDesglosePorGrupo(AcademicPeriod periodo) {
-        FinancialReportConfig config = reporteEstudiantesGateway
+        FinancialReportConfig configFinanciero = reporteEstudiantesGateway
                 .obtenerConfiguracionReporteFinanciero(periodo.getId())
                 .orElse(null);
+        if (configFinanciero == null) return List.of();
 
-        if (config == null || config.getValorSMLV() == null
-                || config.getValorSMLV().compareTo(BigDecimal.ZERO) <= 0) {
-            return List.of();
-        }
+        GroupReportConfig configGrupos = gateway.obtenerConfiguracionReporteGrupos(periodo.getId())
+                .orElse(null);
+        if (configGrupos == null) return List.of();
+
+        // Asegurar que todos los grupos existentes tengan una participacin en esta config
+        sincronizarGruposFaltantes(configGrupos);
+        
+        // Recargar config para tener las participaciones actualizadas
+        configGrupos = gateway.obtenerConfiguracionReporteGrupos(periodo.getId()).get();
 
         List<Student> estudiantes = matriculaFinancieraClient
                 .obtenerEstudiantesPorPeriodo(periodo.getTagPeriodo(), periodo.getAño());
 
         List<StudentProjection> proyecciones = reporteEstudiantesGateway
-                .obtenerProyeccionesPorPeriodo(periodo.getId(), null);
+                .obtenerProyeccionesPorPeriodo(periodo.getId());
 
         List<ResearchGroup> todosGrupos = gateway.obtenerTodosLosGrupos();
 
@@ -441,9 +479,9 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 // Para el primer grupo, calcular con todas las proyecciones para obtener
                 // el totalDerechosComplementarios correcto (todos los estudiantes del semestre)
                 FinancialCalculationService.Totales totalesGrupo =
-                        calculationService.calcular(proyeccionesGrupo, estudiantes, config);
+                        calculationService.calcular(proyeccionesGrupo, estudiantes, configFinanciero);
                 FinancialCalculationService.Totales totalesSemestre =
-                        calculationService.calcular(proyecciones, estudiantes, config);
+                        calculationService.calcular(proyecciones, estudiantes, configFinanciero);
                 // Usar ingresos del grupo pero transferencia del semestre completo
                 totales = new FinancialCalculationService.Totales(
                         totalesGrupo.getTotalNeto(),
@@ -454,7 +492,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             } else {
                 // Para los demás grupos, transferencia = 0 (ya se contó en el primero)
                 FinancialCalculationService.Totales totalesGrupo =
-                        calculationService.calcular(proyeccionesGrupo, estudiantes, config);
+                        calculationService.calcular(proyeccionesGrupo, estudiantes, configFinanciero);
                 totales = new FinancialCalculationService.Totales(
                         totalesGrupo.getTotalNeto(),
                         totalesGrupo.getTotalDescuentos(),

@@ -1,6 +1,5 @@
 package co.edu.unicauca.informacion_presupuestaria.domain.model;
 
-import co.edu.unicauca.informacion_presupuestaria.domain.enums.StudentProjectionStatus;
 import co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
@@ -36,7 +35,7 @@ class ProyeccionEstudiantePropertyTest {
                 1L, "EST001", 12345678L, "Juan", "Pérez",
                 estaPago,
                 false, BigDecimal.ZERO, false,
-                "GTI", StudentProjectionStatus.PROYECCION, null, periodo, null);
+                "GTI", null, periodo, null);
 
         // Act — leer el valor de estaPago
         Boolean valorLeido = proyeccion.getEstaPago();
@@ -59,7 +58,7 @@ class ProyeccionEstudiantePropertyTest {
                 1L, "EST001", 12345678L, "Juan", "Pérez",
                 estaPago,
                 true, porcentajeBeca, false,
-                "GTI", StudentProjectionStatus.PROYECCION, null, null, null);
+                "GTI", null, null, null);
 
         assertThat(proyeccion.getAplicaVotacion()).isTrue();
         assertThat(proyeccion.getPorcentajeBeca()).isEqualByComparingTo(porcentajeBeca);

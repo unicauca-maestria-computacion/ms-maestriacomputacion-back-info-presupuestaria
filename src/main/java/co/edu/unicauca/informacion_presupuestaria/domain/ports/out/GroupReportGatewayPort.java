@@ -42,4 +42,8 @@ public interface GroupReportGatewayPort {
     boolean eliminarGastoGeneral(Long idGastoGeneral);
 
     List<GeneralExpense> obtenerGastosGenerales(Long configId);
+    
+    ResearchGroup guardarGrupo(ResearchGroup grupo);
+    
+    Optional<ResearchGroup> obtenerGrupoPorNombre(String nombre);
 }

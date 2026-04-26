@@ -7,9 +7,10 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageGroupRep
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.groupreport.dtoRequest.ActualizarParticipacionRequest;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.groupreport.dtoRequest.GastoGeneralRequest;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.groupreport.dtoResponse.ConsultaReportePorGruposResponse;
-import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.groupreport.dtoResponse.GastoGeneralResponseDto;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.groupreport.mapper.ReportePorGruposRestMapper;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,11 +29,13 @@ import java.math.BigDecimal;
 @RequestMapping("/api/reporte-por-grupos")
 public class GroupReportRestController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GroupReportRestController.class);
+
     private final ManageGroupReportUseCase useCase;
     private final ReportePorGruposRestMapper mapper;
 
     public GroupReportRestController(ManageGroupReportUseCase useCase,
-                                     ReportePorGruposRestMapper mapper) {
+            ReportePorGruposRestMapper mapper) {
         this.useCase = useCase;
         this.mapper = mapper;
     }
@@ -58,31 +61,37 @@ public class GroupReportRestController {
     }
 
     @PostMapping("/gastos")
-    public ResponseEntity<GastoGeneralResponseDto> crearGastoGeneral(
+    public ResponseEntity<ConsultaReportePorGruposResponse> crearGastoGeneral(
             @RequestParam Long periodoAcademicoId,
             @Valid @RequestBody GastoGeneralRequest request) {
+        LOG.info("POST /api/reporte-por-grupos/gastos periodoAcademicoId={}", periodoAcademicoId);
         GeneralExpense gasto = toDomain(request);
-        GeneralExpense creado = useCase.crearGastoGeneral(periodoAcademicoId, gasto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toGastoResponse(creado));
+        useCase.crearGastoGeneral(periodoAcademicoId, gasto);
+        GroupReportQuery consulta = useCase.obtenerReporteGrupos(resolverAnio(periodoAcademicoId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(consulta));
     }
 
     @PutMapping("/gastos/{id}")
-    public ResponseEntity<GastoGeneralResponseDto> actualizarGastoGeneral(
+    public ResponseEntity<ConsultaReportePorGruposResponse> actualizarGastoGeneral(
             @PathVariable Long id,
             @RequestParam Long periodoAcademicoId,
             @Valid @RequestBody GastoGeneralRequest request) {
+        LOG.info("PUT /api/reporte-por-grupos/gastos/{} periodoAcademicoId={}", id, periodoAcademicoId);
         GeneralExpense gasto = toDomain(request);
         gasto.setId(id);
-        GeneralExpense actualizado = useCase.actualizarGastoGeneral(periodoAcademicoId, gasto);
-        return ResponseEntity.ok(toGastoResponse(actualizado));
+        useCase.actualizarGastoGeneral(periodoAcademicoId, gasto);
+        GroupReportQuery consulta = useCase.obtenerReporteGrupos(resolverAnio(periodoAcademicoId));
+        return ResponseEntity.ok(mapper.toResponse(consulta));
     }
 
     @DeleteMapping("/gastos/{id}")
-    public ResponseEntity<Void> eliminarGastoGeneral(
+    public ResponseEntity<ConsultaReportePorGruposResponse> eliminarGastoGeneral(
             @PathVariable Long id,
             @RequestParam Long periodoAcademicoId) {
+        LOG.info("DELETE /api/reporte-por-grupos/gastos/{} periodoAcademicoId={}", id, periodoAcademicoId);
         useCase.eliminarGastoGeneral(periodoAcademicoId, id);
-        return ResponseEntity.noContent().build();
+        GroupReportQuery consulta = useCase.obtenerReporteGrupos(resolverAnio(periodoAcademicoId));
+        return ResponseEntity.ok(mapper.toResponse(consulta));
     }
 
     @PutMapping("/aui")
@@ -133,7 +142,8 @@ public class GroupReportRestController {
     }
 
     /**
-     * Obtiene el año del período indicado para refrescar el reporte anual tras una edición.
+     * Obtiene el año del período indicado para refrescar el reporte anual tras una
+     * edición.
      */
     private Integer resolverAnio(Long periodoAcademicoId) {
         return useCase.obtenerPeriodoPorId(periodoAcademicoId).getAño();
@@ -157,15 +167,4 @@ public class GroupReportRestController {
         return gasto;
     }
 
-    private GastoGeneralResponseDto toGastoResponse(GeneralExpense gasto) {
-        if (gasto == null) {
-            return null;
-        }
-        GastoGeneralResponseDto dto = new GastoGeneralResponseDto();
-        dto.setId(gasto.getId());
-        dto.setCategoria(gasto.getCategoria());
-        dto.setDescripcion(gasto.getDescripcion());
-        dto.setMonto(gasto.getMonto());
-        return dto;
-    }
 }
