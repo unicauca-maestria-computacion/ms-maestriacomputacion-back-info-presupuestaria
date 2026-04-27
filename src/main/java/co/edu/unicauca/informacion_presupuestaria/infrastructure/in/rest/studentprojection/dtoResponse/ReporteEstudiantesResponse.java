@@ -11,6 +11,7 @@ public class ReporteEstudiantesResponse {
     private BigDecimal totalNeto;
     private BigDecimal totalDescuentos;
     private BigDecimal totalIngresos;
+    private BigDecimal totalDerechosComplementarios;
 
     public ReporteEstudiantesResponse() {
     }
@@ -61,5 +62,13 @@ public class ReporteEstudiantesResponse {
 
     public void setTotalIngresos(BigDecimal totalIngresos) {
         this.totalIngresos = totalIngresos;
+    }
+
+    public BigDecimal getTotalDerechosComplementarios() {
+        return totalDerechosComplementarios;
+    }
+
+    public void setTotalDerechosComplementarios(BigDecimal totalDerechosComplementarios) {
+        this.totalDerechosComplementarios = totalDerechosComplementarios;
     }
 }

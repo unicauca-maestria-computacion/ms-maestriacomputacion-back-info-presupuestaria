@@ -18,6 +18,15 @@ public class ProyeccionEstudianteResponse {
     private Integer valorEnSMLV;
     private List<MateriaResponseDto> materias;
 
+    // Campos calculados
+    private BigDecimal valorMatricula;
+    private BigDecimal valorDescuentoVoto;
+    private BigDecimal valorDescuentoBeca;
+    private BigDecimal valorDescuentoEgresado;
+    private BigDecimal totalDescuentos;
+    private BigDecimal valorNeto;
+    private BigDecimal totalNetoConDerechos;
+
     public ProyeccionEstudianteResponse() {
     }
 
@@ -45,4 +54,19 @@ public class ProyeccionEstudianteResponse {
     public void setValorEnSMLV(Integer valorEnSMLV) { this.valorEnSMLV = valorEnSMLV; }
     public List<MateriaResponseDto> getMaterias() { return materias; }
     public void setMaterias(List<MateriaResponseDto> materias) { this.materias = materias; }
+
+    public BigDecimal getValorMatricula() { return valorMatricula; }
+    public void setValorMatricula(BigDecimal valorMatricula) { this.valorMatricula = valorMatricula; }
+    public BigDecimal getValorDescuentoVoto() { return valorDescuentoVoto; }
+    public void setValorDescuentoVoto(BigDecimal valorDescuentoVoto) { this.valorDescuentoVoto = valorDescuentoVoto; }
+    public BigDecimal getValorDescuentoBeca() { return valorDescuentoBeca; }
+    public void setValorDescuentoBeca(BigDecimal valorDescuentoBeca) { this.valorDescuentoBeca = valorDescuentoBeca; }
+    public BigDecimal getValorDescuentoEgresado() { return valorDescuentoEgresado; }
+    public void setValorDescuentoEgresado(BigDecimal valorDescuentoEgresado) { this.valorDescuentoEgresado = valorDescuentoEgresado; }
+    public BigDecimal getTotalDescuentos() { return totalDescuentos; }
+    public void setTotalDescuentos(BigDecimal totalDescuentos) { this.totalDescuentos = totalDescuentos; }
+    public BigDecimal getValorNeto() { return valorNeto; }
+    public void setValorNeto(BigDecimal valorNeto) { this.valorNeto = valorNeto; }
+    public BigDecimal getTotalNetoConDerechos() { return totalNetoConDerechos; }
+    public void setTotalNetoConDerechos(BigDecimal totalNetoConDerechos) { this.totalNetoConDerechos = totalNetoConDerechos; }
 }
