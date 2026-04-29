@@ -43,6 +43,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
 
     @Override
     public GroupReportQuery obtenerReporteGrupos(Integer anio) {
+        return obtenerReporteGruposInterno(anio, true);
+    }
+
+    private GroupReportQuery obtenerReporteGruposInterno(Integer anio, boolean calcularVigencias) {
         // Buscar todos los períodos del año (puede ser 1 o 2 semestres)
         List<AcademicPeriod> periodosDelAnio = gateway.obtenerPeriodosPorAnio(anio);
         if (periodosDelAnio.isEmpty()) {
@@ -134,7 +138,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 config.getParticipaciones(), resumen1, resumen2, ingreso1, ingreso2);
 
         List<GroupReport> reportesPorGrupo = calcularReportesPorGrupo(
-                participacionesActualizadas, valorADistribuir, config);
+                participacionesActualizadas, valorADistribuir, config, anio, calcularVigencias);
 
         boolean esEditable = periodosDelAnio.stream()
                 .anyMatch(p -> AcademicPeriodStatus.ACTIVO.equals(p.getEstado())
@@ -600,7 +604,9 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
     private List<GroupReport> calcularReportesPorGrupo(
             List<GroupParticipation> participaciones,
             BigDecimal valorADistribuir,
-            GroupReportConfig config) {
+            GroupReportConfig config,
+            Integer anio,
+            boolean calcularVigencias) {
         if (participaciones == null || participaciones.isEmpty()) {
             return List.of();
         }
@@ -620,6 +626,19 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         // Item 2: porcentaje sobre valorADistribuir, distribuido según participación de cada grupo
         BigDecimal item2Total = valorADistribuir.multiply(item2Pct)
                 .setScale(2, RoundingMode.HALF_UP);
+
+        List<GroupReport> reportesAnteriores = List.of();
+        if (calcularVigencias) {
+            try {
+                GroupReportQuery queryAnterior = obtenerReporteGruposInterno(anio - 1, false);
+                if (queryAnterior != null && queryAnterior.getReportesPorGrupo() != null) {
+                    reportesAnteriores = queryAnterior.getReportesPorGrupo();
+                }
+            } catch (Exception e) {
+                // Ignore if no previous year
+            }
+        }
+        final List<GroupReport> finalReportesAnteriores = reportesAnteriores;
 
         return participaciones.stream().map(p -> {
             BigDecimal participacion = p.getPorcentajeParticipacion() != null
@@ -650,17 +669,32 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                     .setScale(2, RoundingMode.HALF_UP);
 
             // Vigencias anteriores (saldo no ejecutado del período anterior)
-            BigDecimal vigencias = p.getVigenciasAnteriores() != null
-                    ? p.getVigenciasAnteriores() : BigDecimal.ZERO;
+            BigDecimal vigencias = BigDecimal.ZERO;
+            if (calcularVigencias) {
+                vigencias = finalReportesAnteriores.stream()
+                        .filter(r -> r.getGrupo().getId().equals(p.getGrupo().getId()))
+                        .map(GroupReport::getTotalNeto)
+                        .findFirst()
+                        .orElse(BigDecimal.ZERO);
+                // Actualizar el valor en la entidad para guardarlo si es necesario o tenerlo en memoria
+                p.setVigenciasAnteriores(vigencias);
+            } else {
+                vigencias = p.getVigenciasAnteriores() != null
+                        ? p.getVigenciasAnteriores() : BigDecimal.ZERO;
+            }
+
+            // Presupuesto por grupo ajustado con vigencias anteriores
+            BigDecimal presupuestoPorGrupoAjustado = presupuestoPorGrupo.add(vigencias)
+                    .setScale(2, RoundingMode.HALF_UP);
 
             // Total neto final = presupuesto del período + saldo anterior
             BigDecimal totalNeto = totalNetoPeriodo.add(vigencias)
                     .setScale(2, RoundingMode.HALF_UP);
 
-            // Aportes semestrales calculados sobre el presupuesto base del grupo
-            BigDecimal aportePrimerSemestre = presupuestoPorGrupo
+            // Aportes semestrales calculados sobre el presupuesto del grupo ajustado
+            BigDecimal aportePrimerSemestre = presupuestoPorGrupoAjustado
                     .divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP);
-            BigDecimal aporteSegundoSemestre = presupuestoPorGrupo.subtract(aportePrimerSemestre);
+            BigDecimal aporteSegundoSemestre = presupuestoPorGrupoAjustado.subtract(aportePrimerSemestre);
 
             GroupReport reporte = new GroupReport();
             reporte.setGrupo(p.getGrupo());
@@ -672,7 +706,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                     p.getPorcentajeSegundoSemestre() != null
                             ? p.getPorcentajeSegundoSemestre() : participacion);
             reporte.setVigenciasAnteriores(vigencias);
-            reporte.setPresupuestoPorGrupo(presupuestoPorGrupo);
+            reporte.setPresupuestoPorGrupo(presupuestoPorGrupoAjustado);
             reporte.setPresupuestoPorGrupoItem1(item1PorGrupo);
             reporte.setPresupuestoPorGrupoItem2(item2PorGrupo);
             reporte.setSubtotalPorGrupo(subtotalPorGrupo);

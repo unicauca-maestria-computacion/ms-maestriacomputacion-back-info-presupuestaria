@@ -113,6 +113,11 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                         p.setPorcentajeBeca(calcularPorcentajeBecaReal(e));
                         p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
                         p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
+                    } else {
+                        p.setEstadoMatriculaFinanciera(e.getEstaPago());
+                        if (Boolean.TRUE.equals(e.getEstaPago())) {
+                            p.setEstaPago(true);
+                        }
                     }
                     
                     return p;

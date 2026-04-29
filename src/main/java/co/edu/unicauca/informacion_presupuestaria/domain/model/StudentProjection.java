@@ -42,6 +42,7 @@ public class StudentProjection {
     private Integer valorEnSMLV;
     private AcademicPeriod academicPeriod;
     private List<SubjectResponse> materias;
+    private Boolean estadoMatriculaFinanciera;
 
     // Campos calculados por el servicio financiero
     private BigDecimal valorMatricula;

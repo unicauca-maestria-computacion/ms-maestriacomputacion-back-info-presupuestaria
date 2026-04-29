@@ -58,7 +58,7 @@ public class FinancialCalculationService {
                 ? config.getPorcentajeEgresadoFijo() : new BigDecimal("0.05");
 
         List<StudentProjection> pagados = proyecciones.stream()
-                .filter(p -> Boolean.TRUE.equals(p.getEstaPago())
+                .filter(p -> (Boolean.TRUE.equals(p.getEstaPago()) || Boolean.TRUE.equals(p.getEstadoMatriculaFinanciera()))
                         && p.getCodigoEstudiante() != null)
                 .toList();
 

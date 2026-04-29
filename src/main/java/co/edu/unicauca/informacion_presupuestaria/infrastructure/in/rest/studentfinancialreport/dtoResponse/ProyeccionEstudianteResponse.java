@@ -17,6 +17,7 @@ public class ProyeccionEstudianteResponse {
     private String estadoProyeccion;
     private Integer valorEnSMLV;
     private List<MateriaResponseDto> materias;
+    private Boolean estadoMatriculaFinanciera;
 
     // Campos calculados
     private BigDecimal valorMatricula;
@@ -69,4 +70,6 @@ public class ProyeccionEstudianteResponse {
     public void setValorNeto(BigDecimal valorNeto) { this.valorNeto = valorNeto; }
     public BigDecimal getTotalNetoConDerechos() { return totalNetoConDerechos; }
     public void setTotalNetoConDerechos(BigDecimal totalNetoConDerechos) { this.totalNetoConDerechos = totalNetoConDerechos; }
+    public Boolean getEstadoMatriculaFinanciera() { return estadoMatriculaFinanciera; }
+    public void setEstadoMatriculaFinanciera(Boolean estadoMatriculaFinanciera) { this.estadoMatriculaFinanciera = estadoMatriculaFinanciera; }
 }
