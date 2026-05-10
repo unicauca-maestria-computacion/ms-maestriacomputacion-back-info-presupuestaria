@@ -1,16 +1,16 @@
-// === ESTUDIANTE: Juan Perez ===
+// === ESTUDIANTE: Brayan Daniel Perdomo ===
 localStorage.setItem('mockAuth', 'true');
 localStorage.setItem('loggedInUser', JSON.stringify({
-  id: 1,
-  username: 'jperez',
-  email: 'jperez@unicauca.edu.co',
+  id: 121,
+  username: 'bperdomo',
+  email: 'bperdomo@unicauca.edu.co',
   role: ['ROLE_ESTUDIANTE'],
-  phoneNumber: '3110000001',
-  academicCode: '702026001',
-  firstName: 'JUAN',
-  lastName: 'PEREZ',
+  phoneNumber: '300121',
+  academicCode: '67_1002963109',
+  firstName: 'BRAYAN DANIEL',
+  lastName: 'PERDOMO',
   idType: 'CEDULA_CIUDADANIA',
-  idNumber: '1061700001'
+  idNumber: '1002963109'
 }));
 localStorage.setItem('token', 'mock-token-estudiante');
 location.reload();

@@ -40,7 +40,12 @@ public class ReportePorGruposRestMapper {
         dto.setIngresosNetos(consulta.getIngresosNetos());
         dto.setTotalGastosGenerales(consulta.getTotalGastosGenerales());
         dto.setValorADistribuir(consulta.getValorADistribuir());
+        dto.setTotalItem1(consulta.getTotalItem1());
+        dto.setTotalItem2(consulta.getTotalItem2());
+        dto.setTotalImprevistos(consulta.getTotalImprevistos());
+        dto.setTotalVigenciasAnteriores(consulta.getTotalVigenciasAnteriores());
         dto.setTransferenciaUnicauca(consulta.getTransferenciaUnicauca());
+
 
         GroupReportConfig config = consulta.getConfiguracion();
         if (config != null) {

@@ -140,6 +140,19 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         List<GroupReport> reportesPorGrupo = calcularReportesPorGrupo(
                 participacionesActualizadas, valorADistribuir, config, anio, calcularVigencias);
 
+        BigDecimal totalItem1 = reportesPorGrupo.stream()
+                .map(r -> r.getPresupuestoPorGrupoItem1() != null ? r.getPresupuestoPorGrupoItem1() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalItem2 = reportesPorGrupo.stream()
+                .map(r -> r.getPresupuestoPorGrupoItem2() != null ? r.getPresupuestoPorGrupoItem2() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalImprevistos = reportesPorGrupo.stream()
+                .map(r -> r.getImprevistosValor() != null ? r.getImprevistosValor() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalVigenciasAnteriores = reportesPorGrupo.stream()
+                .map(r -> r.getVigenciasAnteriores() != null ? r.getVigenciasAnteriores() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         boolean esEditable = periodosDelAnio.stream()
                 .anyMatch(p -> AcademicPeriodStatus.ACTIVO.equals(p.getEstado())
                         || (p.getFechaFin() != null && !java.time.LocalDate.now().isAfter(p.getFechaFin())));
@@ -158,9 +171,14 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         result.setIngresosNetos(ingresosNetos);
         result.setTotalGastosGenerales(totalGastosGenerales);
         result.setValorADistribuir(valorADistribuir);
+        result.setTotalItem1(totalItem1);
+        result.setTotalItem2(totalItem2);
+        result.setTotalImprevistos(totalImprevistos);
+        result.setTotalVigenciasAnteriores(totalVigenciasAnteriores);
         result.setTransferenciaUnicauca(transferenciaUnicauca);
         result.setReportesPorGrupo(reportesPorGrupo);
         return result;
+
     }
 
     @Override
