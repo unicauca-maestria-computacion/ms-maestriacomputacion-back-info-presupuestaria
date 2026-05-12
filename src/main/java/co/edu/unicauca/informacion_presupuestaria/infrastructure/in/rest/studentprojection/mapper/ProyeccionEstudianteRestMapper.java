@@ -40,7 +40,9 @@ public class ProyeccionEstudianteRestMapper {
         dto.setAplicaEgresado(Boolean.TRUE.equals(proyeccion.getAplicaEgresado()));
         dto.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
         dto.setValorEnSMLV(proyeccion.getValorEnSMLV());
-        dto.setEstadoMatriculaFinanciera(proyeccion.getEstadoMatriculaFinanciera());
+        dto.setEstadoMatriculaFinanciera(proyeccion.getEstadoMatriculaFinanciera() != null
+                ? proyeccion.getEstadoMatriculaFinanciera()
+                : Boolean.TRUE.equals(proyeccion.getEstaPago()));
         
         // Mapeo de campos calculados
         dto.setValorMatricula(proyeccion.getValorMatricula());

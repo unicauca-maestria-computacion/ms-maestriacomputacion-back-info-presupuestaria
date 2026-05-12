@@ -23,7 +23,7 @@ public class FinancialReportConfigEntity {
     @Column(name = "recursos_computacionales", precision = 12, scale = 2)
     private BigDecimal recursosComputacionales;
 
-    @Column(name = "valor_smlv", precision = 12, scale = 2)
+    @Column(name = "valor_smlv", precision = 15, scale = 6)
     private BigDecimal valorSMLV;
 
     @Column(name = "es_reporte_final")

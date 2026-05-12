@@ -2,7 +2,10 @@ package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageGroupReportUseCase;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGatewayPort;
@@ -92,9 +95,9 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
 
         // Calcular ingresos por grupo para los dos semestres
         List<ResumenIngresosPeriodo> resumen1 = periodo1 != null
-                ? obtenerDesglosePorGrupo(periodo1) : List.of();
+                ? obtenerDesglosePorGrupo(periodo1, config) : List.of();
         List<ResumenIngresosPeriodo> resumen2 = periodo2 != null
-                ? obtenerDesglosePorGrupo(periodo2) : List.of();
+                ? obtenerDesglosePorGrupo(periodo2, config) : List.of();
 
         BigDecimal ingreso1 = resumen1.stream()
                 .map(r -> r.totales.getTotalIngresos())
@@ -135,12 +138,9 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 .add(excedentes)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        // Actualizar automáticamente los porcentajes de participación basados en ingresos reales
-        List<GroupParticipation> participacionesActualizadas = actualizarParticipacionesDinamicas(
-                config.getParticipaciones(), resumen1, resumen2, ingreso1, ingreso2);
-
+        // Usar las participaciones configuradas como fuente de verdad para distribuir los aportes.
         List<GroupReport> reportesPorGrupo = calcularReportesPorGrupo(
-                participacionesActualizadas, valorADistribuir, ingreso1, ingreso2, config, anio, calcularVigencias);
+                config.getParticipaciones(), valorADistribuir, ingreso1, ingreso2, config, anio, calcularVigencias);
 
         BigDecimal totalItem1 = reportesPorGrupo.stream()
                 .map(r -> r.getPresupuestoPorGrupoItem1() != null ? r.getPresupuestoPorGrupoItem1() : BigDecimal.ZERO)
@@ -497,27 +497,33 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         }
     }
 
-    private List<ResumenIngresosPeriodo> obtenerDesglosePorGrupo(AcademicPeriod periodo) {
+    private List<ResumenIngresosPeriodo> obtenerDesglosePorGrupo(
+            AcademicPeriod periodo, GroupReportConfig configBase) {
         FinancialReportConfig configFinanciero = reporteEstudiantesGateway
                 .obtenerConfiguracionReporteFinanciero(periodo.getId())
                 .orElse(null);
         if (configFinanciero == null) return List.of();
 
         GroupReportConfig configGrupos = gateway.obtenerConfiguracionReporteGrupos(periodo.getId())
-                .orElse(null);
+                .orElse(configBase);
         if (configGrupos == null) return List.of();
 
         // Asegurar que todos los grupos existentes tengan una participacin en esta config
         sincronizarGruposFaltantes(configGrupos);
         
         // Recargar config para tener las participaciones actualizadas
-        configGrupos = gateway.obtenerConfiguracionReporteGrupos(periodo.getId()).get();
+        configGrupos = gateway.obtenerConfiguracionReporteGrupos(periodo.getId())
+                .orElse(configGrupos);
 
         List<Student> estudiantes = matriculaFinancieraClient
                 .obtenerEstudiantesPorPeriodo(periodo.getTagPeriodo(), periodo.getAño());
 
         List<StudentProjection> proyecciones = reporteEstudiantesGateway
                 .obtenerProyeccionesPorPeriodo(periodo.getId());
+        proyecciones = prepararProyeccionesParaReporteGrupos(
+                periodo, estudiantes, proyecciones, configFinanciero);
+        FinancialCalculationService.Totales totalesSemestre =
+                calculationService.calcular(proyecciones, estudiantes, configFinanciero);
 
         List<ResearchGroup> todosGrupos = gateway.obtenerTodosLosGrupos();
 
@@ -540,8 +546,6 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 // el totalDerechosComplementarios correcto (todos los estudiantes del semestre)
                 FinancialCalculationService.Totales totalesGrupo =
                         calculationService.calcular(proyeccionesGrupo, estudiantes, configFinanciero);
-                FinancialCalculationService.Totales totalesSemestre =
-                        calculationService.calcular(proyecciones, estudiantes, configFinanciero);
                 // Usar ingresos del grupo pero transferencia del semestre completo
                 totales = new FinancialCalculationService.Totales(
                         totalesGrupo.getTotalNeto(),
@@ -561,7 +565,106 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             }
             resultado.add(new ResumenIngresosPeriodo(grupo.getId(), totales));
         }
+        ajustarUltimoResumenParaTotalSemestre(resultado, totalesSemestre.getTotalIngresos());
         return resultado;
+    }
+
+    private void ajustarUltimoResumenParaTotalSemestre(
+            List<ResumenIngresosPeriodo> resumen,
+            BigDecimal totalIngresosSemestre) {
+
+        if (resumen == null || resumen.isEmpty() || totalIngresosSemestre == null) {
+            return;
+        }
+
+        BigDecimal totalPorGrupos = resumen.stream()
+                .map(r -> r.totales.getTotalIngresos())
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal diferencia = totalIngresosSemestre.setScale(2, RoundingMode.HALF_UP)
+                .subtract(totalPorGrupos);
+
+        if (diferencia.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+
+        ResumenIngresosPeriodo ultimo = resumen.get(resumen.size() - 1);
+        FinancialCalculationService.Totales totales = ultimo.totales;
+        ultimo.totales = new FinancialCalculationService.Totales(
+                totales.getTotalNeto(),
+                totales.getTotalDescuentos(),
+                totales.getTotalIngresos().add(diferencia).setScale(2, RoundingMode.HALF_UP),
+                totales.getTotalDerechosComplementarios());
+    }
+
+    private List<StudentProjection> prepararProyeccionesParaReporteGrupos(
+            AcademicPeriod periodo,
+            List<Student> estudiantes,
+            List<StudentProjection> proyeccionesGuardadas,
+            FinancialReportConfig configFinanciero) {
+
+        if (estudiantes == null || estudiantes.isEmpty()) {
+            return List.of();
+        }
+
+        Map<String, StudentProjection> proyeccionesPorCodigo = proyeccionesGuardadas == null
+                ? Map.of()
+                : proyeccionesGuardadas.stream()
+                        .filter(p -> p.getCodigoEstudiante() != null)
+                        .collect(Collectors.toMap(
+                                p -> normalizarCodigo(p.getCodigoEstudiante()),
+                                Function.identity(),
+                                (primera, segunda) -> primera));
+
+        boolean reporteReal = esReporteReal(periodo, configFinanciero);
+
+        return estudiantes.stream()
+                .filter(e -> e.getCodigo() != null)
+                .filter(e -> e.getValorEnSMLV() != null)
+                .map(e -> {
+                    StudentProjection guardada = proyeccionesPorCodigo.get(normalizarCodigo(e.getCodigo()));
+                    StudentProjection p = guardada != null ? guardada : new StudentProjection();
+
+                    p.setCodigoEstudiante(e.getCodigo());
+                    p.setIdentificacion(e.getIdentificacion());
+                    p.setNombre(e.getNombre());
+                    p.setApellido(e.getApellido());
+                    p.setValorEnSMLV(e.getValorEnSMLV());
+                    p.setAcademicPeriod(periodo);
+                    p.setGrupoInvestigacion(e.getGrupoNombre() != null
+                            ? e.getGrupoNombre()
+                            : p.getGrupoInvestigacion());
+
+                    if (reporteReal || guardada == null) {
+                        p.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
+                        p.setPorcentajeBeca(BigDecimal.ZERO);
+                        p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
+                        p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
+                    }
+                    p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(p.getEstaPago()));
+                    return p;
+                })
+                .toList();
+    }
+
+    private boolean esReporteReal(AcademicPeriod periodo, FinancialReportConfig configFinanciero) {
+        if (configFinanciero != null && Boolean.TRUE.equals(configFinanciero.getEsReporteFinal())) {
+            return true;
+        }
+        if (periodo != null && AcademicPeriodStatus.CERRADO.equals(periodo.getEstado())) {
+            return true;
+        }
+        return periodo != null
+                && periodo.getFechaFin() != null
+                && LocalDate.now().isAfter(periodo.getFechaFin());
+    }
+
+    private String normalizarCodigo(String codigo) {
+        if (codigo == null) {
+            return "";
+        }
+        String[] partes = codigo.trim().split("_");
+        return partes.length == 0 ? codigo.trim().toLowerCase() : partes[partes.length - 1].trim().toLowerCase();
     }
 
     private List<GroupParticipation> actualizarParticipacionesDinamicas(
@@ -736,7 +839,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         }
         final List<GroupReport> finalReportesAnteriores = reportesAnteriores;
 
-        return participaciones.stream().map(p -> {
+        List<GroupReport> reportes = participaciones.stream().map(p -> {
             BigDecimal participacion = p.getPorcentajeParticipacion() != null
                     ? p.getPorcentajeParticipacion() : BigDecimal.ZERO;
             BigDecimal porcentajePrimerSemestre = p.getPorcentajePrimerSemestre() != null
@@ -797,9 +900,6 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                     .multiply(porcentajeSegundoSemestre)
                     .setScale(2, RoundingMode.HALF_UP);
 
-            // Total neto visible del grupo = presupuesto anual neto asignado al grupo.
-            BigDecimal totalNeto = presupuestoPorGrupoAjustado;
-
             GroupReport reporte = new GroupReport();
             reporte.setGrupo(p.getGrupo());
             reporte.setPorcentajeParticipacion(participacion);
@@ -813,10 +913,65 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             reporte.setSubtotalPorGrupo(subtotalPorGrupo);
             reporte.setImprevistosValor(imprevistosValor);
             reporte.setTotalNetoPeriodo(totalNetoPeriodo);
-            reporte.setTotalNeto(totalNeto);
+            reporte.setTotalNeto(aportePrimerSemestre.add(aporteSegundoSemestre).setScale(2, RoundingMode.HALF_UP));
             reporte.setAportePrimerSemestre(aportePrimerSemestre);
             reporte.setAporteSegundoSemestre(aporteSegundoSemestre);
             return reporte;
         }).collect(Collectors.toList());
+
+        ajustarUltimoReporteParaTotalSemestre(
+                reportes,
+                ingresoPrimerSemestreSeguro,
+                GroupReport::getAportePrimerSemestre,
+                GroupReport::setAportePrimerSemestre);
+        ajustarUltimoReporteParaTotalSemestre(
+                reportes,
+                ingresoSegundoSemestreSeguro,
+                GroupReport::getAporteSegundoSemestre,
+                GroupReport::setAporteSegundoSemestre);
+        actualizarTotalNetoDesdeAportes(reportes);
+
+        return reportes;
+    }
+
+    private void actualizarTotalNetoDesdeAportes(List<GroupReport> reportes) {
+        if (reportes == null) {
+            return;
+        }
+
+        reportes.forEach(reporte -> {
+            BigDecimal aportePrimerSemestre = reporte.getAportePrimerSemestre() != null
+                    ? reporte.getAportePrimerSemestre() : BigDecimal.ZERO;
+            BigDecimal aporteSegundoSemestre = reporte.getAporteSegundoSemestre() != null
+                    ? reporte.getAporteSegundoSemestre() : BigDecimal.ZERO;
+            reporte.setTotalNeto(aportePrimerSemestre.add(aporteSegundoSemestre)
+                    .setScale(2, RoundingMode.HALF_UP));
+        });
+    }
+
+    private void ajustarUltimoReporteParaTotalSemestre(
+            List<GroupReport> reportes,
+            BigDecimal totalSemestre,
+            java.util.function.Function<GroupReport, BigDecimal> getter,
+            java.util.function.BiConsumer<GroupReport, BigDecimal> setter) {
+
+        if (reportes == null || reportes.isEmpty() || totalSemestre == null) {
+            return;
+        }
+
+        BigDecimal totalReportes = reportes.stream()
+                .map(r -> getter.apply(r) != null ? getter.apply(r) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal diferencia = totalSemestre.setScale(2, RoundingMode.HALF_UP)
+                .subtract(totalReportes);
+
+        if (diferencia.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+
+        GroupReport ultimo = reportes.get(reportes.size() - 1);
+        BigDecimal valorActual = getter.apply(ultimo) != null ? getter.apply(ultimo) : BigDecimal.ZERO;
+        setter.accept(ultimo, valorActual.add(diferencia).setScale(2, RoundingMode.HALF_UP));
     }
 }

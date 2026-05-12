@@ -181,6 +181,7 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
                     p.setNombre(e.getNombre());
                     p.setApellido(e.getApellido());
                     p.setValorEnSMLV(e.getValorEnSMLV());
+                    p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(p.getEstaPago()));
                     
                     return p;
                 })

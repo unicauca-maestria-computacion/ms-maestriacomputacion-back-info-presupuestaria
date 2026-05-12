@@ -253,11 +253,19 @@ public class ConsultaReportePorGruposResponse {
         return participacionPrimerSemestre;
     }
 
+    public BigDecimal getPorcentajePrimerSemestre() {
+        return participacionPrimerSemestre;
+    }
+
     public void setParticipacionPrimerSemestre(BigDecimal participacionPrimerSemestre) {
         this.participacionPrimerSemestre = participacionPrimerSemestre;
     }
 
     public BigDecimal getParticipacionSegundoSemestre() {
+        return participacionSegundoSemestre;
+    }
+
+    public BigDecimal getPorcentajeSegundoSemestre() {
         return participacionSegundoSemestre;
     }
 

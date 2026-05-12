@@ -1,4 +1,4 @@
-﻿/*==============================================================*/
+﻿﻿/*==============================================================*/
 /* dbms name:      mysql 5.0                                    */
 /* modificate on:     3/06/23 9:04:38                           */
 /* modificate on:     26/11/23 16:28:21                         */
@@ -3548,7 +3548,7 @@ CREATE TABLE IF NOT EXISTS proyeccion_estudiante (
 CREATE TABLE IF NOT EXISTS configuracion_reporte_financiero (
     id                       BIGINT         NOT NULL AUTO_INCREMENT,
     periodo_academico_id     BIGINT         NOT NULL,
-    valor_smlv               DECIMAL(15,2)  NOT NULL,
+    valor_smlv               DECIMAL(15,6)  NOT NULL,
     biblioteca               DECIMAL(15,2)  NOT NULL COMMENT 'Costo fijo por estudiante',
     recursos_computacionales DECIMAL(15,2)  NOT NULL COMMENT 'Costo fijo por estudiante',
     es_reporte_final         TINYINT        DEFAULT 0,
@@ -3651,6 +3651,52 @@ VALUES
     (3, 1, '2025-02-01', '2025-06-30', '2025-02-15', 'Primer Periodo 2025',  'CERRADO'),
     (4, 2, '2025-08-01', '2025-12-15', '2025-08-15', 'Segundo Periodo 2025', 'CERRADO'),
     (5, 1, '2026-02-01', '2026-06-30', '2026-02-15', 'Primer Periodo 2026',  'ACTIVO');
+
+INSERT INTO configuracion_reporte_financiero
+    (periodo_academico_id, valor_smlv, biblioteca, recursos_computacionales, es_reporte_final, porcentaje_votacion_fijo, porcentaje_egresado_fijo)
+VALUES
+    (3, 1429730.943396, 85000.00, 165000.00, 1, 0.10, 0.05),
+    (4, 1931718.904110, 85000.00, 165000.00, 1, 0.10, 0.05)
+ON DUPLICATE KEY UPDATE
+    valor_smlv = VALUES(valor_smlv),
+    biblioteca = VALUES(biblioteca),
+    recursos_computacionales = VALUES(recursos_computacionales),
+    es_reporte_final = VALUES(es_reporte_final),
+    porcentaje_votacion_fijo = VALUES(porcentaje_votacion_fijo),
+    porcentaje_egresado_fijo = VALUES(porcentaje_egresado_fijo);
+
+INSERT INTO configuracion_reporte_grupos
+    (periodo_academico_id, aui_porcentaje, excedentes_maestria, item1, item2, imprevistos)
+VALUES
+    (3, 0.2200, 0.00, 0.4000, 0.6000, 0.0500),
+    (4, 0.2200, 0.00, 0.4000, 0.6000, 0.0500)
+ON DUPLICATE KEY UPDATE
+    aui_porcentaje = VALUES(aui_porcentaje),
+    excedentes_maestria = VALUES(excedentes_maestria),
+    item1 = VALUES(item1),
+    item2 = VALUES(item2),
+    imprevistos = VALUES(imprevistos);
+
+SET @cfg_grupos_2025_1 = (SELECT id FROM configuracion_reporte_grupos WHERE periodo_academico_id = 3 LIMIT 1);
+SET @cfg_grupos_2025_2 = (SELECT id FROM configuracion_reporte_grupos WHERE periodo_academico_id = 4 LIMIT 1);
+SET @grupo_gti  = (SELECT id FROM grupo WHERE nombre = 'GTI' LIMIT 1);
+SET @grupo_idis = (SELECT id FROM grupo WHERE nombre = 'IDIS' LIMIT 1);
+SET @grupo_gico = (SELECT id FROM grupo WHERE nombre = 'GICO' LIMIT 1);
+
+INSERT INTO participacion_grupo
+    (configuracion_reporte_grupos_id, grupo_id, porcentaje_participacion, porcentaje_primer_semestre, porcentaje_segundo_semestre, vigencias_anteriores)
+VALUES
+    (@cfg_grupos_2025_1, @grupo_gti,0.4859,0.5044,0.4674,0.00),
+    (@cfg_grupos_2025_1, @grupo_idis,0.3001,0.2893,0.3109,0.00),
+    (@cfg_grupos_2025_1, @grupo_gico,0.2140,0.2063,0.2217,0.00),
+    (@cfg_grupos_2025_2, @grupo_gti,0.4859,0.5044, 0.4674,0.00),
+    (@cfg_grupos_2025_2, @grupo_idis,0.3001,0.2893, 0.3109,0.00),
+    (@cfg_grupos_2025_2, @grupo_gico,0.2140,0.2063, 0.2217,0.00)
+ON DUPLICATE KEY UPDATE
+    porcentaje_participacion = VALUES(porcentaje_participacion),
+    porcentaje_primer_semestre = VALUES(porcentaje_primer_semestre),
+    porcentaje_segundo_semestre = VALUES(porcentaje_segundo_semestre),
+    vigencias_anteriores = VALUES(vigencias_anteriores);
 
 -- 1.1 CORRECCIÃ“N DE ESQUEMA (solicitudes_en_concejo)
 DROP PROCEDURE IF EXISTS patch_concejo_schema;
@@ -3957,4 +4003,3 @@ FROM matriculas WHERE id_periodo = 5;
 SELECT 'Script ejecutado: 26 estudiantes, materias, becas (Aprobadas 2025 y 2026) y descuentos mapeados.' AS Resultado;
 
 SET sql_notes = 1;
-
