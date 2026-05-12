@@ -24,6 +24,10 @@ public class ConsultaReportePorGruposResponse {
     /** Suma de gastos generales globales de la maestría */
     private BigDecimal totalGastosGenerales;
     private BigDecimal valorADistribuir;
+    private BigDecimal totalItem1;
+    private BigDecimal totalItem2;
+    private BigDecimal totalImprevistos;
+    private BigDecimal totalVigenciasAnteriores;
     private BigDecimal transferenciaUnicauca;
     private BigDecimal totalNeto;
     private BigDecimal aportePrimerSemestre;
@@ -179,6 +183,39 @@ public class ConsultaReportePorGruposResponse {
     public void setValorADistribuir(BigDecimal valorADistribuir) {
         this.valorADistribuir = valorADistribuir;
     }
+
+    public BigDecimal getTotalItem1() {
+        return totalItem1;
+    }
+
+    public void setTotalItem1(BigDecimal totalItem1) {
+        this.totalItem1 = totalItem1;
+    }
+
+    public BigDecimal getTotalItem2() {
+        return totalItem2;
+    }
+
+    public void setTotalItem2(BigDecimal totalItem2) {
+        this.totalItem2 = totalItem2;
+    }
+
+    public BigDecimal getTotalImprevistos() {
+        return totalImprevistos;
+    }
+
+    public void setTotalImprevistos(BigDecimal totalImprevistos) {
+        this.totalImprevistos = totalImprevistos;
+    }
+
+    public BigDecimal getTotalVigenciasAnteriores() {
+        return totalVigenciasAnteriores;
+    }
+
+    public void setTotalVigenciasAnteriores(BigDecimal totalVigenciasAnteriores) {
+        this.totalVigenciasAnteriores = totalVigenciasAnteriores;
+    }
+
 
     public BigDecimal getTransferenciaUnicauca() {
         return transferenciaUnicauca;

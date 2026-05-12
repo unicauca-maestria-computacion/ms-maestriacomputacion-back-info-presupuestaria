@@ -28,6 +28,10 @@ public class GroupReportQuery {
     /** Suma de todos los gastos generales globales de la maestría */
     private BigDecimal totalGastosGenerales;
     private BigDecimal valorADistribuir;
+    private BigDecimal totalItem1;
+    private BigDecimal totalItem2;
+    private BigDecimal totalImprevistos;
+    private BigDecimal totalVigenciasAnteriores;
     /** Transferencia a la universidad por derechos complementarios (J87 en Excel) */
     private BigDecimal transferenciaUnicauca;
     private BigDecimal totalNeto;
@@ -44,3 +48,4 @@ public class GroupReportQuery {
     private BigDecimal vigenciasAnteriores;
     private List<GroupReport> reportesPorGrupo;
 }
+
