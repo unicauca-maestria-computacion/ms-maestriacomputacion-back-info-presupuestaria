@@ -25,6 +25,8 @@ import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.Busin
 
 public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
 
+    private static final BigDecimal ROUNDING_TOLERANCE = new BigDecimal("0.0005");
+
     private final GroupReportGatewayPort gateway;
     private final StudentFinancialReportGatewayPort reporteEstudiantesGateway;
     private final FinancialEnrollmentClientPort matriculaFinancieraClient;
@@ -138,7 +140,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 config.getParticipaciones(), resumen1, resumen2, ingreso1, ingreso2);
 
         List<GroupReport> reportesPorGrupo = calcularReportesPorGrupo(
-                participacionesActualizadas, valorADistribuir, config, anio, calcularVigencias);
+                participacionesActualizadas, valorADistribuir, ingreso1, ingreso2, config, anio, calcularVigencias);
 
         boolean esEditable = periodosDelAnio.stream()
                 .anyMatch(p -> AcademicPeriodStatus.ACTIVO.equals(p.getEstado())
@@ -160,7 +162,43 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         result.setValorADistribuir(valorADistribuir);
         result.setTransferenciaUnicauca(transferenciaUnicauca);
         result.setReportesPorGrupo(reportesPorGrupo);
+        asignarTotalesTabla(result, reportesPorGrupo);
         return result;
+    }
+
+    private void asignarTotalesTabla(GroupReportQuery result, List<GroupReport> reportesPorGrupo) {
+        result.setTotalNeto(sumarReportes(reportesPorGrupo, GroupReport::getTotalNeto, 2));
+        result.setAportePrimerSemestre(sumarReportes(reportesPorGrupo, GroupReport::getAportePrimerSemestre, 2));
+        result.setAporteSegundoSemestre(sumarReportes(reportesPorGrupo, GroupReport::getAporteSegundoSemestre, 2));
+        result.setParticipacionPrimerSemestre(
+                sumarReportes(reportesPorGrupo, GroupReport::getPorcentajePrimerSemestre, 4));
+        result.setParticipacionSegundoSemestre(
+                sumarReportes(reportesPorGrupo, GroupReport::getPorcentajeSegundoSemestre, 4));
+        result.setParticipacionPorAnio(sumarReportes(reportesPorGrupo, GroupReport::getParticipacionPorAnio, 4));
+        result.setPresupuestoPorGrupoItem1(
+                sumarReportes(reportesPorGrupo, GroupReport::getPresupuestoPorGrupoItem1, 2));
+        result.setPresupuestoPorGrupoItem2(
+                sumarReportes(reportesPorGrupo, GroupReport::getPresupuestoPorGrupoItem2, 2));
+        result.setPresupuestoPorGrupo(sumarReportes(reportesPorGrupo, GroupReport::getPresupuestoPorGrupo, 2));
+        result.setImprevistosValor(sumarReportes(reportesPorGrupo, GroupReport::getImprevistosValor, 2));
+        result.setPresupuestoPorGrupoImprevistos(
+                sumarReportes(reportesPorGrupo, GroupReport::getTotalNetoPeriodo, 2));
+        result.setVigenciasAnteriores(sumarReportes(reportesPorGrupo, GroupReport::getVigenciasAnteriores, 2));
+    }
+
+    private BigDecimal sumarReportes(
+            List<GroupReport> reportes,
+            java.util.function.Function<GroupReport, BigDecimal> getter,
+            int scale) {
+
+        if (reportes == null) {
+            return BigDecimal.ZERO.setScale(scale, RoundingMode.HALF_UP);
+        }
+
+        return reportes.stream()
+                .map(r -> getter.apply(r) != null ? getter.apply(r) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(scale, RoundingMode.HALF_UP);
     }
 
     @Override
@@ -519,6 +557,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             return participaciones;
         }
 
+        if (tieneParticipacionesConfiguradasNoNormalizadas(participaciones)) {
+            return participaciones;
+        }
+
         // Calcular porcentajes individuales
         for (GroupParticipation p : participaciones) {
             BigDecimal ingresoG1 = resumen1.stream()
@@ -574,7 +616,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         // Solo ajustar si la suma es cercana a 1 (diferencia máxima de 0.0005 por redondeo)
         // Si la suma es 0 o muy diferente de 1, no hay nada que ajustar
         BigDecimal difference = BigDecimal.ONE.subtract(currentSum).abs();
-        if (difference.compareTo(new BigDecimal("0.0005")) > 0) {
+        if (difference.compareTo(ROUNDING_TOLERANCE) > 0) {
             return;
         }
 
@@ -592,6 +634,36 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         }
     }
 
+    private boolean tieneParticipacionesConfiguradasNoNormalizadas(
+            List<GroupParticipation> participaciones) {
+
+        BigDecimal sumaPrimerSemestre = sumarPorcentaje(
+                participaciones, GroupParticipation::getPorcentajePrimerSemestre);
+        BigDecimal sumaSegundoSemestre = sumarPorcentaje(
+                participaciones, GroupParticipation::getPorcentajeSegundoSemestre);
+
+        if (sumaPrimerSemestre.compareTo(BigDecimal.ZERO) <= 0
+                || sumaSegundoSemestre.compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+
+        return estaFueraDeToleranciaDeUno(sumaPrimerSemestre)
+                || estaFueraDeToleranciaDeUno(sumaSegundoSemestre);
+    }
+
+    private BigDecimal sumarPorcentaje(
+            List<GroupParticipation> participaciones,
+            java.util.function.Function<GroupParticipation, BigDecimal> getter) {
+
+        return participaciones.stream()
+                .map(p -> getter.apply(p) != null ? getter.apply(p) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private boolean estaFueraDeToleranciaDeUno(BigDecimal valor) {
+        return BigDecimal.ONE.subtract(valor).abs().compareTo(ROUNDING_TOLERANCE) > 0;
+    }
+
     private static class ResumenIngresosPeriodo {
         Long grupoId;
         FinancialCalculationService.Totales totales;
@@ -604,6 +676,8 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
     private List<GroupReport> calcularReportesPorGrupo(
             List<GroupParticipation> participaciones,
             BigDecimal valorADistribuir,
+            BigDecimal ingresoPrimerSemestre,
+            BigDecimal ingresoSegundoSemestre,
             GroupReportConfig config,
             Integer anio,
             boolean calcularVigencias) {
@@ -614,6 +688,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         BigDecimal item1Pct = config.getItem1() != null ? config.getItem1() : BigDecimal.ZERO;
         BigDecimal item2Pct = config.getItem2() != null ? config.getItem2() : BigDecimal.ZERO;
         BigDecimal imprevistoPct = config.getImprevistos() != null ? config.getImprevistos() : BigDecimal.ZERO;
+        BigDecimal ingresoPrimerSemestreSeguro = ingresoPrimerSemestre != null
+                ? ingresoPrimerSemestre : BigDecimal.ZERO;
+        BigDecimal ingresoSegundoSemestreSeguro = ingresoSegundoSemestre != null
+                ? ingresoSegundoSemestre : BigDecimal.ZERO;
 
         // Item 1: porcentaje sobre valorADistribuir, dividido en partes iguales entre grupos
         BigDecimal item1Total = valorADistribuir.multiply(item1Pct)
@@ -643,6 +721,12 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         return participaciones.stream().map(p -> {
             BigDecimal participacion = p.getPorcentajeParticipacion() != null
                     ? p.getPorcentajeParticipacion() : BigDecimal.ZERO;
+            BigDecimal porcentajePrimerSemestre = p.getPorcentajePrimerSemestre() != null
+                    ? p.getPorcentajePrimerSemestre() : participacion;
+            BigDecimal porcentajeSegundoSemestre = p.getPorcentajeSegundoSemestre() != null
+                    ? p.getPorcentajeSegundoSemestre() : participacion;
+            BigDecimal participacionPorAnio = porcentajePrimerSemestre.add(porcentajeSegundoSemestre)
+                    .divide(BigDecimal.valueOf(2), 4, RoundingMode.HALF_UP);
 
             // Presupuesto base del grupo (para referencia y distribución semestral)
             BigDecimal presupuestoPorGrupo = valorADistribuir
@@ -687,24 +771,23 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             BigDecimal presupuestoPorGrupoAjustado = presupuestoPorGrupo.add(vigencias)
                     .setScale(2, RoundingMode.HALF_UP);
 
-            // Total neto final = presupuesto del período + saldo anterior
-            BigDecimal totalNeto = totalNetoPeriodo.add(vigencias)
+            // Aportes semestrales = ingreso real del semestre * participacion del grupo en ese semestre.
+            BigDecimal aportePrimerSemestre = ingresoPrimerSemestreSeguro
+                    .multiply(porcentajePrimerSemestre)
+                    .setScale(2, RoundingMode.HALF_UP);
+            BigDecimal aporteSegundoSemestre = ingresoSegundoSemestreSeguro
+                    .multiply(porcentajeSegundoSemestre)
                     .setScale(2, RoundingMode.HALF_UP);
 
-            // Aportes semestrales calculados sobre el presupuesto del grupo ajustado
-            BigDecimal aportePrimerSemestre = presupuestoPorGrupoAjustado
-                    .divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP);
-            BigDecimal aporteSegundoSemestre = presupuestoPorGrupoAjustado.subtract(aportePrimerSemestre);
+            // Total neto visible del grupo = presupuesto anual neto asignado al grupo.
+            BigDecimal totalNeto = presupuestoPorGrupoAjustado;
 
             GroupReport reporte = new GroupReport();
             reporte.setGrupo(p.getGrupo());
             reporte.setPorcentajeParticipacion(participacion);
-            reporte.setPorcentajePrimerSemestre(
-                    p.getPorcentajePrimerSemestre() != null
-                            ? p.getPorcentajePrimerSemestre() : participacion);
-            reporte.setPorcentajeSegundoSemestre(
-                    p.getPorcentajeSegundoSemestre() != null
-                            ? p.getPorcentajeSegundoSemestre() : participacion);
+            reporte.setPorcentajePrimerSemestre(porcentajePrimerSemestre);
+            reporte.setPorcentajeSegundoSemestre(porcentajeSegundoSemestre);
+            reporte.setParticipacionPorAnio(participacionPorAnio);
             reporte.setVigenciasAnteriores(vigencias);
             reporte.setPresupuestoPorGrupo(presupuestoPorGrupoAjustado);
             reporte.setPresupuestoPorGrupoItem1(item1PorGrupo);

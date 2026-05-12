@@ -30,5 +30,17 @@ public class GroupReportQuery {
     private BigDecimal valorADistribuir;
     /** Transferencia a la universidad por derechos complementarios (J87 en Excel) */
     private BigDecimal transferenciaUnicauca;
+    private BigDecimal totalNeto;
+    private BigDecimal aportePrimerSemestre;
+    private BigDecimal aporteSegundoSemestre;
+    private BigDecimal participacionPrimerSemestre;
+    private BigDecimal participacionSegundoSemestre;
+    private BigDecimal participacionPorAnio;
+    private BigDecimal presupuestoPorGrupoItem1;
+    private BigDecimal presupuestoPorGrupoItem2;
+    private BigDecimal presupuestoPorGrupo;
+    private BigDecimal imprevistosValor;
+    private BigDecimal presupuestoPorGrupoImprevistos;
+    private BigDecimal vigenciasAnteriores;
     private List<GroupReport> reportesPorGrupo;
 }

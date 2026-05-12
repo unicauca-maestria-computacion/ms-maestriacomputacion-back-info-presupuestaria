@@ -10,6 +10,7 @@ public class ReportePorGrupoResponse {
     private BigDecimal porcentajeParticipacion;
     private BigDecimal porcentajePrimerSemestre;
     private BigDecimal porcentajeSegundoSemestre;
+    private BigDecimal participacionPorAnio;
     private BigDecimal vigenciasAnteriores;
     private BigDecimal presupuestoPorGrupo;
     private BigDecimal presupuestoPorGrupoItem1;
@@ -65,6 +66,14 @@ public class ReportePorGrupoResponse {
 
     public void setPorcentajeSegundoSemestre(BigDecimal porcentajeSegundoSemestre) {
         this.porcentajeSegundoSemestre = porcentajeSegundoSemestre;
+    }
+
+    public BigDecimal getParticipacionPorAnio() {
+        return participacionPorAnio;
+    }
+
+    public void setParticipacionPorAnio(BigDecimal participacionPorAnio) {
+        this.participacionPorAnio = participacionPorAnio;
     }
 
     public BigDecimal getVigenciasAnteriores() {
