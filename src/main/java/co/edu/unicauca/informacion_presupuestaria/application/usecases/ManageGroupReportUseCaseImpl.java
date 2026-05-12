@@ -135,7 +135,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
 
         BigDecimal valorADistribuir = ingresosNetos
                 .subtract(totalGastosGenerales)
-                .add(excedentes)
+                .subtract(excedentes)
                 .setScale(2, RoundingMode.HALF_UP);
 
         // Usar las participaciones configuradas como fuente de verdad para distribuir los aportes.

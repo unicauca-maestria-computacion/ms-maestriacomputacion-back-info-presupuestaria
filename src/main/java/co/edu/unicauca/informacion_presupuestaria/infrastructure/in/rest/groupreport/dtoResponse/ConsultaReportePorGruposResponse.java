@@ -19,7 +19,7 @@ public class ConsultaReportePorGruposResponse {
     private BigDecimal imprevistos;
     private BigDecimal totalIngresos;
     private BigDecimal auiValor;
-    /** Ingresos netos = totalIngresos - auiValor - excedentesMaestria */
+    /** Ingresos netos = totalIngresos - auiValor */
     private BigDecimal ingresosNetos;
     /** Suma de gastos generales globales de la maestría */
     private BigDecimal totalGastosGenerales;

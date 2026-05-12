@@ -5,6 +5,7 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGa
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
+import co.edu.unicauca.informacion_presupuestaria.domain.model.GeneralExpense;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportQuery;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReport;
@@ -96,9 +97,12 @@ class ManageGroupReportUseCaseImplTest {
         AcademicPeriod periodo = buildPeriodo(1L, 1, 2024);
         BigDecimal auiPorcentaje = new BigDecimal("0.1000");
         BigDecimal excedentesMaestria = new BigDecimal("500000.00");
+        BigDecimal gastosGeneralesMaestria = new BigDecimal("300000.00");
 
         GroupReportConfig config = buildConfig(1L, auiPorcentaje,
                 excedentesMaestria, periodo, buildParticipaciones());
+        config.setGastosGenerales(List.of(new GeneralExpense(
+                1L, "General", "Gasto general", gastosGeneralesMaestria, config)));
 
         FinancialReportConfig configFinanciero = new FinancialReportConfig(
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"), false, periodo, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
@@ -125,6 +129,7 @@ class ManageGroupReportUseCaseImplTest {
         // Assert — valorADistribuir = totalIngresos - auiValor - excedentesMaestria
         BigDecimal esperado = resultado.getTotalIngresos()
                 .subtract(resultado.getAuiValor())
+                .subtract(gastosGeneralesMaestria)
                 .subtract(excedentesMaestria)
                 .setScale(2, java.math.RoundingMode.HALF_UP);
         assertThat(resultado.getValorADistribuir()).isEqualByComparingTo(esperado);
