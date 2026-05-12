@@ -225,7 +225,10 @@ class ManageGroupReportUseCaseImplTest {
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, periodo1, participaciones);
         GroupReportConfig configSegundoSemestre = buildConfig(
                 2L, BigDecimal.ZERO, BigDecimal.ZERO, periodo2, participaciones);
-
+        configPrimerSemestre.setItem1(new BigDecimal("0.4000"));
+        configPrimerSemestre.setItem2(new BigDecimal("0.6000"));
+        configSegundoSemestre.setItem1(new BigDecimal("0.4000"));
+        configSegundoSemestre.setItem2(new BigDecimal("0.6000"));
         FinancialReportConfig configFinancieroPrimerSemestre = new FinancialReportConfig(
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"),
                 false, periodo1, new BigDecimal("0.1000"), new BigDecimal("0.0500"));
@@ -279,6 +282,8 @@ class ManageGroupReportUseCaseImplTest {
         assertThat(reporteGti.getPorcentajePrimerSemestre()).isEqualByComparingTo(new BigDecimal("0.5044"));
         assertThat(reporteGti.getAportePrimerSemestre()).isEqualByComparingTo(new BigDecimal("50.44"));
         assertThat(reporteGti.getTotalNeto()).isEqualByComparingTo(new BigDecimal("97.18"));
+        assertThat(reporteGti.getPresupuestoPorGrupo()).isEqualByComparingTo(
+                reporteGti.getPresupuestoPorGrupoItem1().add(reporteGti.getPresupuestoPorGrupoItem2()));
         assertThat(reporteGico.getPorcentajePrimerSemestre()).isEqualByComparingTo(new BigDecimal("0.2063"));
         assertThat(reporteGico.getPorcentajeSegundoSemestre()).isEqualByComparingTo(new BigDecimal("0.2217"));
         assertThat(reporteGico.getAporteSegundoSemestre()).isEqualByComparingTo(new BigDecimal("22.17"));

@@ -65,22 +65,21 @@ class ReportePorGruposPropertyTest {
      * Validates: Requisito 5.8
      */
     @Property(tries = 100)
-    void presupuestoPorGrupoEsProductoDeValorADistribuir(
-            @ForAll @BigRange(min = "0", max = "100000000") BigDecimal valorADistribuir,
-            @ForAll @BigRange(min = "0", max = "1") BigDecimal porcentajeParticipacion) {
+    void presupuestoPorGrupoEsSumaDeItems(
+            @ForAll @BigRange(min = "0", max = "100000000") BigDecimal presupuestoPorGrupoItem1,
+            @ForAll @BigRange(min = "0", max = "100000000") BigDecimal presupuestoPorGrupoItem2) {
 
         // Act
-        BigDecimal presupuestoPorGrupo = valorADistribuir.multiply(porcentajeParticipacion)
+        BigDecimal presupuestoPorGrupo = presupuestoPorGrupoItem1
+                .add(presupuestoPorGrupoItem2)
                 .setScale(2, RoundingMode.HALF_UP);
 
         // Assert
+        BigDecimal esperado = presupuestoPorGrupoItem1
+                .add(presupuestoPorGrupoItem2)
+                .setScale(2, RoundingMode.HALF_UP);
         assertThat(presupuestoPorGrupo)
-                .as("presupuestoPorGrupo debe ser >= 0")
-                .isGreaterThanOrEqualTo(BigDecimal.ZERO);
-
-        assertThat(presupuestoPorGrupo.compareTo(
-                        valorADistribuir.setScale(2, RoundingMode.HALF_UP).add(new BigDecimal("0.01"))))
-                .as("presupuestoPorGrupo debe ser <= valorADistribuir")
-                .isLessThanOrEqualTo(0);
+                .as("presupuestoPorGrupo debe ser item1 + item2")
+                .isEqualByComparingTo(esperado);
     }
 }

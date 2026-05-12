@@ -850,10 +850,6 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                     .divide(BigDecimal.valueOf(2), 4, RoundingMode.HALF_UP);
 
             // Presupuesto base del grupo (para referencia y distribución semestral)
-            BigDecimal presupuestoPorGrupo = valorADistribuir
-                    .multiply(participacion)
-                    .setScale(2, RoundingMode.HALF_UP);
-
             // Item 2 proporcional a la participación del grupo
             BigDecimal item2PorGrupo = item2Total
                     .multiply(participacion)
@@ -889,9 +885,6 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             }
 
             // Presupuesto por grupo ajustado con vigencias anteriores
-            BigDecimal presupuestoPorGrupoAjustado = presupuestoPorGrupo.add(vigencias)
-                    .setScale(2, RoundingMode.HALF_UP);
-
             // Aportes semestrales = ingreso real del semestre * participacion del grupo en ese semestre.
             BigDecimal aportePrimerSemestre = ingresoPrimerSemestreSeguro
                     .multiply(porcentajePrimerSemestre)
@@ -907,7 +900,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             reporte.setPorcentajeSegundoSemestre(porcentajeSegundoSemestre);
             reporte.setParticipacionPorAnio(participacionPorAnio);
             reporte.setVigenciasAnteriores(vigencias);
-            reporte.setPresupuestoPorGrupo(presupuestoPorGrupoAjustado);
+            reporte.setPresupuestoPorGrupo(subtotalPorGrupo);
             reporte.setPresupuestoPorGrupoItem1(item1PorGrupo);
             reporte.setPresupuestoPorGrupoItem2(item2PorGrupo);
             reporte.setSubtotalPorGrupo(subtotalPorGrupo);
