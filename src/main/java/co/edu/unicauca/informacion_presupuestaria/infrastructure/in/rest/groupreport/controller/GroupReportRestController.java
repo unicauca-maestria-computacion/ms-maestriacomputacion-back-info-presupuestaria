@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @RestController
 @RequestMapping("/api/reporte-por-grupos")
@@ -53,7 +54,7 @@ public class GroupReportRestController {
         useCase.actualizarPorcentajeParticipacion(
                 request.getPeriodoAcademicoId(),
                 request.getGrupoId(),
-                request.getPorcentajeParticipacion(),
+                normalizarPorcentaje(request.getPorcentajeParticipacion()),
                 request.getSemestre());
         GroupReportQuery consulta = useCase.obtenerReporteGrupos(
                 resolverAnio(request.getPeriodoAcademicoId()));
@@ -98,7 +99,7 @@ public class GroupReportRestController {
     public ResponseEntity<ConsultaReportePorGruposResponse> actualizarPorcentajeAUI(
             @RequestParam Long periodoAcademicoId,
             @RequestParam BigDecimal porcentaje) {
-        useCase.actualizarPorcentajeAUI(periodoAcademicoId, porcentaje);
+        useCase.actualizarPorcentajeAUI(periodoAcademicoId, normalizarPorcentaje(porcentaje));
         GroupReportQuery consulta = useCase.obtenerReporteGrupos(resolverAnio(periodoAcademicoId));
         return ResponseEntity.ok(mapper.toResponse(consulta));
     }
@@ -127,7 +128,7 @@ public class GroupReportRestController {
             @RequestParam Long periodoAcademicoId,
             @RequestParam BigDecimal item1,
             @RequestParam BigDecimal item2) {
-        useCase.actualizarItems(periodoAcademicoId, item1, item2);
+        useCase.actualizarItems(periodoAcademicoId, normalizarPorcentaje(item1), normalizarPorcentaje(item2));
         GroupReportQuery consulta = useCase.obtenerReporteGrupos(resolverAnio(periodoAcademicoId));
         return ResponseEntity.ok(mapper.toResponse(consulta));
     }
@@ -136,7 +137,7 @@ public class GroupReportRestController {
     public ResponseEntity<ConsultaReportePorGruposResponse> actualizarImprevistos(
             @RequestParam Long periodoAcademicoId,
             @RequestParam BigDecimal porcentaje) {
-        useCase.actualizarImprevistos(periodoAcademicoId, porcentaje);
+        useCase.actualizarImprevistos(periodoAcademicoId, normalizarPorcentaje(porcentaje));
         GroupReportQuery consulta = useCase.obtenerReporteGrupos(resolverAnio(periodoAcademicoId));
         return ResponseEntity.ok(mapper.toResponse(consulta));
     }
@@ -165,6 +166,16 @@ public class GroupReportRestController {
         }
 
         return gasto;
+    }
+
+    private BigDecimal normalizarPorcentaje(BigDecimal valor) {
+        if (valor == null) {
+            return null;
+        }
+        if (valor.compareTo(BigDecimal.ONE) > 0) {
+            return valor.divide(new BigDecimal("100"), 8, RoundingMode.HALF_UP);
+        }
+        return valor;
     }
 
 }

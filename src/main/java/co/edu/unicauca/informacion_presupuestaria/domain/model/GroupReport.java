@@ -15,6 +15,7 @@ public class GroupReport {
     private BigDecimal porcentajeParticipacion;
     private BigDecimal porcentajePrimerSemestre;
     private BigDecimal porcentajeSegundoSemestre;
+    private BigDecimal participacionPorAnio;
     private BigDecimal vigenciasAnteriores;
     private BigDecimal presupuestoPorGrupo;
     private BigDecimal presupuestoPorGrupoItem1;
@@ -22,9 +23,9 @@ public class GroupReport {
     /** Subtotal = item1PorGrupo + item2PorGrupo (base para imprevistos) */
     private BigDecimal subtotalPorGrupo;
     private BigDecimal imprevistosValor;
-    /** totalNetoPeriodo = subtotalPorGrupo + imprevistosValor */
+    /** totalNetoPeriodo = subtotalPorGrupo - imprevistosValor */
     private BigDecimal totalNetoPeriodo;
-    /** totalNeto = totalNetoPeriodo + vigenciasAnteriores */
+    /** totalNeto = presupuesto anual neto asignado al grupo */
     private BigDecimal totalNeto;
     private BigDecimal aportePrimerSemestre;
     private BigDecimal aporteSegundoSemestre;

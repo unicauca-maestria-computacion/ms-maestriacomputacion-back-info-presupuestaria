@@ -5,9 +5,12 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.GroupReportGa
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
+import co.edu.unicauca.informacion_presupuestaria.domain.model.GeneralExpense;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReportQuery;
+import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupReport;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
+import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.ResearchGroup;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.GroupParticipation;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
@@ -94,9 +97,12 @@ class ManageGroupReportUseCaseImplTest {
         AcademicPeriod periodo = buildPeriodo(1L, 1, 2024);
         BigDecimal auiPorcentaje = new BigDecimal("0.1000");
         BigDecimal excedentesMaestria = new BigDecimal("500000.00");
+        BigDecimal gastosGeneralesMaestria = new BigDecimal("300000.00");
 
         GroupReportConfig config = buildConfig(1L, auiPorcentaje,
                 excedentesMaestria, periodo, buildParticipaciones());
+        config.setGastosGenerales(List.of(new GeneralExpense(
+                1L, "General", "Gasto general", gastosGeneralesMaestria, config)));
 
         FinancialReportConfig configFinanciero = new FinancialReportConfig(
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"), false, periodo, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
@@ -123,9 +129,224 @@ class ManageGroupReportUseCaseImplTest {
         // Assert — valorADistribuir = totalIngresos - auiValor - excedentesMaestria
         BigDecimal esperado = resultado.getTotalIngresos()
                 .subtract(resultado.getAuiValor())
+                .subtract(gastosGeneralesMaestria)
                 .subtract(excedentesMaestria)
                 .setScale(2, java.math.RoundingMode.HALF_UP);
         assertThat(resultado.getValorADistribuir()).isEqualByComparingTo(esperado);
+    }
+
+    @Test
+    void shouldExposeGroupTotalNetoAsSumOfSemesterContributions() {
+        AcademicPeriod periodo1 = buildPeriodo(1L, 1, 2025);
+        AcademicPeriod periodo2 = buildPeriodo(2L, 2, 2025);
+        ResearchGroup gti = new ResearchGroup(1L, "GTI");
+
+        GroupReportConfig configPrimerSemestre = buildConfig(
+                1L, BigDecimal.ZERO, BigDecimal.ZERO, periodo1,
+                List.of(new GroupParticipation(1L, gti, BigDecimal.ONE, null, null, BigDecimal.ZERO, null)));
+
+        GroupReportConfig configSegundoSemestre = buildConfig(
+                2L, BigDecimal.ZERO, BigDecimal.ZERO, periodo2,
+                List.of(new GroupParticipation(2L, gti, BigDecimal.ONE, null, null, BigDecimal.ZERO, null)));
+        configSegundoSemestre.setItem1(new BigDecimal("0.4000"));
+        configSegundoSemestre.setItem2(new BigDecimal("0.6000"));
+        configSegundoSemestre.setImprevistos(new BigDecimal("0.0500"));
+
+        FinancialReportConfig configFinancieroPrimerSemestre = new FinancialReportConfig(
+                1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"),
+                false, periodo1, new BigDecimal("0.1000"), new BigDecimal("0.0500"));
+        FinancialReportConfig configFinancieroSegundoSemestre = new FinancialReportConfig(
+                2L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"),
+                false, periodo2, new BigDecimal("0.1000"), new BigDecimal("0.0500"));
+
+        Student estudiante = buildEstudiante("EST001", 1);
+        StudentProjection proyeccionPrimerSemestre = new StudentProjection(
+                1L, "EST001", 12345678L, "Juan", "Perez",
+                true, false, BigDecimal.ZERO, false, "GTI", 1,
+                periodo1, Collections.emptyList());
+        StudentProjection proyeccionSegundoSemestre = new StudentProjection(
+                2L, "EST001", 12345678L, "Juan", "Perez",
+                true, false, BigDecimal.ZERO, false, "GTI", 1,
+                periodo2, Collections.emptyList());
+
+        when(gateway.obtenerPeriodosPorAnio(2025)).thenReturn(List.of(periodo1, periodo2));
+        when(gateway.obtenerPeriodosPorAnio(2024)).thenReturn(Collections.emptyList());
+        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo2));
+        when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(configPrimerSemestre));
+        when(gateway.obtenerConfiguracionReporteGrupos(2L)).thenReturn(Optional.of(configSegundoSemestre));
+        when(gateway.obtenerTodosLosGrupos()).thenReturn(List.of(gti));
+        when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(1L))
+                .thenReturn(Optional.of(configFinancieroPrimerSemestre));
+        when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(2L))
+                .thenReturn(Optional.of(configFinancieroSegundoSemestre));
+        when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2025))
+                .thenReturn(List.of(estudiante));
+        when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(2, 2025))
+                .thenReturn(List.of(estudiante));
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(1L))
+                .thenReturn(List.of(proyeccionPrimerSemestre));
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(2L))
+                .thenReturn(List.of(proyeccionSegundoSemestre));
+        when(calculationService.calcular(anyList(), anyList(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        new BigDecimal("100.00"), BigDecimal.ZERO, new BigDecimal("100.00"), BigDecimal.ZERO));
+
+        GroupReportQuery resultado = useCase.obtenerReporteGrupos(2025);
+
+        GroupReport reporteGti = resultado.getReportesPorGrupo().get(0);
+        BigDecimal sumaAportes = reporteGti.getAportePrimerSemestre()
+                .add(reporteGti.getAporteSegundoSemestre());
+
+        assertThat(reporteGti.getTotalNeto()).isEqualByComparingTo(sumaAportes);
+        assertThat(reporteGti.getTotalNeto()).isEqualByComparingTo(new BigDecimal("200.00"));
+        assertThat(reporteGti.getTotalNetoPeriodo()).isEqualByComparingTo(new BigDecimal("190.00"));
+    }
+
+    @Test
+    void shouldPreserveConfiguredPercentagesAndCalculateSemesterAportes() {
+        AcademicPeriod periodo1 = buildPeriodo(1L, 1, 2025);
+        AcademicPeriod periodo2 = buildPeriodo(2L, 2, 2025);
+        ResearchGroup gti = new ResearchGroup(1L, "GTI");
+        ResearchGroup idis = new ResearchGroup(2L, "IDIS");
+        ResearchGroup gico = new ResearchGroup(3L, "GICO");
+
+        List<GroupParticipation> participaciones = List.of(
+                new GroupParticipation(1L, gti, new BigDecimal("0.4859"),
+                        new BigDecimal("0.5044"), new BigDecimal("0.4674"),
+                        BigDecimal.ZERO, null),
+                new GroupParticipation(2L, idis, new BigDecimal("0.3001"),
+                        new BigDecimal("0.2893"), new BigDecimal("0.3109"),
+                        BigDecimal.ZERO, null),
+                new GroupParticipation(3L, gico, new BigDecimal("0.2140"),
+                        new BigDecimal("0.2063"), new BigDecimal("0.2217"),
+                        BigDecimal.ZERO, null));
+
+        GroupReportConfig configPrimerSemestre = buildConfig(
+                1L, BigDecimal.ZERO, BigDecimal.ZERO, periodo1, participaciones);
+        GroupReportConfig configSegundoSemestre = buildConfig(
+                2L, BigDecimal.ZERO, BigDecimal.ZERO, periodo2, participaciones);
+        configPrimerSemestre.setItem1(new BigDecimal("0.4000"));
+        configPrimerSemestre.setItem2(new BigDecimal("0.6000"));
+        configSegundoSemestre.setItem1(new BigDecimal("0.4000"));
+        configSegundoSemestre.setItem2(new BigDecimal("0.6000"));
+        FinancialReportConfig configFinancieroPrimerSemestre = new FinancialReportConfig(
+                1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"),
+                false, periodo1, new BigDecimal("0.1000"), new BigDecimal("0.0500"));
+        FinancialReportConfig configFinancieroSegundoSemestre = new FinancialReportConfig(
+                2L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1000000.00"),
+                false, periodo2, new BigDecimal("0.1000"), new BigDecimal("0.0500"));
+
+        Student estudiante = buildEstudiante("EST001", 1);
+        List<StudentProjection> proyeccionesPrimerSemestre = List.of(
+                buildProjection(1L, "EST001", "GTI", periodo1),
+                buildProjection(2L, "EST002", "IDIS", periodo1),
+                buildProjection(3L, "EST003", "GICO", periodo1));
+        List<StudentProjection> proyeccionesSegundoSemestre = List.of(
+                buildProjection(4L, "EST004", "GTI", periodo2),
+                buildProjection(5L, "EST005", "IDIS", periodo2),
+                buildProjection(6L, "EST006", "GICO", periodo2));
+
+        when(gateway.obtenerPeriodosPorAnio(2025)).thenReturn(List.of(periodo1, periodo2));
+        when(gateway.obtenerPeriodosPorAnio(2024)).thenReturn(Collections.emptyList());
+        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo2));
+        when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(configPrimerSemestre));
+        when(gateway.obtenerConfiguracionReporteGrupos(2L)).thenReturn(Optional.of(configSegundoSemestre));
+        when(gateway.obtenerTodosLosGrupos()).thenReturn(List.of(gti, idis, gico));
+        when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(1L))
+                .thenReturn(Optional.of(configFinancieroPrimerSemestre));
+        when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(2L))
+                .thenReturn(Optional.of(configFinancieroSegundoSemestre));
+        when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2025))
+                .thenReturn(List.of(estudiante));
+        when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(2, 2025))
+                .thenReturn(List.of(estudiante));
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(1L))
+                .thenReturn(proyeccionesPrimerSemestre);
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(2L))
+                .thenReturn(proyeccionesSegundoSemestre);
+        when(calculationService.calcular(anyList(), anyList(), any()))
+                .thenReturn(new FinancialCalculationService.Totales(
+                        new BigDecimal("100.00"), BigDecimal.ZERO, new BigDecimal("100.00"), BigDecimal.ZERO));
+
+        GroupReportQuery resultado = useCase.obtenerReporteGrupos(2025);
+
+        GroupReport reporteGti = resultado.getReportesPorGrupo().stream()
+                .filter(r -> "GTI".equals(r.getGrupo().getNombre()))
+                .findFirst()
+                .orElseThrow();
+        GroupReport reporteGico = resultado.getReportesPorGrupo().stream()
+                .filter(r -> "GICO".equals(r.getGrupo().getNombre()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(reporteGti.getPorcentajePrimerSemestre()).isEqualByComparingTo(new BigDecimal("0.5044"));
+        assertThat(reporteGti.getAportePrimerSemestre()).isEqualByComparingTo(new BigDecimal("50.44"));
+        assertThat(reporteGti.getTotalNeto()).isEqualByComparingTo(new BigDecimal("97.18"));
+        assertThat(reporteGti.getPresupuestoPorGrupo()).isEqualByComparingTo(
+                reporteGti.getPresupuestoPorGrupoItem1().add(reporteGti.getPresupuestoPorGrupoItem2()));
+        assertThat(reporteGico.getPorcentajePrimerSemestre()).isEqualByComparingTo(new BigDecimal("0.2063"));
+        assertThat(reporteGico.getPorcentajeSegundoSemestre()).isEqualByComparingTo(new BigDecimal("0.2217"));
+        assertThat(reporteGico.getAporteSegundoSemestre()).isEqualByComparingTo(new BigDecimal("22.17"));
+        assertThat(reporteGico.getTotalNeto()).isEqualByComparingTo(
+                reporteGico.getAportePrimerSemestre().add(reporteGico.getAporteSegundoSemestre()));
+        assertThat(resultado.getTotalNeto()).isEqualByComparingTo(
+                resultado.getAportePrimerSemestre().add(resultado.getAporteSegundoSemestre()));
+    }
+
+    @Test
+    void shouldSumAnnualEnrollmentIncomeWhenSecondPeriodHasNoGroupConfig() {
+        AcademicPeriod periodo1 = buildPeriodo(1L, 1, 2025);
+        AcademicPeriod periodo2 = buildPeriodo(2L, 2, 2025);
+        ResearchGroup gti = new ResearchGroup(1L, "GTI");
+
+        GroupReportConfig configPrimerSemestre = buildConfig(
+                1L, BigDecimal.ZERO, BigDecimal.ZERO, periodo1,
+                List.of(new GroupParticipation(1L, gti, BigDecimal.ONE,
+                        BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ZERO, null)));
+
+        FinancialReportConfig configFinancieroPrimerSemestre = new FinancialReportConfig(
+                1L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1429730.943396"),
+                true, periodo1, new BigDecimal("0.1000"), new BigDecimal("0.0500"));
+        FinancialReportConfig configFinancieroSegundoSemestre = new FinancialReportConfig(
+                2L, BigDecimal.ZERO, BigDecimal.ZERO, new BigDecimal("1931718.904110"),
+                true, periodo2, new BigDecimal("0.1000"), new BigDecimal("0.0500"));
+
+        Student estudiante = buildEstudiante("EST001", 1);
+        estudiante.setEstaPago(true);
+        estudiante.setGrupoNombre("GTI");
+
+        when(gateway.obtenerPeriodosPorAnio(2025)).thenReturn(List.of(periodo1, periodo2));
+        when(gateway.obtenerPeriodosPorAnio(2024)).thenReturn(Collections.emptyList());
+        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo2));
+        when(gateway.obtenerConfiguracionReporteGrupos(2L)).thenReturn(Optional.empty());
+        when(gateway.obtenerConfiguracionReporteGrupos(1L)).thenReturn(Optional.of(configPrimerSemestre));
+        when(gateway.obtenerTodosLosGrupos()).thenReturn(List.of(gti));
+        when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(1L))
+                .thenReturn(Optional.of(configFinancieroPrimerSemestre));
+        when(reporteEstudiantesGateway.obtenerConfiguracionReporteFinanciero(2L))
+                .thenReturn(Optional.of(configFinancieroSegundoSemestre));
+        when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2025))
+                .thenReturn(List.of(estudiante));
+        when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(2, 2025))
+                .thenReturn(List.of(estudiante));
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(1L))
+                .thenReturn(Collections.emptyList());
+        when(reporteEstudiantesGateway.obtenerProyeccionesPorPeriodo(2L))
+                .thenReturn(Collections.emptyList());
+        when(calculationService.calcular(anyList(), anyList(), any()))
+                .thenAnswer(invocation -> {
+                    FinancialReportConfig config = invocation.getArgument(2);
+                    BigDecimal total = config.getAcademicPeriod().getId().equals(1L)
+                            ? new BigDecimal("75775740.00")
+                            : new BigDecimal("70507740.00");
+                    return new FinancialCalculationService.Totales(total, BigDecimal.ZERO, total, BigDecimal.ZERO);
+                });
+
+        GroupReportQuery resultado = useCase.obtenerReporteGrupos(2025);
+
+        assertThat(resultado.getIngresoPeriodo1()).isEqualByComparingTo(new BigDecimal("75775740.00"));
+        assertThat(resultado.getIngresoPeriodo2()).isEqualByComparingTo(new BigDecimal("70507740.00"));
+        assertThat(resultado.getTotalIngresos()).isEqualByComparingTo(new BigDecimal("146283480.00"));
     }
 
     private AcademicPeriod buildPeriodo(Long id, Integer tag, Integer anio) {
@@ -159,5 +380,12 @@ class ManageGroupReportUseCaseImplTest {
                 false, // esEgresadoUnicauca
                 false, // aplicaVotacion
                 Collections.emptyList(), Collections.emptyList(), false, null);
+    }
+
+    private StudentProjection buildProjection(Long id, String codigo, String grupo, AcademicPeriod periodo) {
+        return new StudentProjection(
+                id, codigo, 12345678L, "Juan", "Perez",
+                true, false, BigDecimal.ZERO, false, grupo, 1,
+                periodo, Collections.emptyList());
     }
 }

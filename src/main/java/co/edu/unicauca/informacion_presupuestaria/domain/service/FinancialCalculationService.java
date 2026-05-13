@@ -57,17 +57,20 @@ public class FinancialCalculationService {
         BigDecimal pctEgresado = config.getPorcentajeEgresadoFijo() != null
                 ? config.getPorcentajeEgresadoFijo() : new BigDecimal("0.05");
 
-        List<StudentProjection> pagados = proyecciones.stream()
-                .filter(p -> (Boolean.TRUE.equals(p.getEstaPago()) || Boolean.TRUE.equals(p.getEstadoMatriculaFinanciera()))
-                        && p.getCodigoEstudiante() != null)
+        List<StudentProjection> conCodigo = proyecciones.stream()
+                .filter(p -> p.getCodigoEstudiante() != null)
                 .toList();
 
         BigDecimal totalNeto = BigDecimal.ZERO;
         BigDecimal totalDescuentos = BigDecimal.ZERO;
+        int cantidadPagados = 0;
 
-        for (StudentProjection p : pagados) {
+        for (StudentProjection p : conCodigo) {
             Integer smlvs = resolverValorEnSMLV(p, estudiantes);
             if (smlvs == null) continue;
+
+            boolean pagado = Boolean.TRUE.equals(p.getEstaPago())
+                    || Boolean.TRUE.equals(p.getEstadoMatriculaFinanciera());
 
             // Obtener el semestre financiero para validar restricciones de egresado
             Integer semestre = estudiantes.stream()
@@ -77,6 +80,17 @@ public class FinancialCalculationService {
                     .orElse(1);
 
             BigDecimal valorMatricula = valorSMLV.multiply(BigDecimal.valueOf(smlvs));
+            p.setValorMatricula(valorMatricula);
+
+            if (!pagado) {
+                p.setValorDescuentoVoto(BigDecimal.ZERO);
+                p.setValorDescuentoBeca(BigDecimal.ZERO);
+                p.setValorDescuentoEgresado(BigDecimal.ZERO);
+                p.setTotalDescuentos(BigDecimal.ZERO);
+                p.setValorNeto(BigDecimal.ZERO);
+                p.setTotalNetoConDerechos(BigDecimal.ZERO);
+                continue;
+            }
 
             // 1. Descuento por voto: SIEMPRE ACUMULABLE
             BigDecimal descuentoVoto = BigDecimal.ZERO;
@@ -117,7 +131,6 @@ public class FinancialCalculationService {
             BigDecimal netoEstudiante = valorMatricula.subtract(descuentoTotalEstudiante);
 
             // Seteamos los valores calculados en el objeto proyeccion
-            p.setValorMatricula(valorMatricula);
             p.setValorDescuentoVoto(descuentoVoto);
             p.setValorDescuentoBeca(valorDescuentoBeca);
             p.setValorDescuentoEgresado(valorDescuentoEgresado);
@@ -127,11 +140,12 @@ public class FinancialCalculationService {
 
             totalNeto = totalNeto.add(valorMatricula);
             totalDescuentos = totalDescuentos.add(descuentoTotalEstudiante);
+            cantidadPagados++;
         }
 
         // Derechos complementarios: se cobran a los estudiantes con estaPago = true,
         // igual que el resto de los cálculos de matrícula.
-        BigDecimal totalDerechosComplementarios = BigDecimal.valueOf(pagados.size())
+        BigDecimal totalDerechosComplementarios = BigDecimal.valueOf(cantidadPagados)
                 .multiply(derechosComplementarios)
                 .setScale(2, RoundingMode.HALF_UP);
 
@@ -174,7 +188,7 @@ public class FinancialCalculationService {
                     .map(bd -> {
                         float p = bd.getPorcentaje() != null ? bd.getPorcentaje() : 0f;
                         if (p > 1.0) p = p / 100f;
-                        return BigDecimal.valueOf(p);
+                        return BigDecimal.valueOf(p).setScale(4, RoundingMode.HALF_UP);
                     })
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         }

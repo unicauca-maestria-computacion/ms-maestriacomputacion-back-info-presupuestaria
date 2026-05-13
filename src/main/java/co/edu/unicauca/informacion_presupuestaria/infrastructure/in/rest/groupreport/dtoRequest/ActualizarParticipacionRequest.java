@@ -16,7 +16,7 @@ public class ActualizarParticipacionRequest {
 
     @NotNull
     @DecimalMin("0.0")
-    @DecimalMax("1.0")
+    @DecimalMax("100.0")
     private BigDecimal porcentajeParticipacion;
 
     private String semestre;

@@ -1,4 +1,4 @@
-﻿/*==============================================================*/
+﻿﻿/*==============================================================*/
 /* dbms name:      mysql 5.0                                    */
 /* modificate on:     3/06/23 9:04:38                           */
 /* modificate on:     26/11/23 16:28:21                         */
@@ -3548,7 +3548,7 @@ CREATE TABLE IF NOT EXISTS proyeccion_estudiante (
 CREATE TABLE IF NOT EXISTS configuracion_reporte_financiero (
     id                       BIGINT         NOT NULL AUTO_INCREMENT,
     periodo_academico_id     BIGINT         NOT NULL,
-    valor_smlv               DECIMAL(15,2)  NOT NULL,
+    valor_smlv               DECIMAL(15,6)  NOT NULL,
     biblioteca               DECIMAL(15,2)  NOT NULL COMMENT 'Costo fijo por estudiante',
     recursos_computacionales DECIMAL(15,2)  NOT NULL COMMENT 'Costo fijo por estudiante',
     es_reporte_final         TINYINT        DEFAULT 0,
@@ -3652,6 +3652,131 @@ VALUES
     (4, 2, '2025-08-01', '2025-12-15', '2025-08-15', 'Segundo Periodo 2025', 'CERRADO'),
     (5, 1, '2026-02-01', '2026-06-30', '2026-02-15', 'Primer Periodo 2026',  'ACTIVO');
 
+INSERT INTO configuracion_reporte_financiero
+    (periodo_academico_id, valor_smlv, biblioteca, recursos_computacionales, es_reporte_final, porcentaje_votacion_fijo, porcentaje_egresado_fijo)
+VALUES
+    (3, 1429730.943396, 85000.00, 165000.00, 1, 0.10, 0.05),
+    (4, 1931718.904110, 85000.00, 165000.00, 1, 0.10, 0.05)
+ON DUPLICATE KEY UPDATE
+    valor_smlv = VALUES(valor_smlv),
+    biblioteca = VALUES(biblioteca),
+    recursos_computacionales = VALUES(recursos_computacionales),
+    es_reporte_final = VALUES(es_reporte_final),
+    porcentaje_votacion_fijo = VALUES(porcentaje_votacion_fijo),
+    porcentaje_egresado_fijo = VALUES(porcentaje_egresado_fijo);
+
+INSERT INTO configuracion_reporte_grupos
+    (periodo_academico_id, aui_porcentaje, excedentes_maestria, item1, item2, imprevistos)
+VALUES
+    (3, 0.2200, 0.00, 0.4000, 0.6000, 0.0500),
+    (4, 0.2200, 0.00, 0.4000, 0.6000, 0.0500)
+ON DUPLICATE KEY UPDATE
+    aui_porcentaje = VALUES(aui_porcentaje),
+    excedentes_maestria = VALUES(excedentes_maestria),
+    item1 = VALUES(item1),
+    item2 = VALUES(item2),
+    imprevistos = VALUES(imprevistos);
+
+SET @cfg_grupos_2025_1 = (SELECT id FROM configuracion_reporte_grupos WHERE periodo_academico_id = 3 LIMIT 1);
+SET @cfg_grupos_2025_2 = (SELECT id FROM configuracion_reporte_grupos WHERE periodo_academico_id = 4 LIMIT 1);
+SET @grupo_gti  = (SELECT id FROM grupo WHERE nombre = 'GTI' LIMIT 1);
+SET @grupo_idis = (SELECT id FROM grupo WHERE nombre = 'IDIS' LIMIT 1);
+SET @grupo_gico = (SELECT id FROM grupo WHERE nombre = 'GICO' LIMIT 1);
+
+INSERT INTO participacion_grupo
+    (configuracion_reporte_grupos_id, grupo_id, porcentaje_participacion, porcentaje_primer_semestre, porcentaje_segundo_semestre, vigencias_anteriores)
+VALUES
+    (@cfg_grupos_2025_1, @grupo_gti,0.4859,0.5044,0.4674,0.00),
+    (@cfg_grupos_2025_1, @grupo_idis,0.3001,0.2893,0.3109,0.00),
+    (@cfg_grupos_2025_1, @grupo_gico,0.2140,0.2063,0.2217,0.00),
+    (@cfg_grupos_2025_2, @grupo_gti,0.4859,0.5044, 0.4674,0.00),
+    (@cfg_grupos_2025_2, @grupo_idis,0.3001,0.2893, 0.3109,0.00),
+    (@cfg_grupos_2025_2, @grupo_gico,0.2140,0.2063, 0.2217,0.00)
+ON DUPLICATE KEY UPDATE
+    porcentaje_participacion = VALUES(porcentaje_participacion),
+    porcentaje_primer_semestre = VALUES(porcentaje_primer_semestre),
+    porcentaje_segundo_semestre = VALUES(porcentaje_segundo_semestre),
+    vigencias_anteriores = VALUES(vigencias_anteriores);
+
+UPDATE gasto_general gg
+JOIN (
+    SELECT @cfg_grupos_2025_1 AS configuracion_reporte_grupos_id, 'Gastos Generales' AS categoria, 'Gestion de la Tecnologia' AS descripcion, 8218800.00 AS monto
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Competencias empresariales', 4799779.20
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Gastos varios', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Actividad con estud o egresados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Apoyo estudiantes para segunda lengua', 1500000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contratacion de monitores de apoyo al programa de pregrado o de posgrado', 2100000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS Secretaria apoyo coordinacion Maestria, jefatura y programa ing. Sistemas', 27000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Aporte Contrato OPS Enlace FIET', 3445120.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Pago de elementos publicitarios para la Maestria en Computacion', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS disenador publicidad para la Maestria en Computacion', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Compra papeleria incluidos toners, kits de tinta', 1000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Servicios de comida a la mesa para expertos invitados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Publicaciones', 26000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Ajuste gastos generales', 2499999.80
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Gestion de la Tecnologia', 8218800.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Competencias empresariales', 4799779.20
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Gastos varios', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Actividad con estud o egresados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Apoyo estudiantes para segunda lengua', 1500000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Contratacion de monitores de apoyo al programa de pregrado o de posgrado', 2100000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Contrato OPS Secretaria apoyo coordinacion Maestria, jefatura y programa ing. Sistemas', 27000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Aporte Contrato OPS Enlace FIET', 3445120.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Pago de elementos publicitarios para la Maestria en Computacion', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Contrato OPS disenador publicidad para la Maestria en Computacion', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Compra papeleria incluidos toners, kits de tinta', 1000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Servicios de comida a la mesa para expertos invitados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Publicaciones', 26000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Ajuste gastos generales', 2499999.80
+) gastos_2025
+    ON gg.configuracion_reporte_grupos_id = gastos_2025.configuracion_reporte_grupos_id
+    AND gg.descripcion = gastos_2025.descripcion
+SET gg.categoria = gastos_2025.categoria,
+    gg.monto = gastos_2025.monto;
+
+INSERT INTO gasto_general
+    (configuracion_reporte_grupos_id, categoria, descripcion, monto)
+SELECT gastos_2025.configuracion_reporte_grupos_id,
+       gastos_2025.categoria,
+       gastos_2025.descripcion,
+       gastos_2025.monto
+FROM (
+    SELECT @cfg_grupos_2025_1 AS configuracion_reporte_grupos_id, 'Gastos Generales' AS categoria, 'Gestion de la Tecnologia' AS descripcion, 8218800.00 AS monto
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Competencias empresariales', 4799779.20
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Gastos varios', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Actividad con estud o egresados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Apoyo estudiantes para segunda lengua', 1500000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contratacion de monitores de apoyo al programa de pregrado o de posgrado', 2100000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS Secretaria apoyo coordinacion Maestria, jefatura y programa ing. Sistemas', 27000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Aporte Contrato OPS Enlace FIET', 3445120.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Pago de elementos publicitarios para la Maestria en Computacion', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS disenador publicidad para la Maestria en Computacion', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Compra papeleria incluidos toners, kits de tinta', 1000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Servicios de comida a la mesa para expertos invitados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Publicaciones', 26000000.00
+    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Ajuste gastos generales', 2499999.80
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Gestion de la Tecnologia', 8218800.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Competencias empresariales', 4799779.20
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Gastos varios', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Actividad con estud o egresados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Apoyo estudiantes para segunda lengua', 1500000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Contratacion de monitores de apoyo al programa de pregrado o de posgrado', 2100000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Contrato OPS Secretaria apoyo coordinacion Maestria, jefatura y programa ing. Sistemas', 27000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Aporte Contrato OPS Enlace FIET', 3445120.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Pago de elementos publicitarios para la Maestria en Computacion', 2000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Contrato OPS disenador publicidad para la Maestria en Computacion', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Compra papeleria incluidos toners, kits de tinta', 1000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Servicios de comida a la mesa para expertos invitados', 3000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Publicaciones', 26000000.00
+    UNION ALL SELECT @cfg_grupos_2025_2, 'Gastos Generales', 'Ajuste gastos generales', 2499999.80
+) gastos_2025
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM gasto_general gg
+    WHERE gg.configuracion_reporte_grupos_id = gastos_2025.configuracion_reporte_grupos_id
+      AND gg.descripcion = gastos_2025.descripcion
+);
+
 -- 1.1 CORRECCIÃ“N DE ESQUEMA (solicitudes_en_concejo)
 DROP PROCEDURE IF EXISTS patch_concejo_schema;
 DELIMITER //
@@ -3672,7 +3797,7 @@ INSERT IGNORE INTO personas (id, identificacion, nombre, apellido, correo_electr
 VALUES 
     (1, 12345678, 'Alberto', 'Docente', 'alberto@unicauca.edu.co', '3110000000', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (2, 22345678, 'Cesar Alberto', 'Collazos', 'ccollazos@unicauca.edu.co', '3110000001', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (3, 32345678, 'Hugo', 'OrdoÃ±ez', 'hordonez@unicauca.edu.co', '3110000002', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (3, 32345678, 'Hugo', 'Ordonez', 'hordonez@unicauca.edu.co', '3110000002', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (4, 42345678, 'Julio Ariel', 'Hurtado', 'jhurtado@unicauca.edu.co', '3110000003', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (5, 52345678, 'Ricardo Antonio', 'Zambrano', 'rzambrano@unicauca.edu.co', '3110000004', 'MASCULINO', 'CEDULA_CIUDADANIA');
 
@@ -3687,32 +3812,66 @@ VALUES
 -- 3. ESTUDIANTES REALES (26 TOTAL)
 INSERT IGNORE INTO personas (id, identificacion, nombre, apellido, correo_electronico, telefono, genero, tipo_identificacion)
 VALUES
-    (101, 1061730667, 'ANDRÃ‰S FELIPE', 'AGUDELO CONCHA', 'aagudelo@unicauca.edu.co', '300101', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (102, 4617806, 'ARIEL FERNANDO', 'CERQUERA GARCÃA', 'acerquera@unicauca.edu.co', '300102', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (103, 1061771185, 'CRISTIAN CAMILO', 'MUÃ‘OZ ORDOÃ‘EZ', 'ccmunoz@unicauca.edu.co', '300103', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (104, 1061785831, 'DIEGO FERNANDO', 'RIVERA VÃSQUEZ', 'drivera@unicauca.edu.co', '300104', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (101, 1061730667, 'ANDRES FELIPE', 'AGUDELO CONCHA', 'aagudelo@unicauca.edu.co', '300101', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (102, 4617806, 'ARIEL FERNANDO', 'CERQUERA GARCIA', 'acerquera@unicauca.edu.co', '300102', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (103, 1061771185, 'CRISTIAN CAMILO', 'MUNOZ ORDONEZ', 'ccmunoz@unicauca.edu.co', '300103', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (104, 1061785831, 'DIEGO FERNANDO', 'RIVERA VASQUEZ', 'drivera@unicauca.edu.co', '300104', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (105, 1004550400, 'ESTEBAN ALBERTO', 'ARTEAGA BENAVIDES', 'earteaga@unicauca.edu.co', '300105', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (106, 1061777560, 'FABIAN CAMILO', 'MARTÃNEZ SILVA', 'fmartinez@unicauca.edu.co', '300106', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (106, 1061777560, 'FABIAN CAMILO', 'MARTINEZ SILVA', 'fmartinez@unicauca.edu.co', '300106', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (107, 79747463, 'FREY GIOVANNI', 'ZAMBRANO PINILLA', 'fzambrano@unicauca.edu.co', '300107', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (108, 1086106976, 'GERMÃN HOMERO', 'MORÃN FIGUEROA', 'gmoran@unicauca.edu.co', '300108', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (108, 1086106976, 'GERMAN HOMERO', 'MORAN FIGUEROA', 'gmoran@unicauca.edu.co', '300108', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (109, 1062287178, 'GUSTAVO ADOLFO', 'LARRAHONDO', 'glarrahondo@unicauca.edu.co', '300109', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (110, 1061736253, 'INGRITH CAROLINA', 'MUÃ‘OZ ORDOÃ‘EZ', 'imunoz@unicauca.edu.co', '300110', 'FEMENINO', 'CEDULA_CIUDADANIA'),
-    (111, 25278582, 'ISABEL CRISTINA', 'MEJÃA', 'imejia@unicauca.edu.co', '300111', 'FEMENINO', 'CEDULA_CIUDADANIA'),
+    (110, 1061736253, 'INGRITH CAROLINA', 'MUNOZ ORDONEZ', 'imunoz@unicauca.edu.co', '300110', 'FEMENINO', 'CEDULA_CIUDADANIA'),
+    (111, 25278582, 'ISABEL CRISTINA', 'MEJIA', 'imejia@unicauca.edu.co', '300111', 'FEMENINO', 'CEDULA_CIUDADANIA'),
     (112, 1061801557, 'JHOAN SEBASTIAN', 'HURTADO CAMPO', 'jhurtado@unicauca.edu.co', '300112', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (113, 1061693367, 'JUAN DAVID', 'ARBOLEDA LEGARDA', 'jarboleda@unicauca.edu.co', '300113', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (114, 1061087908, 'NELSON FERNANDO', 'FERNÃNDEZ MAJÃ‰', 'nfernandez@unicauca.edu.co', '300114', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (115, 78707194, 'PEDRO DEL SOCORRO', 'GÃ“MEZ ÃLVAREZ', 'pgomez@unicauca.edu.co', '300115', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (116, 1061747253, 'VÃCTOR HUGO', 'PINTO RODRÃGUEZ', 'vpinto@unicauca.edu.co', '300116', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (114, 1061087908, 'NELSON FERNANDO', 'FERNANDEZ MAJE', 'nfernandez@unicauca.edu.co', '300114', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (115, 78707194, 'PEDRO DEL SOCORRO', 'GOMEZ ALVAREZ', 'pgomez@unicauca.edu.co', '300115', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (116, 1061747253, 'VICTOR HUGO', 'PINTO RODRIGUEZ', 'vpinto@unicauca.edu.co', '300116', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (117, 1061771636, 'FERNANDO MAURICIO', 'ROSERO PIAMBA', 'frosero@unicauca.edu.co', '300117', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (118, 10307703, 'OSCAR JAVIER', 'QUIÃ‘ONEZ MENESES', 'oquinonez@unicauca.edu.co', '300118', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (118, 10307703, 'OSCAR JAVIER', 'QUINONEZ MENESES', 'oquinonez@unicauca.edu.co', '300118', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (119, 1061543081, 'RUBEN DARIO', 'VARGAS YANDY', 'rvargas@unicauca.edu.co', '300119', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (120, 10300176, 'JHONY ARVEY', 'MUÃ‘OZ NAVIA', 'jmunoz@unicauca.edu.co', '300120', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (120, 10300176, 'JHONY ARVEY', 'MUNOZ NAVIA', 'jmunoz@unicauca.edu.co', '300120', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (121, 1002963109, 'BRAYAN DANIEL', 'PERDOMO', 'bperdomo@unicauca.edu.co', '300121', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (122, 10302830, 'CARLOS JULIAN', 'SANCHEZ', 'csanchez@unicauca.edu.co', '300122', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (123, 1061697069, 'GINETH ANDREA', 'LOPEZ HOYOS', 'glopez@unicauca.edu.co', '300123', 'FEMENINO', 'CEDULA_CIUDADANIA'),
-    (124, 1193271943, 'CARLOS ANDRÃ‰S', 'DURÃN PAREDES', 'cduran@unicauca.edu.co', '300124', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (124, 1193271943, 'CARLOS ANDRES', 'DURAN PAREDES', 'cduran@unicauca.edu.co', '300124', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (125, 1061796647, 'JUAN PABLO', 'VALENCIA ROSADA', 'jvalencia@unicauca.edu.co', '300125', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (126, 1002953754, 'YEFERSON DUVAN', 'MONTILLA DIAZ', 'ymontilla@unicauca.edu.co', '300126', 'MASCULINO', 'CEDULA_CIUDADANIA');
+
+UPDATE personas p
+JOIN (
+    SELECT 3 AS id, 'Hugo' AS nombre, 'Ordonez' AS apellido
+    UNION ALL SELECT 101, 'ANDRES FELIPE', 'AGUDELO CONCHA'
+    UNION ALL SELECT 102, 'ARIEL FERNANDO', 'CERQUERA GARCIA'
+    UNION ALL SELECT 103, 'CRISTIAN CAMILO', 'MUNOZ ORDONEZ'
+    UNION ALL SELECT 104, 'DIEGO FERNANDO', 'RIVERA VASQUEZ'
+    UNION ALL SELECT 105, 'ESTEBAN ALBERTO', 'ARTEAGA BENAVIDES'
+    UNION ALL SELECT 106, 'FABIAN CAMILO', 'MARTINEZ SILVA'
+    UNION ALL SELECT 107, 'FREY GIOVANNI', 'ZAMBRANO PINILLA'
+    UNION ALL SELECT 108, 'GERMAN HOMERO', 'MORAN FIGUEROA'
+    UNION ALL SELECT 109, 'GUSTAVO ADOLFO', 'LARRAHONDO'
+    UNION ALL SELECT 110, 'INGRITH CAROLINA', 'MUNOZ ORDONEZ'
+    UNION ALL SELECT 111, 'ISABEL CRISTINA', 'MEJIA'
+    UNION ALL SELECT 112, 'JHOAN SEBASTIAN', 'HURTADO CAMPO'
+    UNION ALL SELECT 113, 'JUAN DAVID', 'ARBOLEDA LEGARDA'
+    UNION ALL SELECT 114, 'NELSON FERNANDO', 'FERNANDEZ MAJE'
+    UNION ALL SELECT 115, 'PEDRO DEL SOCORRO', 'GOMEZ ALVAREZ'
+    UNION ALL SELECT 116, 'VICTOR HUGO', 'PINTO RODRIGUEZ'
+    UNION ALL SELECT 117, 'FERNANDO MAURICIO', 'ROSERO PIAMBA'
+    UNION ALL SELECT 118, 'OSCAR JAVIER', 'QUINONEZ MENESES'
+    UNION ALL SELECT 119, 'RUBEN DARIO', 'VARGAS YANDY'
+    UNION ALL SELECT 120, 'JHONY ARVEY', 'MUNOZ NAVIA'
+    UNION ALL SELECT 121, 'BRAYAN DANIEL', 'PERDOMO'
+    UNION ALL SELECT 122, 'CARLOS JULIAN', 'SANCHEZ'
+    UNION ALL SELECT 123, 'GINETH ANDREA', 'LOPEZ HOYOS'
+    UNION ALL SELECT 124, 'CARLOS ANDRES', 'DURAN PAREDES'
+    UNION ALL SELECT 125, 'JUAN PABLO', 'VALENCIA ROSADA'
+    UNION ALL SELECT 126, 'YEFERSON DUVAN', 'MONTILLA DIAZ'
+) nombres_limpios
+    ON p.id = nombres_limpios.id
+SET p.nombre = nombres_limpios.nombre,
+    p.apellido = nombres_limpios.apellido;
 
 INSERT IGNORE INTO estudiantes (id, id_persona, codigo, cohorte, periodo_ingreso, semestre_financiero, semestre_academico, estado_maestria, modalidad, es_egresado_unicauca, ciudad_residencia, correo_universidad)
 VALUES
@@ -3957,4 +4116,3 @@ FROM matriculas WHERE id_periodo = 5;
 SELECT 'Script ejecutado: 26 estudiantes, materias, becas (Aprobadas 2025 y 2026) y descuentos mapeados.' AS Resultado;
 
 SET sql_notes = 1;
-

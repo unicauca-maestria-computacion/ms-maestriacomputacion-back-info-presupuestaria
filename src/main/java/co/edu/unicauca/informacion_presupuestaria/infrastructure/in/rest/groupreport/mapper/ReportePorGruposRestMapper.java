@@ -45,6 +45,18 @@ public class ReportePorGruposRestMapper {
         dto.setTotalImprevistos(consulta.getTotalImprevistos());
         dto.setTotalVigenciasAnteriores(consulta.getTotalVigenciasAnteriores());
         dto.setTransferenciaUnicauca(consulta.getTransferenciaUnicauca());
+        dto.setTotalNeto(consulta.getTotalNeto());
+        dto.setAportePrimerSemestre(consulta.getAportePrimerSemestre());
+        dto.setAporteSegundoSemestre(consulta.getAporteSegundoSemestre());
+        dto.setParticipacionPrimerSemestre(consulta.getParticipacionPrimerSemestre());
+        dto.setParticipacionSegundoSemestre(consulta.getParticipacionSegundoSemestre());
+        dto.setParticipacionPorAnio(consulta.getParticipacionPorAnio());
+        dto.setPresupuestoPorGrupoItem1(consulta.getPresupuestoPorGrupoItem1());
+        dto.setPresupuestoPorGrupoItem2(consulta.getPresupuestoPorGrupoItem2());
+        dto.setPresupuestoPorGrupo(consulta.getPresupuestoPorGrupo());
+        dto.setImprevistosValor(consulta.getImprevistosValor());
+        dto.setPresupuestoPorGrupoImprevistos(consulta.getPresupuestoPorGrupoImprevistos());
+        dto.setVigenciasAnteriores(consulta.getVigenciasAnteriores());
 
 
         GroupReportConfig config = consulta.getConfiguracion();
@@ -94,6 +106,7 @@ public class ReportePorGruposRestMapper {
         dto.setPorcentajeParticipacion(reporte.getPorcentajeParticipacion());
         dto.setPorcentajePrimerSemestre(reporte.getPorcentajePrimerSemestre());
         dto.setPorcentajeSegundoSemestre(reporte.getPorcentajeSegundoSemestre());
+        dto.setParticipacionPorAnio(reporte.getParticipacionPorAnio());
         dto.setVigenciasAnteriores(reporte.getVigenciasAnteriores());
         dto.setPresupuestoPorGrupo(reporte.getPresupuestoPorGrupo());
         dto.setPresupuestoPorGrupoItem1(reporte.getPresupuestoPorGrupoItem1());

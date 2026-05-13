@@ -19,7 +19,7 @@ public class ConsultaReportePorGruposResponse {
     private BigDecimal imprevistos;
     private BigDecimal totalIngresos;
     private BigDecimal auiValor;
-    /** Ingresos netos = totalIngresos - auiValor - excedentesMaestria */
+    /** Ingresos netos = totalIngresos - auiValor */
     private BigDecimal ingresosNetos;
     /** Suma de gastos generales globales de la maestría */
     private BigDecimal totalGastosGenerales;
@@ -29,6 +29,18 @@ public class ConsultaReportePorGruposResponse {
     private BigDecimal totalImprevistos;
     private BigDecimal totalVigenciasAnteriores;
     private BigDecimal transferenciaUnicauca;
+    private BigDecimal totalNeto;
+    private BigDecimal aportePrimerSemestre;
+    private BigDecimal aporteSegundoSemestre;
+    private BigDecimal participacionPrimerSemestre;
+    private BigDecimal participacionSegundoSemestre;
+    private BigDecimal participacionPorAnio;
+    private BigDecimal presupuestoPorGrupoItem1;
+    private BigDecimal presupuestoPorGrupoItem2;
+    private BigDecimal presupuestoPorGrupo;
+    private BigDecimal imprevistosValor;
+    private BigDecimal presupuestoPorGrupoImprevistos;
+    private BigDecimal vigenciasAnteriores;
     private List<ReportePorGrupoResponse> reportesPorGrupo;
     private List<GastoGeneralResponseDto> gastosGenerales;
     private Long idConfiguracionReporteGrupos;
@@ -211,6 +223,110 @@ public class ConsultaReportePorGruposResponse {
 
     public void setTransferenciaUnicauca(BigDecimal transferenciaUnicauca) {
         this.transferenciaUnicauca = transferenciaUnicauca;
+    }
+
+    public BigDecimal getTotalNeto() {
+        return totalNeto;
+    }
+
+    public void setTotalNeto(BigDecimal totalNeto) {
+        this.totalNeto = totalNeto;
+    }
+
+    public BigDecimal getAportePrimerSemestre() {
+        return aportePrimerSemestre;
+    }
+
+    public void setAportePrimerSemestre(BigDecimal aportePrimerSemestre) {
+        this.aportePrimerSemestre = aportePrimerSemestre;
+    }
+
+    public BigDecimal getAporteSegundoSemestre() {
+        return aporteSegundoSemestre;
+    }
+
+    public void setAporteSegundoSemestre(BigDecimal aporteSegundoSemestre) {
+        this.aporteSegundoSemestre = aporteSegundoSemestre;
+    }
+
+    public BigDecimal getParticipacionPrimerSemestre() {
+        return participacionPrimerSemestre;
+    }
+
+    public BigDecimal getPorcentajePrimerSemestre() {
+        return participacionPrimerSemestre;
+    }
+
+    public void setParticipacionPrimerSemestre(BigDecimal participacionPrimerSemestre) {
+        this.participacionPrimerSemestre = participacionPrimerSemestre;
+    }
+
+    public BigDecimal getParticipacionSegundoSemestre() {
+        return participacionSegundoSemestre;
+    }
+
+    public BigDecimal getPorcentajeSegundoSemestre() {
+        return participacionSegundoSemestre;
+    }
+
+    public void setParticipacionSegundoSemestre(BigDecimal participacionSegundoSemestre) {
+        this.participacionSegundoSemestre = participacionSegundoSemestre;
+    }
+
+    public BigDecimal getParticipacionPorAnio() {
+        return participacionPorAnio;
+    }
+
+    public void setParticipacionPorAnio(BigDecimal participacionPorAnio) {
+        this.participacionPorAnio = participacionPorAnio;
+    }
+
+    public BigDecimal getPresupuestoPorGrupoItem1() {
+        return presupuestoPorGrupoItem1;
+    }
+
+    public void setPresupuestoPorGrupoItem1(BigDecimal presupuestoPorGrupoItem1) {
+        this.presupuestoPorGrupoItem1 = presupuestoPorGrupoItem1;
+    }
+
+    public BigDecimal getPresupuestoPorGrupoItem2() {
+        return presupuestoPorGrupoItem2;
+    }
+
+    public void setPresupuestoPorGrupoItem2(BigDecimal presupuestoPorGrupoItem2) {
+        this.presupuestoPorGrupoItem2 = presupuestoPorGrupoItem2;
+    }
+
+    public BigDecimal getPresupuestoPorGrupo() {
+        return presupuestoPorGrupo;
+    }
+
+    public void setPresupuestoPorGrupo(BigDecimal presupuestoPorGrupo) {
+        this.presupuestoPorGrupo = presupuestoPorGrupo;
+    }
+
+    public BigDecimal getImprevistosValor() {
+        return imprevistosValor;
+    }
+
+    public void setImprevistosValor(BigDecimal imprevistosValor) {
+        this.imprevistosValor = imprevistosValor;
+    }
+
+    public BigDecimal getPresupuestoPorGrupoImprevistos() {
+        return presupuestoPorGrupoImprevistos;
+    }
+
+    public void setPresupuestoPorGrupoImprevistos(BigDecimal presupuestoPorGrupoImprevistos) {
+        this.presupuestoPorGrupoImprevistos = presupuestoPorGrupoImprevistos;
+    }
+
+    public BigDecimal getVigenciasAnteriores() {
+        return vigenciasAnteriores;
+    }
+
+    public void setVigenciasAnteriores(BigDecimal vigenciasAnteriores) {
+        this.vigenciasAnteriores = vigenciasAnteriores;
     }
 
     public List<ReportePorGrupoResponse> getReportesPorGrupo() {

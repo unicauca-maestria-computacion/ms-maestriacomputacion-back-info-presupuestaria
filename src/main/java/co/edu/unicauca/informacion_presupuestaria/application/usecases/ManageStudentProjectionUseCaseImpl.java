@@ -114,11 +114,11 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                         p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
                         p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
                     } else {
-                        p.setEstadoMatriculaFinanciera(e.getEstaPago());
                         if (Boolean.TRUE.equals(e.getEstaPago())) {
                             p.setEstaPago(true);
                         }
                     }
+                    p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(p.getEstaPago()));
                     
                     return p;
                 })
