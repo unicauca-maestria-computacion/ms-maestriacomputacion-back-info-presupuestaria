@@ -1,4 +1,4 @@
-﻿﻿/*==============================================================*/
+/*==============================================================*/
 /* dbms name:      mysql 5.0                                    */
 /* modificate on:     3/06/23 9:04:38                           */
 /* modificate on:     26/11/23 16:28:21                         */
@@ -3812,24 +3812,24 @@ VALUES
 -- 3. ESTUDIANTES REALES (26 TOTAL)
 INSERT IGNORE INTO personas (id, identificacion, nombre, apellido, correo_electronico, telefono, genero, tipo_identificacion)
 VALUES
-    (101, 1061730667, 'ANDRES FELIPE', 'AGUDELO CONCHA', 'aagudelo@unicauca.edu.co', '300101', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (102, 4617806, 'ARIEL FERNANDO', 'CERQUERA GARCIA', 'acerquera@unicauca.edu.co', '300102', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (103, 1061771185, 'CRISTIAN CAMILO', 'MUNOZ ORDONEZ', 'ccmunoz@unicauca.edu.co', '300103', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (104, 1061785831, 'DIEGO FERNANDO', 'RIVERA VASQUEZ', 'drivera@unicauca.edu.co', '300104', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (101, 1061730667, 'ANDRÉS FELIPE', 'AGUDELO CONCHA', 'aagudelo@unicauca.edu.co', '300101', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (102, 4617806, 'ARIEL FERNANDO', 'CERQUERA GARCÍA', 'acerquera@unicauca.edu.co', '300102', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (103, 1061771185, 'CRISTIAN CAMILO', 'MUÑOZ ORDOÑEZ', 'ccmunoz@unicauca.edu.co', '300103', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (104, 1061785831, 'DIEGO FERNANDO', 'RIVERA VÁSQUEZ', 'drivera@unicauca.edu.co', '300104', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (105, 1004550400, 'ESTEBAN ALBERTO', 'ARTEAGA BENAVIDES', 'earteaga@unicauca.edu.co', '300105', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (106, 1061777560, 'FABIAN CAMILO', 'MARTINEZ SILVA', 'fmartinez@unicauca.edu.co', '300106', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (106, 1061777560, 'FABIAN CAMILO', 'MARTÍNEZ SILVA', 'fmartinez@unicauca.edu.co', '300106', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (107, 79747463, 'FREY GIOVANNI', 'ZAMBRANO PINILLA', 'fzambrano@unicauca.edu.co', '300107', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (108, 1086106976, 'GERMAN HOMERO', 'MORAN FIGUEROA', 'gmoran@unicauca.edu.co', '300108', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (108, 1086106976, 'GERMÁN HOMERO', 'MORÁN FIGUEROA', 'gmoran@unicauca.edu.co', '300108', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (109, 1062287178, 'GUSTAVO ADOLFO', 'LARRAHONDO', 'glarrahondo@unicauca.edu.co', '300109', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (110, 1061736253, 'INGRITH CAROLINA', 'MUNOZ ORDONEZ', 'imunoz@unicauca.edu.co', '300110', 'FEMENINO', 'CEDULA_CIUDADANIA'),
-    (111, 25278582, 'ISABEL CRISTINA', 'MEJIA', 'imejia@unicauca.edu.co', '300111', 'FEMENINO', 'CEDULA_CIUDADANIA'),
+    (110, 1061736253, 'INGRITH CAROLINA', 'MUÑOZ ORDOÑEZ', 'imunoz@unicauca.edu.co', '300110', 'FEMENINO', 'CEDULA_CIUDADANIA'),
+    (111, 25278582, 'ISABEL CRISTINA', 'MEJÍA', 'imejia@unicauca.edu.co', '300111', 'FEMENINO', 'CEDULA_CIUDADANIA'),
     (112, 1061801557, 'JHOAN SEBASTIAN', 'HURTADO CAMPO', 'jhurtado@unicauca.edu.co', '300112', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (113, 1061693367, 'JUAN DAVID', 'ARBOLEDA LEGARDA', 'jarboleda@unicauca.edu.co', '300113', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (114, 1061087908, 'NELSON FERNANDO', 'FERNANDEZ MAJE', 'nfernandez@unicauca.edu.co', '300114', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (115, 78707194, 'PEDRO DEL SOCORRO', 'GOMEZ ALVAREZ', 'pgomez@unicauca.edu.co', '300115', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (116, 1061747253, 'VICTOR HUGO', 'PINTO RODRIGUEZ', 'vpinto@unicauca.edu.co', '300116', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (114, 1061087908, 'NELSON FERNANDO', 'FERNÁNDEZ MAJÉ', 'nfernandez@unicauca.edu.co', '300114', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (115, 78707194, 'PEDRO DEL SOCORRO', 'GÓMEZ ÁLVAREZ', 'pgomez@unicauca.edu.co', '300115', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (116, 1061747253, 'VÍCTOR HUGO', 'PINTO RODRÍGUEZ', 'vpinto@unicauca.edu.co', '300116', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (117, 1061771636, 'FERNANDO MAURICIO', 'ROSERO PIAMBA', 'frosero@unicauca.edu.co', '300117', 'MASCULINO', 'CEDULA_CIUDADANIA'),
-    (118, 10307703, 'OSCAR JAVIER', 'QUINONEZ MENESES', 'oquinonez@unicauca.edu.co', '300118', 'MASCULINO', 'CEDULA_CIUDADANIA'),
+    (118, 10307703, 'OSCAR JAVIER', 'QUIÑONEZ MENESES', 'oquinonez@unicauca.edu.co', '300118', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (119, 1061543081, 'RUBEN DARIO', 'VARGAS YANDY', 'rvargas@unicauca.edu.co', '300119', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (120, 10300176, 'JHONY ARVEY', 'MUNOZ NAVIA', 'jmunoz@unicauca.edu.co', '300120', 'MASCULINO', 'CEDULA_CIUDADANIA'),
     (121, 1002963109, 'BRAYAN DANIEL', 'PERDOMO', 'bperdomo@unicauca.edu.co', '300121', 'MASCULINO', 'CEDULA_CIUDADANIA'),
@@ -3841,31 +3841,31 @@ VALUES
 
 UPDATE personas p
 JOIN (
-    SELECT 3 AS id, 'Hugo' AS nombre, 'Ordonez' AS apellido
-    UNION ALL SELECT 101, 'ANDRES FELIPE', 'AGUDELO CONCHA'
-    UNION ALL SELECT 102, 'ARIEL FERNANDO', 'CERQUERA GARCIA'
-    UNION ALL SELECT 103, 'CRISTIAN CAMILO', 'MUNOZ ORDONEZ'
-    UNION ALL SELECT 104, 'DIEGO FERNANDO', 'RIVERA VASQUEZ'
+    SELECT 3 AS id, 'Hugo' AS nombre, 'Ordoñez' AS apellido
+    UNION ALL SELECT 101, 'ANDRÉS FELIPE', 'AGUDELO CONCHA'
+    UNION ALL SELECT 102, 'ARIEL FERNANDO', 'CERQUERA GARCÍA'
+    UNION ALL SELECT 103, 'CRISTIAN CAMILO', 'MUÑOZ ORDOÑEZ'
+    UNION ALL SELECT 104, 'DIEGO FERNANDO', 'RIVERA VÁSQUEZ'
     UNION ALL SELECT 105, 'ESTEBAN ALBERTO', 'ARTEAGA BENAVIDES'
-    UNION ALL SELECT 106, 'FABIAN CAMILO', 'MARTINEZ SILVA'
+    UNION ALL SELECT 106, 'FABIAN CAMILO', 'MARTÍNEZ SILVA'
     UNION ALL SELECT 107, 'FREY GIOVANNI', 'ZAMBRANO PINILLA'
-    UNION ALL SELECT 108, 'GERMAN HOMERO', 'MORAN FIGUEROA'
+    UNION ALL SELECT 108, 'GERMÁN HOMERO', 'MORÁN FIGUEROA'
     UNION ALL SELECT 109, 'GUSTAVO ADOLFO', 'LARRAHONDO'
-    UNION ALL SELECT 110, 'INGRITH CAROLINA', 'MUNOZ ORDONEZ'
-    UNION ALL SELECT 111, 'ISABEL CRISTINA', 'MEJIA'
+    UNION ALL SELECT 110, 'INGRITH CAROLINA', 'MUÑOZ ORDOÑEZ'
+    UNION ALL SELECT 111, 'ISABEL CRISTINA', 'MEJÍA'
     UNION ALL SELECT 112, 'JHOAN SEBASTIAN', 'HURTADO CAMPO'
     UNION ALL SELECT 113, 'JUAN DAVID', 'ARBOLEDA LEGARDA'
-    UNION ALL SELECT 114, 'NELSON FERNANDO', 'FERNANDEZ MAJE'
-    UNION ALL SELECT 115, 'PEDRO DEL SOCORRO', 'GOMEZ ALVAREZ'
-    UNION ALL SELECT 116, 'VICTOR HUGO', 'PINTO RODRIGUEZ'
+    UNION ALL SELECT 114, 'NELSON FERNANDO', 'FERNÁNDEZ MAJÉ'
+    UNION ALL SELECT 115, 'PEDRO DEL SOCORRO', 'GÓMEZ ÁLVAREZ'
+    UNION ALL SELECT 116, 'VÍCTOR HUGO', 'PINTO RODRÍGUEZ'
     UNION ALL SELECT 117, 'FERNANDO MAURICIO', 'ROSERO PIAMBA'
-    UNION ALL SELECT 118, 'OSCAR JAVIER', 'QUINONEZ MENESES'
+    UNION ALL SELECT 118, 'OSCAR JAVIER', 'QUIÑONEZ MENESES'
     UNION ALL SELECT 119, 'RUBEN DARIO', 'VARGAS YANDY'
-    UNION ALL SELECT 120, 'JHONY ARVEY', 'MUNOZ NAVIA'
+    UNION ALL SELECT 120, 'JHONY ARVEY', 'MUÑOZ NAVIA'
     UNION ALL SELECT 121, 'BRAYAN DANIEL', 'PERDOMO'
     UNION ALL SELECT 122, 'CARLOS JULIAN', 'SANCHEZ'
     UNION ALL SELECT 123, 'GINETH ANDREA', 'LOPEZ HOYOS'
-    UNION ALL SELECT 124, 'CARLOS ANDRES', 'DURAN PAREDES'
+    UNION ALL SELECT 124, 'CARLOS ANDRÉS', 'DURÁN PAREDES'
     UNION ALL SELECT 125, 'JUAN PABLO', 'VALENCIA ROSADA'
     UNION ALL SELECT 126, 'YEFERSON DUVAN', 'MONTILLA DIAZ'
 ) nombres_limpios
@@ -3907,9 +3907,9 @@ INSERT IGNORE INTO asignaturas (id, codigo_asignatura, nombre_asignatura, credit
 VALUES 
     (1, 27712, 'Trabajo de Grado 2', 4, 1), 
     (2, 27709, 'Trabajo de Grado 1', 4, 1), 
-    (3, 27691, 'MetodologÃ­a de la InvestigaciÃ³n', 4, 1), 
+    (3, 27691, 'Metodología de la Investigación', 4, 1), 
     (4, 11,    'Competencias Empresariales', 4, 1), 
-    (5, 27701, 'GestiÃ³n de la TecnologÃ­a', 4, 1);
+    (5, 27701, 'Gestión de la Tecnología', 4, 1);
 
 -- Cursos por PerÃ­odo
 INSERT IGNORE INTO cursos (id, idmatricula, id_asignatura, periodo_id, grupocurso, periodocurso, aniocurso, horariocurso, saloncurso, estado)
@@ -3918,14 +3918,14 @@ VALUES
     (401, 0, 1, 4, 'A', 2, 2025, 'Lun 18-22', 'L1', 1), (402, 0, 2, 4, 'A', 2, 2025, 'Mar 18-22', 'L2', 1), (404, 0, 4, 4, 'A', 2, 2025, 'Jue 18-22', 'L4', 1),
     (501, 0, 1, 5, 'A', 1, 2026, 'Lun 18-22', 'L1', 1), (502, 0, 2, 5, 'A', 1, 2026, 'Mar 18-22', 'L2', 1), (503, 0, 3, 5, 'A', 1, 2026, 'Mie 18-22', 'L3', 1), (505, 0, 5, 5, 'A', 1, 2026, 'Vie 08-12', 'L5', 1);
 
--- 4.1 ASIGNACIÃ“N DOCENTE A CURSOS (curso_docente)
+-- 4.1 ASIGNACIÓN DOCENTE A CURSOS (curso_docente)
 INSERT IGNORE INTO curso_docente (id_curso, id_docente)
 VALUES 
     (301, 2), (302, 2), (303, 3), -- 2025-1
     (401, 2), (402, 2), (404, 5), -- 2025-2
     (501, 2), (502, 2), (503, 3), (505, 5); -- 2026-1
 
--- 5. MATRÃCULAS (Mapeo Detallado por Estudiante y Materia)
+-- 5. MATRÍCULAS (Mapeo Detallado por Estudiante y Materia)
 -- =============================================================================
 
 -- Periodo 2025-1 (ID 3)
@@ -3938,7 +3938,7 @@ SELECT e.id, 301, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (10
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 302, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (110, 111, 114);
 
--- MetodologÃ­a de la InvestigaciÃ³n (Curso 303): Admitidos Nuevos 2025-1
+-- Metodología de la Investigación (Curso 303): Admitidos Nuevos 2025-1
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 303, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (117, 118, 119);
 
@@ -3949,7 +3949,7 @@ SELECT e.id, 303, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (11
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 401, 4, 2, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (101, 102, 103, 104, 105, 106, 107, 108, 109, 111, 112, 113, 114, 115, 116);
 
--- Trabajo de Grado 1 (Curso 402): ContinÃºan en TG1
+-- Trabajo de Grado 1 (Curso 402): Continúan en TG1
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 402, 4, 2, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (110);
 
@@ -3964,7 +3964,7 @@ SELECT e.id, 404, 4, 2, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (11
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 501, 5, 1, 2026, 1, 'CREADA' FROM estudiantes e WHERE e.id BETWEEN 101 AND 116;
 
--- MetodologÃ­a de la InvestigaciÃ³n (Curso 503): Admitidos Nuevos 2026-1
+-- Metodología de la Investigación (Curso 503): Admitidos Nuevos 2026-1
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 503, 5, 1, 2026, 1, 'CREADA' FROM estudiantes e WHERE e.id IN (120, 121, 122, 125, 126);
 
@@ -3972,7 +3972,7 @@ SELECT e.id, 503, 5, 1, 2026, 1, 'CREADA' FROM estudiantes e WHERE e.id IN (120,
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 VALUES (123, 502, 5, 1, 2026, 1, 'CREADA');
 
--- GestiÃ³n de la TecnologÃ­a (Curso 505): Admitido especial con GestiÃ³n
+-- Gestión de la Tecnología (Curso 505): Admitido especial con Gestión
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 VALUES (124, 505, 5, 1, 2026, 1, 'CREADA');
 
@@ -3980,7 +3980,7 @@ VALUES (124, 505, 5, 1, 2026, 1, 'CREADA');
 INSERT IGNORE INTO tipos_solicitudes (id, codigo, nombre)
 VALUES (1, 'SO_BECA', 'Solicitud de Beca');
 
--- 6.1 MATRÃCULA FINANCIERA (Realidad: Pago y Grupo asignado)
+-- 6.1 MATRÍCULA FINANCIERA (Realidad: Pago y Grupo asignado)
 -- =============================================================================
 -- ID 3: 2025-1 | ID 4: 2025-2 | ID 5: 2026-1
 -- -----------------------------------------------------------------------------
@@ -4003,33 +4003,33 @@ FROM matriculas WHERE id_periodo = 5;
 -- 7. FLUJO DE BECAS Y DESCUENTOS
 SET @id_tipo_beca = (SELECT id FROM tipos_solicitudes WHERE codigo = 'SO_BECA' LIMIT 1);
 
--- BECAS 2025 (REALIDAD: ALGUNAS RESUELTAS, OTRAS EN TRÃMITE)
+-- BECAS 2025 (REALIDAD: ALGUNAS RESUELTAS, OTRAS EN TRÁMITE)
 INSERT IGNORE INTO solicitudes (id, id_tipo_solicitud, id_estudiante, id_tutor, estado, radicado)
 VALUES 
-    (2003, @id_tipo_beca, 103, 2, 'RESUELTA', 'RAD-25-103'), -- Cristian MuÃ±oz (Aprobada)
-    (2006, @id_tipo_beca, 106, 3, 'RESUELTA', 'RAD-25-106'), -- Fabian MartÃ­nez (Aprobada 2025-1)
-    (2015, @id_tipo_beca, 115, 4, 'RESUELTA', 'RAD-25-115'), -- Pedro GÃ³mez (Aprobada)
+    (2003, @id_tipo_beca, 103, 2, 'RESUELTA', 'RAD-25-103'), -- Cristian Muñoz (Aprobada)
+    (2006, @id_tipo_beca, 106, 3, 'RESUELTA', 'RAD-25-106'), -- Fabian Martínez (Aprobada 2025-1)
+    (2015, @id_tipo_beca, 115, 4, 'RESUELTA', 'RAD-25-115'), -- Pedro Gómez (Aprobada)
     (2012, @id_tipo_beca, 112, 2, 'RESUELTA', 'RAD-25-112'), -- Jhoan Hurtado (50%)
-    (2001, @id_tipo_beca, 101, 2, 'EN COMITE', 'RAD-25-101'), -- AndrÃ©s Agudelo (Pendiente)
+    (2001, @id_tipo_beca, 101, 2, 'EN COMITE', 'RAD-25-101'), -- Andrés Agudelo (Pendiente)
     (2017, @id_tipo_beca, 117, 3, 'EN COMITE', 'RAD-25-117'); -- Fernando Rosero (Pendiente)
 
 INSERT IGNORE INTO solicitud_beca_descuento (id_solicitud, tipo, motivo)
 VALUES 
-    (2003, 'Beca - Trabajo', 'Excelencia AcadÃ©mica'),
-    (2006, 'Beca - Trabajo', 'MonitorÃ­a de InvestigaciÃ³n'),
-    (2015, 'Beca - Trabajo', 'MonitorÃ­a de InvestigaciÃ³n'),
+    (2003, 'Beca - Trabajo', 'Excelencia Académica'),
+    (2006, 'Beca - Trabajo', 'Monitoría de Investigación'),
+    (2015, 'Beca - Trabajo', 'Monitoría de Investigación'),
     (2012, 'Beca - Convenio (cidesco)', 'Convenio Interinstitucional'),
-    (2001, 'Beca - Trabajo', 'En trÃ¡mite desde 2025-1'),
-    (2017, 'Beca - Mejor promedio en pregrado', 'En trÃ¡mite desde 2025-1');
+    (2001, 'Beca - Trabajo', 'En trámite desde 2025-1'),
+    (2017, 'Beca - Mejor promedio en pregrado', 'En trámite desde 2025-1');
 
 INSERT IGNORE INTO solicitudes_en_comite (id_solicitud, avalado_comite, concepto_comite)
 VALUES 
     (2003, 'SI', 'Cumple requisitos'), 
-    (2006, 'SI', 'VÃ¡lido'), 
+    (2006, 'SI', 'Válido'), 
     (2015, 'SI', 'Excelente'), 
-    (2012, 'SI', 'VÃ¡lido'),
-    (2001, 'SI', 'Pendiente sesiÃ³n concejo'),
-    (2017, 'SI', 'Pendiente sesiÃ³n concejo');
+    (2012, 'SI', 'Válido'),
+    (2001, 'SI', 'Pendiente sesión concejo'),
+    (2017, 'SI', 'Pendiente sesión concejo');
 
 INSERT IGNORE INTO solicitudes_en_concejo (id_solicitud, avalado_concejo, porcentaje, resolucion, fecha_inicio, fecha_fin)
 VALUES 
@@ -4043,10 +4043,10 @@ VALUES
 
 
 
--- BECAS 2026 (REALIDAD: EN TRÃMITE PERO CON % VISIBLE)
+-- BECAS 2026 (REALIDAD: EN TRÁMITE PERO CON % VISIBLE)
 INSERT IGNORE INTO solicitudes (id, id_tipo_solicitud, id_estudiante, id_tutor, estado, radicado)
 VALUES 
-    (2020, @id_tipo_beca, 120, 3, 'EN CONCEJO', 'RAD-26-120'), -- Jhony MuÃ±oz
+    (2020, @id_tipo_beca, 120, 3, 'EN CONCEJO', 'RAD-26-120'), -- Jhony Muñoz
     (2021, @id_tipo_beca, 121, 1, 'EN COMITE',  'RAD-26-121'),
     (2022, @id_tipo_beca, 122, 1, 'EN COMITE',  'RAD-26-122'),
     (2023, @id_tipo_beca, 123, 4, 'RADICADA',   'RAD-26-123'),
@@ -4087,7 +4087,7 @@ INSERT IGNORE INTO descuentos (id_estudiante, fechainiciodes, fechafindes, tipod
 SELECT e.id, '2025-02-01', '2026-12-31', 'EGRESADO', 10, 'ACTA-EGRESADO', TRUE 
 FROM estudiantes e WHERE e.id IN (114,119,120,121,122,123,124,125);
 
--- 8. PROYECCIONES FINANCIERAS (SimulaciÃ³n)
+-- 8. PROYECCIONES FINANCIERAS (Simulación)
 -- =============================================================================
 
 -- Generamos proyecciones para todos los estudiantes matriculados en cada periodo.
