@@ -200,7 +200,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         result.setPresupuestoPorGrupo(sumarReportes(reportesPorGrupo, GroupReport::getPresupuestoPorGrupo, 2));
         result.setImprevistosValor(sumarReportes(reportesPorGrupo, GroupReport::getImprevistosValor, 2));
         result.setPresupuestoPorGrupoImprevistos(
-                sumarReportes(reportesPorGrupo, GroupReport::getTotalNetoPeriodo, 2));
+                restarMontos(result.getPresupuestoPorGrupo(), result.getImprevistosValor()));
         result.setVigenciasAnteriores(sumarReportes(reportesPorGrupo, GroupReport::getVigenciasAnteriores, 2));
     }
 
@@ -217,6 +217,12 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 .map(r -> getter.apply(r) != null ? getter.apply(r) : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(scale, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal restarMontos(BigDecimal minuendo, BigDecimal sustraendo) {
+        BigDecimal valorBase = minuendo != null ? minuendo : BigDecimal.ZERO;
+        BigDecimal valorARestar = sustraendo != null ? sustraendo : BigDecimal.ZERO;
+        return valorBase.subtract(valorARestar).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
@@ -866,8 +872,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                     .setScale(2, RoundingMode.HALF_UP);
 
             // Total neto del período = subtotal - imprevistos
-            BigDecimal totalNetoPeriodo = subtotalPorGrupo.subtract(imprevistosValor)
-                    .setScale(2, RoundingMode.HALF_UP);
+            BigDecimal totalNetoPeriodo = restarMontos(subtotalPorGrupo, imprevistosValor);
 
             // Vigencias anteriores (saldo no ejecutado del período anterior)
             BigDecimal vigencias = BigDecimal.ZERO;

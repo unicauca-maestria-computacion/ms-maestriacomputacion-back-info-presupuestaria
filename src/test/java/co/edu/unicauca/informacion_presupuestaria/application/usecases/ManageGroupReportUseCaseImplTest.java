@@ -200,6 +200,8 @@ class ManageGroupReportUseCaseImplTest {
         assertThat(reporteGti.getTotalNeto()).isEqualByComparingTo(sumaAportes);
         assertThat(reporteGti.getTotalNeto()).isEqualByComparingTo(new BigDecimal("200.00"));
         assertThat(reporteGti.getTotalNetoPeriodo()).isEqualByComparingTo(new BigDecimal("190.00"));
+        assertThat(resultado.getPresupuestoPorGrupoImprevistos())
+                .isEqualByComparingTo(resultado.getPresupuestoPorGrupo().subtract(resultado.getImprevistosValor()));
     }
 
     @Test
