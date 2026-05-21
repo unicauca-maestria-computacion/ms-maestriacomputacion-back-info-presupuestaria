@@ -10,6 +10,7 @@ import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.student
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentfinancialreport.dtoResponse.ReporteEstudiantesResponse;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class ProyeccionEstudianteRestMapper {
         dto.setApellido(proyeccion.getApellido());
         dto.setEstaPago(proyeccion.getEstaPago());
         dto.setAplicaVotacion(Boolean.TRUE.equals(proyeccion.getAplicaVotacion()));
-        dto.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
+        dto.setPorcentajeBeca(toDisplayPercentage(proyeccion.getPorcentajeBeca()));
         dto.setAplicaEgresado(Boolean.TRUE.equals(proyeccion.getAplicaEgresado()));
         dto.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
         dto.setValorEnSMLV(proyeccion.getValorEnSMLV());
@@ -107,5 +108,14 @@ public class ProyeccionEstudianteRestMapper {
         return materias.stream()
                 .map(m -> new MateriaResponseDto(m.getCodigo(), m.getNombre(), m.getCreditos()))
                 .collect(Collectors.toList());
+    }
+
+    private BigDecimal toDisplayPercentage(BigDecimal value) {
+        if (value == null) {
+            return BigDecimal.ZERO;
+        }
+        return value.compareTo(BigDecimal.ONE) <= 0
+                ? value.multiply(BigDecimal.valueOf(100))
+                : value;
     }
 }
