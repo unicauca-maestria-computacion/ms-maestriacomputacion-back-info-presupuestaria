@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 
 -- Certificado de votación (del script modificado)
 INSERT INTO tipos_solicitudes (codigo, nombre, estado, usuario_creacion, fecha_creacion, usuario_modificacion, fecha_modificacion)

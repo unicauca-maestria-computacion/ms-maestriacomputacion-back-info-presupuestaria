@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- MODULO 3: INFORMACIÓN PRESUPUESTARIA
 -- Responsabilidad: Gestión de proyecciones financieras y reportes presupuestales
 

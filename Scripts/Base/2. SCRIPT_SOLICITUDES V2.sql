@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- SCRIPT_INSERT_DATA_SOLICITUDES
 
 /*TABLE tipos_solicitudes*/

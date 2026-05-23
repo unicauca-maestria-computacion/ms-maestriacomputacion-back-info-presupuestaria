@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- =============================================================
 -- MÓDULO: SOLICITUD DE REVISIÓN DE MATRÍCULA
 -- Objetivo: Registrar el nuevo tipo de solicitud RE_MATR que permite

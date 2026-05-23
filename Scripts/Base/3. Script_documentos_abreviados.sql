@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 SET SQL_SAFE_UPDATES = 0;
 
 delete from documentos_requisitos_solicitud

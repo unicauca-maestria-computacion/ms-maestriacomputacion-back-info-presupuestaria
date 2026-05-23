@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- =============================================================
 -- MÓDULO: MATRÍCULA ACADÉMICA
 -- Objetivo: Gestión de periodos, cursos, asignaturas y calificaciones.

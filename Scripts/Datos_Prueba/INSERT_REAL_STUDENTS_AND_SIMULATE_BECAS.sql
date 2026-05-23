@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- =============================================================================
 -- Script: Inserción de Estudiantes Reales y Simulación de Becas/Descuentos
 -- Objetivo: Población TOTAL 26 Estudiantes + Materias + Flujo de Becas Realista
@@ -198,9 +199,9 @@ INSERT IGNORE INTO matricula_financiera (estudiante_id, periodo_id, esta_pago, g
 SELECT id_estudiante, id_periodo, 1, (CASE WHEN id_estudiante % 3 = 0 THEN 1 WHEN id_estudiante % 3 = 1 THEN 2 ELSE 3 END)
 FROM matriculas WHERE id_periodo = 4;
 
--- Para 2026-1 (ACTIVO), simulamos algunos pagos realizados y otros pendientes
+-- Para 2026-1 (ACTIVO), simulamos algunos pagos realizados y otros pendientes (solo 3 estudiantes pagados, el resto null)
 INSERT IGNORE INTO matricula_financiera (estudiante_id, periodo_id, esta_pago, grupo_id)
-SELECT id_estudiante, id_periodo, (CASE WHEN id_estudiante % 4 != 0 THEN 1 ELSE 0 END), (CASE WHEN id_estudiante % 3 = 0 THEN 1 WHEN id_estudiante % 3 = 1 THEN 2 ELSE 3 END)
+SELECT id_estudiante, id_periodo, (CASE WHEN id_estudiante IN (101, 102, 103) THEN 1 ELSE NULL END), (CASE WHEN id_estudiante % 3 = 0 THEN 1 WHEN id_estudiante % 3 = 1 THEN 2 ELSE 3 END)
 FROM matriculas WHERE id_periodo = 5;
 
 -- 7. FLUJO DE BECAS Y DESCUENTOS
@@ -310,7 +311,7 @@ FROM matriculas WHERE id_periodo = 4;
 -- Aquí simulamos que algunos tienen beca proyectada, otros votación, etc.
 INSERT IGNORE INTO proyeccion_estudiante (periodo_academico_id, estudiante_id, esta_pago, porcentaje_beca, aplica_votacion, aplica_egresado)
 SELECT 5, id_estudiante, 
-       (CASE WHEN id_estudiante % 5 != 0 THEN 1 ELSE 0 END), -- Pago simulado
+       1, -- Pago simulado (todos activos/chuleados por defecto)
        (CASE WHEN id_estudiante = 103 THEN 100.0 WHEN id_estudiante = 112 THEN 50.0 ELSE 0 END), -- Beca simulada
        1, -- Casi todos aplican votación
        (CASE WHEN id_estudiante BETWEEN 119 AND 125 THEN 1 ELSE 0 END) -- Egresados

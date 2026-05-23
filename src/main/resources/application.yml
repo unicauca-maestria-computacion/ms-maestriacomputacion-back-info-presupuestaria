@@ -1,8 +1,14 @@
 spring:
   application:
-    name: informacion_presupuestaria
+    name: informacion-presupuestaria
   profiles:
     active: dev
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
   messages:
     basename: ValidationMessages
     encoding: UTF-8
@@ -11,7 +17,7 @@ spring:
     defer-datasource-initialization: true
   sql:
     init:
-      continue-on-error: true
+      mode: never
   devtools:
     restart:
       log-condition-evaluation-delta: false

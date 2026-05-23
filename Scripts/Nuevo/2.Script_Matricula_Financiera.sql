@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- =============================================================
 -- MÓDULO: MATRÍCULA FINANCIERA
 -- Objetivo: Gestión de pagos reales, grupos de investigación, becas y descuentos.

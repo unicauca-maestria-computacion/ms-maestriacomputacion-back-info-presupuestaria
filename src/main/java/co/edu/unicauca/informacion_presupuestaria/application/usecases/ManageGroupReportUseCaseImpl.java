@@ -433,6 +433,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
 
         // Crear participaciones copiando porcentajes del período anterior si existen
         List<ResearchGroup> grupos = gateway.obtenerTodosLosGrupos();
+        List<GroupParticipation> listParticipaciones = new java.util.ArrayList<>();
 
         for (ResearchGroup grupo : grupos) {
             GroupParticipation participacion = new GroupParticipation();
@@ -458,22 +459,39 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                                                     ? p.getPorcentajeSegundoSemestre() : BigDecimal.ZERO);
                                 },
                                 () -> {
-                                    participacion.setPorcentajeParticipacion(BigDecimal.ZERO);
-                                    participacion.setPorcentajePrimerSemestre(BigDecimal.ZERO);
-                                    participacion.setPorcentajeSegundoSemestre(BigDecimal.ZERO);
+                                    asignarPorcentajesPorDefecto(participacion, grupo.getNombre());
                                 });
             } else {
-                participacion.setPorcentajeParticipacion(BigDecimal.ZERO);
-                participacion.setPorcentajePrimerSemestre(BigDecimal.ZERO);
-                participacion.setPorcentajeSegundoSemestre(BigDecimal.ZERO);
+                asignarPorcentajesPorDefecto(participacion, grupo.getNombre());
             }
-            gateway.guardarParticipacionGrupo(participacion);
+            GroupParticipation savedPart = gateway.guardarParticipacionGrupo(participacion);
+            listParticipaciones.add(savedPart);
         }
 
-        // Recargar la config con las participaciones ya persistidas
-        return gateway.obtenerConfiguracionReporteGrupos(periodo.getId())
-                .orElse(configGuardada);
+        configGuardada.setParticipaciones(listParticipaciones);
+        return configGuardada;
     }
+
+    private void asignarPorcentajesPorDefecto(GroupParticipation participacion, String nombreGrupo) {
+        if ("GTI".equalsIgnoreCase(nombreGrupo)) {
+            participacion.setPorcentajeParticipacion(new BigDecimal("0.4859"));
+            participacion.setPorcentajePrimerSemestre(new BigDecimal("0.5044"));
+            participacion.setPorcentajeSegundoSemestre(new BigDecimal("0.4674"));
+        } else if ("IDIS".equalsIgnoreCase(nombreGrupo)) {
+            participacion.setPorcentajeParticipacion(new BigDecimal("0.3001"));
+            participacion.setPorcentajePrimerSemestre(new BigDecimal("0.2893"));
+            participacion.setPorcentajeSegundoSemestre(new BigDecimal("0.3109"));
+        } else if ("GICO".equalsIgnoreCase(nombreGrupo)) {
+            participacion.setPorcentajeParticipacion(new BigDecimal("0.2140"));
+            participacion.setPorcentajePrimerSemestre(new BigDecimal("0.2063"));
+            participacion.setPorcentajeSegundoSemestre(new BigDecimal("0.2217"));
+        } else {
+            participacion.setPorcentajeParticipacion(BigDecimal.ZERO);
+            participacion.setPorcentajePrimerSemestre(BigDecimal.ZERO);
+            participacion.setPorcentajeSegundoSemestre(BigDecimal.ZERO);
+        }
+    }
+
 
     private void asegurarGruposBasicos() {
         List<String> nombres = List.of("GTI", "IDIS", "GICO");
@@ -487,8 +505,12 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
     private void sincronizarGruposFaltantes(GroupReportConfig config) {
         List<ResearchGroup> todosLosGrupos = gateway.obtenerTodosLosGrupos();
         for (ResearchGroup grupo : todosLosGrupos) {
-            boolean existe = config.getParticipaciones().stream()
+            boolean existe = config.getParticipaciones() != null && config.getParticipaciones().stream()
                     .anyMatch(p -> p.getGrupo() != null && p.getGrupo().getId().equals(grupo.getId()));
+            
+            if (!existe && config.getId() != null) {
+                existe = gateway.obtenerParticipacionGrupo(config.getId(), grupo.getId()).isPresent();
+            }
             
             if (!existe) {
                 GroupParticipation nueva = new GroupParticipation();
@@ -647,7 +669,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                         p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
                         p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
                     }
-                    p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(p.getEstaPago()));
+                    p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(e.getEstaPago()));
                     return p;
                 })
                 .toList();
