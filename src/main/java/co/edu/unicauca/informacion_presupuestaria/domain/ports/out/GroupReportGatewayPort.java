@@ -25,6 +25,9 @@ public interface GroupReportGatewayPort {
 
     Optional<GroupReportConfig> obtenerConfiguracionReporteGrupos(Long periodoAcademicoId);
 
+    /** Retorna la configuración de reporte por grupos más reciente (por fecha_inicio del período). */
+    Optional<GroupReportConfig> obtenerConfiguracionMasReciente();
+
     GroupReportConfig guardarConfiguracionReporteGrupos(GroupReportConfig config);
 
     Optional<GroupParticipation> obtenerParticipacionGrupo(Long configId, Long grupoId);

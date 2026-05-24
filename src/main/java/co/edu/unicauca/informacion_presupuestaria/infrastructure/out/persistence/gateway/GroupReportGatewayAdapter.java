@@ -109,6 +109,13 @@ public class GroupReportGatewayAdapter implements GroupReportGatewayPort {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional<GroupReportConfig> obtenerConfiguracionMasReciente() {
+        return configGruposRepository.findMostRecentConfig()
+                .map(this::toConfigDomain);
+    }
+
+    @Override
     @Transactional
     public GroupReportConfig guardarConfiguracionReporteGrupos(GroupReportConfig config) {
         if (config == null) {

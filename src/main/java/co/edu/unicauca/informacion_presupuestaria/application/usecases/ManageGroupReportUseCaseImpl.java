@@ -88,6 +88,14 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             config = inicializarConfiguracionReporteGrupos(periodoInicial);
         }
 
+        // Detectar y corregir configs que tienen todas las participaciones en 0% (datos inválidos)
+        if (tieneTodasLasParticipacionesEnCero(config)) {
+            AcademicPeriod periodoParaRecargar = config.getAcademicPeriod() != null
+                    ? config.getAcademicPeriod() : periodosDelAnio.get(0);
+            corregirParticipacionesCero(config);
+            config = gateway.obtenerConfiguracionReporteGrupos(periodoParaRecargar.getId()).orElse(config);
+        }
+
         // El período de referencia de la config es el que tiene la configuración activa
         AcademicPeriod periodoConfig = config.getAcademicPeriod() != null
                 ? config.getAcademicPeriod()
@@ -405,10 +413,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         // Asegurar que existan los grupos bsicos (GTI, IDIS, GICO) si no estn en la BD
         asegurarGruposBasicos();
 
-        // Buscar config del perodo anterior para copiar
+        // Buscar config del período anterior para copiar; si no existe, usar la más reciente disponible
         GroupReportConfig anterior = gateway.obtenerPeriodoAnterior(periodo.getId())
                 .flatMap(p -> gateway.obtenerConfiguracionReporteGrupos(p.getId()))
-                .orElse(null);
+                .orElseGet(() -> gateway.obtenerConfiguracionMasReciente().orElse(null));
 
         GroupReportConfig config = new GroupReportConfig();
         config.setAcademicPeriod(periodo);
@@ -448,19 +456,21 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                         .findFirst()
                         .ifPresentOrElse(
                                 p -> {
-                                    participacion.setPorcentajeParticipacion(
-                                            p.getPorcentajeParticipacion() != null
-                                                    ? p.getPorcentajeParticipacion() : BigDecimal.ZERO);
-                                    participacion.setPorcentajePrimerSemestre(
-                                            p.getPorcentajePrimerSemestre() != null
-                                                    ? p.getPorcentajePrimerSemestre() : BigDecimal.ZERO);
-                                    participacion.setPorcentajeSegundoSemestre(
-                                            p.getPorcentajeSegundoSemestre() != null
-                                                    ? p.getPorcentajeSegundoSemestre() : BigDecimal.ZERO);
+                                    BigDecimal pct = p.getPorcentajeParticipacion();
+                                    BigDecimal pct1 = p.getPorcentajePrimerSemestre();
+                                    BigDecimal pct2 = p.getPorcentajeSegundoSemestre();
+                                    boolean fuenteValida = (pct != null && pct.compareTo(BigDecimal.ZERO) != 0)
+                                            || (pct1 != null && pct1.compareTo(BigDecimal.ZERO) != 0)
+                                            || (pct2 != null && pct2.compareTo(BigDecimal.ZERO) != 0);
+                                    if (fuenteValida) {
+                                        participacion.setPorcentajeParticipacion(pct != null ? pct : BigDecimal.ZERO);
+                                        participacion.setPorcentajePrimerSemestre(pct1 != null ? pct1 : BigDecimal.ZERO);
+                                        participacion.setPorcentajeSegundoSemestre(pct2 != null ? pct2 : BigDecimal.ZERO);
+                                    } else {
+                                        asignarPorcentajesPorDefecto(participacion, grupo.getNombre());
+                                    }
                                 },
-                                () -> {
-                                    asignarPorcentajesPorDefecto(participacion, grupo.getNombre());
-                                });
+                                () -> asignarPorcentajesPorDefecto(participacion, grupo.getNombre()));
             } else {
                 asignarPorcentajesPorDefecto(participacion, grupo.getNombre());
             }
@@ -499,6 +509,52 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             if (gateway.obtenerGrupoPorNombre(nombre).isEmpty()) {
                 gateway.guardarGrupo(new ResearchGroup(null, nombre));
             }
+        }
+    }
+
+    private boolean tieneTodasLasParticipacionesEnCero(GroupReportConfig config) {
+        if (config.getParticipaciones() == null || config.getParticipaciones().isEmpty()) {
+            return true;
+        }
+        BigDecimal sumaTotal = config.getParticipaciones().stream()
+                .map(p -> {
+                    BigDecimal a = p.getPorcentajeParticipacion() != null ? p.getPorcentajeParticipacion() : BigDecimal.ZERO;
+                    BigDecimal b = p.getPorcentajePrimerSemestre() != null ? p.getPorcentajePrimerSemestre() : BigDecimal.ZERO;
+                    BigDecimal c = p.getPorcentajeSegundoSemestre() != null ? p.getPorcentajeSegundoSemestre() : BigDecimal.ZERO;
+                    return a.add(b).add(c);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return sumaTotal.compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    private void corregirParticipacionesCero(GroupReportConfig config) {
+        GroupReportConfig fuente = gateway.obtenerConfiguracionMasReciente()
+                .filter(c -> !c.getId().equals(config.getId()) && !tieneTodasLasParticipacionesEnCero(c))
+                .orElse(null);
+
+        for (GroupParticipation participacion : config.getParticipaciones()) {
+            if (participacion.getGrupo() == null) continue;
+            boolean copiado = false;
+            if (fuente != null && fuente.getParticipaciones() != null) {
+                copiado = fuente.getParticipaciones().stream()
+                        .filter(p -> p.getGrupo() != null
+                                && participacion.getGrupo().getId().equals(p.getGrupo().getId()))
+                        .findFirst()
+                        .map(p -> {
+                            participacion.setPorcentajeParticipacion(
+                                    p.getPorcentajeParticipacion() != null ? p.getPorcentajeParticipacion() : BigDecimal.ZERO);
+                            participacion.setPorcentajePrimerSemestre(
+                                    p.getPorcentajePrimerSemestre() != null ? p.getPorcentajePrimerSemestre() : BigDecimal.ZERO);
+                            participacion.setPorcentajeSegundoSemestre(
+                                    p.getPorcentajeSegundoSemestre() != null ? p.getPorcentajeSegundoSemestre() : BigDecimal.ZERO);
+                            return true;
+                        })
+                        .orElse(false);
+            }
+            if (!copiado) {
+                asignarPorcentajesPorDefecto(participacion, participacion.getGrupo().getNombre());
+            }
+            gateway.guardarParticipacionGrupo(participacion);
         }
     }
 
@@ -854,18 +910,25 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         BigDecimal item2Total = valorADistribuir.multiply(item2Pct)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        List<GroupReport> reportesAnteriores = List.of();
-        if (calcularVigencias) {
-            try {
-                GroupReportQuery queryAnterior = obtenerReporteGruposInterno(anio - 1, false);
-                if (queryAnterior != null && queryAnterior.getReportesPorGrupo() != null) {
-                    reportesAnteriores = queryAnterior.getReportesPorGrupo();
+        BigDecimal excedentes = config.getExcedentesMaestria() != null
+                ? config.getExcedentesMaestria() : BigDecimal.ZERO;
+        BigDecimal vigenciasPorGrupo = cantidadGrupos > 0
+                ? excedentes.divide(BigDecimal.valueOf(cantidadGrupos), 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        java.util.Map<Long, BigDecimal> vigenciasMap = new java.util.HashMap<>();
+        if (cantidadGrupos > 0) {
+            BigDecimal acumulado = BigDecimal.ZERO;
+            for (int i = 0; i < cantidadGrupos; i++) {
+                Long gId = participaciones.get(i).getGrupo().getId();
+                if (i == cantidadGrupos - 1) {
+                    vigenciasMap.put(gId, excedentes.subtract(acumulado));
+                } else {
+                    vigenciasMap.put(gId, vigenciasPorGrupo);
+                    acumulado = acumulado.add(vigenciasPorGrupo);
                 }
-            } catch (Exception e) {
-                // Ignore if no previous year
             }
         }
-        final List<GroupReport> finalReportesAnteriores = reportesAnteriores;
 
         List<GroupReport> reportes = participaciones.stream().map(p -> {
             BigDecimal participacion = p.getPorcentajeParticipacion() != null
@@ -897,19 +960,9 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             BigDecimal totalNetoPeriodo = restarMontos(subtotalPorGrupo, imprevistosValor);
 
             // Vigencias anteriores (saldo no ejecutado del período anterior)
-            BigDecimal vigencias = BigDecimal.ZERO;
-            if (calcularVigencias) {
-                vigencias = finalReportesAnteriores.stream()
-                        .filter(r -> r.getGrupo().getId().equals(p.getGrupo().getId()))
-                        .map(GroupReport::getTotalNeto)
-                        .findFirst()
-                        .orElse(BigDecimal.ZERO);
-                // Actualizar el valor en la entidad para guardarlo si es necesario o tenerlo en memoria
-                p.setVigenciasAnteriores(vigencias);
-            } else {
-                vigencias = p.getVigenciasAnteriores() != null
-                        ? p.getVigenciasAnteriores() : BigDecimal.ZERO;
-            }
+            // Se obtienen de la distribución equitativa de los excedentes globales de maestría
+            BigDecimal vigencias = vigenciasMap.getOrDefault(p.getGrupo().getId(), BigDecimal.ZERO);
+            p.setVigenciasAnteriores(vigencias);
 
             // Presupuesto por grupo ajustado con vigencias anteriores
             // Aportes semestrales = ingreso real del semestre * participacion del grupo en ese semestre.
