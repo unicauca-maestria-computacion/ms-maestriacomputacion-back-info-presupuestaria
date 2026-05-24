@@ -1,15 +1,11 @@
 name: CD Practica Profesional informacion-presupuestaria
 
 on:
-  workflow_run:
-    workflows: ['CI Practica Profesional informacion-presupuestaria']
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: self-hosted
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
