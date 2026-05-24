@@ -317,6 +317,19 @@ SELECT 5, id_estudiante,
        (CASE WHEN id_estudiante BETWEEN 119 AND 125 THEN 1 ELSE 0 END) -- Egresados
 FROM matriculas WHERE id_periodo = 5;
 
+-- 9. CONFIGURACIÓN FINANCIERA POR PERÍODO (configuracion_reporte_financiero)
+-- =============================================================================
+-- biblioteca=85000, recursos_computacionales=165000, valor_smlv=1423500
+-- heredados del período 4 real; el servicio copia del anterior si no existe
+
+INSERT IGNORE INTO configuracion_reporte_financiero
+    (periodo_academico_id, valor_smlv, biblioteca, recursos_computacionales,
+     es_reporte_final, porcentaje_votacion_fijo, porcentaje_egresado_fijo)
+VALUES
+    (3, 1423500.00, 85000.00, 165000.00, 1, 0.10, 0.05), -- 2025-1 CERRADO
+    (4, 1423500.00, 85000.00, 165000.00, 1, 0.10, 0.05), -- 2025-2 CERRADO
+    (5, 1423500.00, 85000.00, 165000.00, 0, 0.10, 0.05); -- 2026-1 ACTIVO
+
 SELECT 'Script ejecutado: 26 estudiantes, materias, becas (Aprobadas 2025 y 2026) y descuentos mapeados.' AS Resultado;
 
 SET sql_notes = 1;
