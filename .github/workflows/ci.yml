@@ -126,8 +126,8 @@ jobs:
             --network "maestria-network" \
             --network-alias "informacion-presupuestaria" \
             --restart "always" \
-            --memory "320m" \
-            --memory-swap "320m" \
+            --memory "384m" \
+            --memory-swap "768m" \
             --label project="practica-u" \
             --label service="informacion-presupuestaria" \
             -e SPRING_PROFILES_ACTIVE="dev" \
@@ -137,7 +137,7 @@ jobs:
             -e SPRING_DATASOURCE_URL="jdbc:mysql://mysql-db:3306/maestria-computacion?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Bogota" \
             -e SPRING_DATASOURCE_USERNAME="$BD_USER" \
             -e SPRING_DATASOURCE_PASSWORD="$BD_PASSWORD" \
-            -e JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -XX:+UseSerialGC -Xms64m -Xmx256m" \
+            -e JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -XX:+UseSerialGC -Xms64m -Xmx192m" \
             -e MATRICULA_FINANCIERA_BASE_URL="http://matricula-financiera-service:8092" \
             $DOCKER_USERNAME/practica-profesional-info-presupuestaria:latest
 
