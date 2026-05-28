@@ -53,7 +53,8 @@ CREATE TABLE IF NOT EXISTS docentes_asignatura (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 5. Materiales de Apoyo
-CREATE TABLE IF NOT EXISTS materiales_apoyo (
+DROP TABLE IF EXISTS materiales_apoyo;
+CREATE TABLE materiales_apoyo (
     id                  INT          NOT NULL AUTO_INCREMENT,
     nombrematerial      VARCHAR(150) NOT NULL UNIQUE,
     descripcionmaterial VARCHAR(500),
