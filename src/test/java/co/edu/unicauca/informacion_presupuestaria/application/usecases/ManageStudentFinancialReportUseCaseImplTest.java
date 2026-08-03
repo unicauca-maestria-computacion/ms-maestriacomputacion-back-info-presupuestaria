@@ -48,7 +48,7 @@ class ManageStudentFinancialReportUseCaseImplTest {
     @Test
     void shouldCalculateTotalNetoCorrectly() {
         // Arrange
-        AcademicPeriod periodoAnterior = buildPeriodo(1L, 1, 2023, AcademicPeriodStatus.CERRADO);
+        AcademicPeriod periodoAnterior = buildPeriodo(1L, 1, 2023, AcademicPeriodStatus.FINALIZADO);
         AcademicPeriod periodoActual = buildPeriodo(2L, 2, 2024, AcademicPeriodStatus.ACTIVO);
 
         BigDecimal valorSMLV = new BigDecimal("1300000.00");
@@ -83,7 +83,7 @@ class ManageStudentFinancialReportUseCaseImplTest {
     @Test
     void shouldCalculateTotalIngresosCorrectly() {
         // Arrange
-        AcademicPeriod periodoAnterior = buildPeriodo(1L, 1, 2023, AcademicPeriodStatus.CERRADO);
+        AcademicPeriod periodoAnterior = buildPeriodo(1L, 1, 2023, AcademicPeriodStatus.FINALIZADO);
         AcademicPeriod periodoActual = buildPeriodo(2L, 2, 2024, AcademicPeriodStatus.ACTIVO);
 
         BigDecimal valorSMLV = new BigDecimal("1000000.00");

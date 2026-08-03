@@ -87,14 +87,14 @@ class ManageStudentProjectionUseCaseImplTest {
 
     @Test
     void shouldThrowReglaNegocioWhenPeriodoNotEditable() {
-        // Arrange — período CERRADO con fecha límite vencida
+        // Arrange — período FINALIZADO con fecha límite vencida
         AcademicPeriod periodoCerrado = new AcademicPeriod(
                 1L, 1, 2023,
                 LocalDate.of(2023, 1, 15),
                 LocalDate.of(2023, 6, 30),
                 LocalDate.of(2023, 2, 28), // fechaFin
                 "Período 2023-1",
-                AcademicPeriodStatus.CERRADO);
+                AcademicPeriodStatus.FINALIZADO);
 
         StudentProjection proyeccion = buildProyeccion("EST001", periodoCerrado);
 

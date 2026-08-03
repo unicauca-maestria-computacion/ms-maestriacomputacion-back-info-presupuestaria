@@ -170,12 +170,12 @@ public class FinancialCalculationService {
     }
 
     private BigDecimal resolverPorcentajeBeca(StudentProjection proyeccion, List<Student> estudiantes, FinancialReportConfig config) {
-        // REGLA AUTOMÁTICA: Si el reporte está marcado como FINAL o el periodo académico está CERRADO,
+        // REGLA AUTOMÁTICA: Si el reporte está marcado como FINAL o el periodo académico está FINALIZADO,
         // o si la fecha actual ya superó la fecha de fin del semestre,
         // se ignora el valor manual y se usan solo las becas avaladas por el concejo.
         boolean esReporteFinal = Boolean.TRUE.equals(config.getEsReporteFinal());
         boolean esPeriodoCerrado = config.getAcademicPeriod() != null 
-                && co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.CERRADO.equals(config.getAcademicPeriod().getEstado());
+                && co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.FINALIZADO.equals(config.getAcademicPeriod().getEstado());
         boolean esPeriodoVencido = config.getAcademicPeriod() != null 
                 && config.getAcademicPeriod().getFechaFin() != null 
                 && LocalDate.now().isAfter(config.getAcademicPeriod().getFechaFin());

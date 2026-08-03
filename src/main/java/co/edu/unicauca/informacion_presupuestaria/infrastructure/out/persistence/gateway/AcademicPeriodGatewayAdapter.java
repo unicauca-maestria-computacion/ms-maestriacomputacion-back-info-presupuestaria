@@ -48,14 +48,14 @@ public class AcademicPeriodGatewayAdapter implements AcademicPeriodGatewayPort {
     }
 
     @Override
-    public List<AcademicPeriod> obtenerPeriodosCerrados() {
-        return periodoRepository.findByEstadoOrderByFechaInicioDesc(AcademicPeriodStatus.CERRADO).stream()
+    public List<AcademicPeriod> obtenerPeriodosFinalizados() {
+        return periodoRepository.findByEstadoOrderByFechaInicioDesc(AcademicPeriodStatus.FINALIZADO).stream()
                 .map(periodoMapper::toDomain)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<AcademicPeriod> obtenerPeriodosActivosYCerrados() {
+    public List<AcademicPeriod> obtenerPeriodosActivosYFinalizados() {
         return periodoRepository.findActivosYCerradosOrderByFechaInicioDesc().stream()
                 .map(periodoMapper::toDomain)
                 .collect(Collectors.toList());

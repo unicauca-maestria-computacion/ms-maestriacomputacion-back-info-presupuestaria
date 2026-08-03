@@ -36,7 +36,7 @@ class PeriodoAcademicoMapperTest {
     void shouldDeriveAnioFromFechaInicioYearForDifferentYear() {
         AcademicPeriodEntity entity = buildEntity(
                 2L, 2, LocalDate.of(2019, 7, 15), LocalDate.of(2019, 12, 31),
-                LocalDate.of(2019, 8, 31), "Período 2019-2", AcademicPeriodStatus.CERRADO);
+                LocalDate.of(2019, 8, 31), "Período 2019-2", AcademicPeriodStatus.FINALIZADO);
 
         AcademicPeriod domain = mapper.toDomain(entity);
 
@@ -91,11 +91,11 @@ class PeriodoAcademicoMapperTest {
     void shouldMapEstadoCerradoCorrectly() {
         AcademicPeriodEntity entity = buildEntity(
                 3L, 1, LocalDate.of(2023, 1, 15), LocalDate.of(2023, 6, 30),
-                LocalDate.of(2023, 2, 28), "Período 2023-1", AcademicPeriodStatus.CERRADO);
+                LocalDate.of(2023, 2, 28), "Período 2023-1", AcademicPeriodStatus.FINALIZADO);
 
         AcademicPeriod domain = mapper.toDomain(entity);
 
-        assertThat(domain.getEstado()).isEqualTo(AcademicPeriodStatus.CERRADO);
+        assertThat(domain.getEstado()).isEqualTo(AcademicPeriodStatus.FINALIZADO);
     }
 
     @Test

@@ -11,8 +11,8 @@ SET sql_notes = 0;
 -- 1. PERIODOS ACADÉMICOS
 INSERT IGNORE INTO periodo_academico (id, tag_periodo, fecha_inicio, fecha_fin, fecha_fin_matricula, descripcion, estado)
 VALUES
-    (3, 1, '2025-02-01', '2025-06-30', '2025-02-15', 'Primer Periodo 2025',  'CERRADO'),
-    (4, 2, '2025-08-01', '2025-12-15', '2025-08-15', 'Segundo Periodo 2025', 'CERRADO'),
+    (3, 1, '2025-02-01', '2025-06-30', '2025-02-15', 'Primer Periodo 2025',  'FINALIZADO'),
+    (4, 2, '2025-08-01', '2025-12-15', '2025-08-15', 'Segundo Periodo 2025', 'FINALIZADO'),
     (5, 1, '2026-02-01', '2026-06-30', '2026-02-15', 'Primer Periodo 2026',  'ACTIVO');
 
 -- 1.1 CORRECCIÓN DE ESQUEMA (solicitudes_en_concejo)
@@ -297,12 +297,12 @@ FROM estudiantes e WHERE e.id IN (114,119,120,121,122,123,124,125);
 -- Generamos proyecciones para todos los estudiantes matriculados en cada periodo.
 -- Se asumen valores por defecto que el usuario luego puede editar desde la UI.
 
--- Periodo 2025-1 (CERRADO - Proyecciones que se volvieron realidad)
+-- Periodo 2025-1 (FINALIZADO - Proyecciones que se volvieron realidad)
 INSERT IGNORE INTO proyeccion_estudiante (periodo_academico_id, estudiante_id, esta_pago, porcentaje_beca, aplica_votacion, aplica_egresado)
 SELECT 3, id_estudiante, 1, 0, 1, (CASE WHEN id_estudiante IN (114, 119) THEN 1 ELSE 0 END)
 FROM matriculas WHERE id_periodo = 3;
 
--- Periodo 2025-2 (CERRADO)
+-- Periodo 2025-2 (FINALIZADO)
 INSERT IGNORE INTO proyeccion_estudiante (periodo_academico_id, estudiante_id, esta_pago, porcentaje_beca, aplica_votacion, aplica_egresado)
 SELECT 4, id_estudiante, 1, 0, 1, (CASE WHEN id_estudiante IN (114, 119) THEN 1 ELSE 0 END)
 FROM matriculas WHERE id_periodo = 4;
@@ -326,8 +326,8 @@ INSERT IGNORE INTO configuracion_reporte_financiero
     (periodo_academico_id, valor_smlv, biblioteca, recursos_computacionales,
      es_reporte_final, porcentaje_votacion_fijo, porcentaje_egresado_fijo)
 VALUES
-    (3, 1423500.00, 85000.00, 165000.00, 1, 0.10, 0.05), -- 2025-1 CERRADO
-    (4, 1423500.00, 85000.00, 165000.00, 1, 0.10, 0.05), -- 2025-2 CERRADO
+    (3, 1423500.00, 85000.00, 165000.00, 1, 0.10, 0.05), -- 2025-1 FINALIZADO
+    (4, 1423500.00, 85000.00, 165000.00, 1, 0.10, 0.05), -- 2025-2 FINALIZADO
     (5, 1423500.00, 85000.00, 165000.00, 0, 0.10, 0.05); -- 2026-1 ACTIVO
 
 SELECT 'Script ejecutado: 26 estudiantes, materias, becas (Aprobadas 2025 y 2026) y descuentos mapeados.' AS Resultado;

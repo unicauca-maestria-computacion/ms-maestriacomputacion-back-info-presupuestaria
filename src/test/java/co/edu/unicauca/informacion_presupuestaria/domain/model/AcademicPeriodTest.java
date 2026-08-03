@@ -72,24 +72,24 @@ class AcademicPeriodTest {
     }
 
     // -------------------------------------------------------------------------
-    // esEditable() — estado CERRADO, fecha vencida
+    // esEditable() — estado FINALIZADO, fecha vencida
     // -------------------------------------------------------------------------
 
     @Test
     void shouldReturnFalseWhenEstadoCerradoAndFechaVencida() {
-        // Arrange — estado CERRADO y fecha límite en el pasado
+        // Arrange — estado FINALIZADO y fecha límite en el pasado
         AcademicPeriod periodo = new AcademicPeriod(
                 3L, 1, 2023,
                 LocalDate.of(2023, 1, 15),
                 LocalDate.of(2023, 6, 30),
                 LocalDate.of(2023, 2, 28), // fecha límite en el pasado
                 "Período 2023-1",
-                AcademicPeriodStatus.CERRADO);
+                AcademicPeriodStatus.FINALIZADO);
 
         // Act
         boolean resultado = periodo.esEditable();
 
-        // Assert — CERRADO + fecha vencida → no editable
+        // Assert — FINALIZADO + fecha vencida → no editable
         assertThat(resultado).isFalse();
     }
 

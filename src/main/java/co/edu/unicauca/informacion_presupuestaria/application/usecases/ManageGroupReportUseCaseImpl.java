@@ -735,7 +735,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         if (configFinanciero != null && Boolean.TRUE.equals(configFinanciero.getEsReporteFinal())) {
             return true;
         }
-        if (periodo != null && AcademicPeriodStatus.CERRADO.equals(periodo.getEstado())) {
+        if (periodo != null && AcademicPeriodStatus.FINALIZADO.equals(periodo.getEstado())) {
             return true;
         }
         return periodo != null

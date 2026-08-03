@@ -9,6 +9,6 @@ public interface AcademicPeriodGatewayPort {
     Boolean finalizarReporteGrupos();
     List<AcademicPeriod> obtenerPeriodosAcademicos();
     List<AcademicPeriod> obtenerPeriodosActivos();
-    List<AcademicPeriod> obtenerPeriodosCerrados();
-    List<AcademicPeriod> obtenerPeriodosActivosYCerrados();
+    List<AcademicPeriod> obtenerPeriodosFinalizados();
+    List<AcademicPeriod> obtenerPeriodosActivosYFinalizados();
 }

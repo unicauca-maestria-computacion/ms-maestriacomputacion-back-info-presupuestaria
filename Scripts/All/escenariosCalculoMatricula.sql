@@ -3336,7 +3336,7 @@ CREATE TABLE IF NOT EXISTS periodo_academico (
     fecha_fin           DATE         NOT NULL,
     fecha_fin_matricula DATE         NOT NULL,
     descripcion         VARCHAR(255) NULL,
-    estado              VARCHAR(20)  NOT NULL DEFAULT 'ACTIVO' COMMENT 'ACTIVO | INACTIVO | CERRADO',
+    estado              VARCHAR(20)  NOT NULL DEFAULT 'ACTIVO' COMMENT 'ACTIVO | INACTIVO | FINALIZADO',
     PRIMARY KEY (id),
     UNIQUE KEY uk_periodo_tag_anio (tag_periodo, fecha_inicio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -3660,8 +3660,8 @@ SET sql_notes = 0;
 -- 1. PERIODOS ACADÃ‰MICOS
 INSERT IGNORE INTO periodo_academico (id, tag_periodo, fecha_inicio, fecha_fin, fecha_fin_matricula, descripcion, estado)
 VALUES
-    (3, 1, '2025-02-01', '2025-06-30', '2025-02-15', 'Primer Periodo 2025',  'CERRADO'),
-    (4, 2, '2025-08-01', '2025-12-15', '2025-08-15', 'Segundo Periodo 2025', 'CERRADO'),
+    (3, 1, '2025-02-01', '2025-06-30', '2025-02-15', 'Primer Periodo 2025',  'FINALIZADO'),
+    (4, 2, '2025-08-01', '2025-12-15', '2025-08-15', 'Segundo Periodo 2025', 'FINALIZADO'),
     (5, 1, '2026-02-01', '2026-06-30', '2026-02-15', 'Primer Periodo 2026',  'ACTIVO');
 
 INSERT INTO configuracion_reporte_financiero
@@ -4206,12 +4206,12 @@ FROM estudiantes e WHERE e.id IN (114,119,120,121,122,123,124,125);
 -- Generamos proyecciones para todos los estudiantes matriculados en cada periodo.
 -- Se asumen valores por defecto que el usuario luego puede editar desde la UI.
 
--- Periodo 2025-1 (CERRADO - Proyecciones que se volvieron realidad)
+-- Periodo 2025-1 (FINALIZADO - Proyecciones que se volvieron realidad)
 INSERT IGNORE INTO proyeccion_estudiante (periodo_academico_id, estudiante_id, esta_pago, porcentaje_beca, aplica_votacion, aplica_egresado)
 SELECT 3, id_estudiante, 1, 0, 1, (CASE WHEN id_estudiante IN (114, 119) THEN 1 ELSE 0 END)
 FROM matriculas WHERE id_periodo = 3;
 
--- Periodo 2025-2 (CERRADO)
+-- Periodo 2025-2 (FINALIZADO)
 INSERT IGNORE INTO proyeccion_estudiante (periodo_academico_id, estudiante_id, esta_pago, porcentaje_beca, aplica_votacion, aplica_egresado)
 SELECT 4, id_estudiante, 1, 0, 1, (CASE WHEN id_estudiante IN (114, 119) THEN 1 ELSE 0 END)
 FROM matriculas WHERE id_periodo = 4;

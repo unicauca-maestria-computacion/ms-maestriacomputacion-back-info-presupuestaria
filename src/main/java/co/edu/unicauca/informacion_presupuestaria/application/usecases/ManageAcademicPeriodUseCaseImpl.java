@@ -35,12 +35,12 @@ public class ManageAcademicPeriodUseCaseImpl implements ManageAcademicPeriodUseC
     }
 
     @Override
-    public List<AcademicPeriod> obtenerPeriodosCerrados() {
-        return objGestionarPeriodo.obtenerPeriodosCerrados();
+    public List<AcademicPeriod> obtenerPeriodosFinalizados() {
+        return objGestionarPeriodo.obtenerPeriodosFinalizados();
     }
 
     @Override
-    public List<AcademicPeriod> obtenerPeriodosActivosYCerrados() {
-        return objGestionarPeriodo.obtenerPeriodosActivosYCerrados();
+    public List<AcademicPeriod> obtenerPeriodosActivosYFinalizados() {
+        return objGestionarPeriodo.obtenerPeriodosActivosYFinalizados();
     }
 }

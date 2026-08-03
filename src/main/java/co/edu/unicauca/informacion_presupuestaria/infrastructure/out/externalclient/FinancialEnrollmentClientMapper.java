@@ -84,7 +84,12 @@ public class FinancialEnrollmentClientMapper {
             try {
                 estado = AcademicPeriodStatus.valueOf(response.getEstado());
             } catch (IllegalArgumentException e) {
-                estado = AcademicPeriodStatus.INACTIVO;
+                // Backward compatibility: "CERRADO" from older data
+                if ("CERRADO".equalsIgnoreCase(response.getEstado())) {
+                    estado = AcademicPeriodStatus.FINALIZADO;
+                } else {
+                    estado = AcademicPeriodStatus.INACTIVO;
+                }
             }
         }
 

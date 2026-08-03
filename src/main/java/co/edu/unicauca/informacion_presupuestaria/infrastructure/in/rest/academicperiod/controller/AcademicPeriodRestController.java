@@ -41,15 +41,15 @@ public class AcademicPeriodRestController {
         return ResponseEntity.ok(mapear(periodos));
     }
 
-    @GetMapping("/cerrados")
-    public ResponseEntity<List<PeriodoAcademicoResponseDto>> obtenerPeriodosCerrados() {
-        List<AcademicPeriod> periodos = periodoUseCase.obtenerPeriodosCerrados();
+    @GetMapping("/finalizados")
+    public ResponseEntity<List<PeriodoAcademicoResponseDto>> obtenerPeriodosFinalizados() {
+        List<AcademicPeriod> periodos = periodoUseCase.obtenerPeriodosFinalizados();
         return ResponseEntity.ok(mapear(periodos));
     }
 
-    @GetMapping("/activos-y-cerrados")
-    public ResponseEntity<List<PeriodoAcademicoResponseDto>> obtenerPeriodosActivosYCerrados() {
-        List<AcademicPeriod> periodos = periodoUseCase.obtenerPeriodosActivosYCerrados();
+    @GetMapping("/activos-y-finalizados")
+    public ResponseEntity<List<PeriodoAcademicoResponseDto>> obtenerPeriodosActivosYFinalizados() {
+        List<AcademicPeriod> periodos = periodoUseCase.obtenerPeriodosActivosYFinalizados();
         return ResponseEntity.ok(mapear(periodos));
     }
 

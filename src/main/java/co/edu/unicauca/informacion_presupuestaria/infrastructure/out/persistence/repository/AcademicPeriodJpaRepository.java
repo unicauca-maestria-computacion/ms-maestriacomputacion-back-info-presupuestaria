@@ -31,7 +31,7 @@ public interface AcademicPeriodJpaRepository extends JpaRepository<AcademicPerio
     @Query("SELECT p FROM AcademicPeriodEntity p WHERE p.estado = :estado ORDER BY p.fechaInicio DESC")
     List<AcademicPeriodEntity> findByEstadoOrderByFechaInicioDesc(@Param("estado") AcademicPeriodStatus estado);
 
-    @Query("SELECT p FROM AcademicPeriodEntity p WHERE p.estado IN ('ACTIVO', 'CERRADO') ORDER BY p.fechaInicio DESC")
+    @Query("SELECT p FROM AcademicPeriodEntity p WHERE p.estado IN ('ACTIVO', 'FINALIZADO') ORDER BY p.fechaInicio DESC")
     List<AcademicPeriodEntity> findActivosYCerradosOrderByFechaInicioDesc();
 
     @Query("SELECT p FROM AcademicPeriodEntity p WHERE YEAR(p.fechaInicio) = :anio ORDER BY p.tagPeriodo ASC")
