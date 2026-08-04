@@ -3321,6 +3321,23 @@ WHERE NOT EXISTS (
     SELECT 1 FROM tipos_solicitudes WHERE codigo = 'CER_VOTO'
 );
 
+-- Requisitos para CER_VOTO
+INSERT IGNORE INTO requisitos_solicitud (titulo_documento, descripcion, id_tipo_solicitud, usuario_creacion, fecha_creacion, usuario_modificacion, fecha_modificacion)
+SELECT 'Documentos requeridos para solicitar el registro del certificado de votacion:', NULL, ts.id, 1, NOW(), 1, NOW()
+FROM tipos_solicitudes ts WHERE ts.codigo = 'CER_VOTO' AND ts.estado = 'ACTIVO' LIMIT 1;
+
+-- Documentos requeridos para CER_VOTO
+INSERT IGNORE INTO documentos_requisitos_solicitud (nombre_documento, id_requisito_solicitud, adjuntar_documento, usuario_creacion, fecha_creacion, usuario_modificacion, fecha_modificacion, abreviatura_documento, enlace)
+SELECT 'Certificado de votacion', r.id, 1, 1, NOW(), 1, NOW(), 'Certificado de votacion', 0
+FROM requisitos_solicitud r JOIN tipos_solicitudes ts ON ts.id = r.id_tipo_solicitud
+WHERE ts.codigo = 'CER_VOTO' AND ts.estado = 'ACTIVO' LIMIT 1;
+
+INSERT IGNORE INTO documentos_requisitos_solicitud (nombre_documento, id_requisito_solicitud, adjuntar_documento, usuario_creacion, fecha_creacion, usuario_modificacion, fecha_modificacion, abreviatura_documento, enlace)
+SELECT 'Copia de la cedula de ciudadania por ambos lados', r.id, 1, 1, NOW(), 1, NOW(), 'Copia Cedula', 0
+FROM requisitos_solicitud r JOIN tipos_solicitudes ts ON ts.id = r.id_tipo_solicitud
+WHERE ts.codigo = 'CER_VOTO' AND ts.estado = 'ACTIVO' LIMIT 1;
+
+
 -- =============================================================
 -- MÃ“DULO: MATRÃCULA ACADÃ‰MICA
 -- Objetivo: GestiÃ³n de periodos, cursos, asignaturas y calificaciones.
@@ -3468,16 +3485,7 @@ CREATE TABLE IF NOT EXISTS tipos_solicitudes (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO tipos_solicitudes (codigo, nombre, estado)
-SELECT 'SO_BECA', 'Solicitud de Beca', 'ACTIVO'
-WHERE NOT EXISTS (
-    SELECT 1 FROM tipos_solicitudes WHERE codigo = 'SO_BECA'
-)
-UNION ALL
-SELECT 'CER_VOTO', 'Certificado de Votacion', 'ACTIVO'
-WHERE NOT EXISTS (
-    SELECT 1 FROM tipos_solicitudes WHERE codigo = 'CER_VOTO'
-);
+-- SO_BECA y CER_VOTO ya fueron insertados previamente con todos los campos
 
 -- 5. Flujo de Solicitudes (Becas y Descuentos)
 CREATE TABLE IF NOT EXISTS solicitudes (
@@ -4034,11 +4042,7 @@ SELECT id_estudiante, id_periodo, (CASE WHEN id_estudiante % 4 != 0 THEN 1 ELSE 
 FROM matriculas WHERE id_periodo = 5;
 
 -- 7. FLUJO DE BECAS Y DESCUENTOS
-INSERT INTO tipos_solicitudes (codigo, nombre, estado)
-SELECT 'CER_VOTO', 'Certificado de Votacion', 'ACTIVO'
-WHERE NOT EXISTS (
-    SELECT 1 FROM tipos_solicitudes WHERE codigo = 'CER_VOTO'
-);
+-- CER_VOTO ya fue insertado previamente
 
 SET @id_tipo_beca = (SELECT id FROM tipos_solicitudes WHERE codigo = 'SO_BECA' LIMIT 1);
 SET @id_tipo_voto = (SELECT id FROM tipos_solicitudes WHERE codigo = 'CER_VOTO' LIMIT 1);

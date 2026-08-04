@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS tipos_solicitudes (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT IGNORE INTO tipos_solicitudes (codigo, nombre) VALUES ('SO_BECA', 'Solicitud de Beca'), ('CER_VOTO', 'Certificado de Votación');
+INSERT IGNORE INTO tipos_solicitudes (codigo, nombre) VALUES ('SO_BECA', 'Solicitud de Beca');
+-- CER_VOTO se inserta con todos los campos en el script de certificado de votacion
 
 -- 5. Flujo de Solicitudes (Becas y Descuentos)
 CREATE TABLE IF NOT EXISTS solicitudes (
