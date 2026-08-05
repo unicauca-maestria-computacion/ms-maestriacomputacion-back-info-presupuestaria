@@ -109,6 +109,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                     p.setGrupoInvestigacion(e.getGrupoNombre());
                     
                     BigDecimal becaReal = calcularPorcentajeBecaReal(e);
+                    String becaEstado = obtenerEstadoBeca(e);
                     if (esReporteReal) {
                         p.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
                         p.setPorcentajeBeca(becaReal);
@@ -125,7 +126,8 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                         }
                     }
                     p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(e.getEstaPago()));
-                    
+                    p.setBecaEstado(becaEstado);
+
                     return p;
                 })
                 .collect(Collectors.toList());
@@ -149,6 +151,15 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                     return BigDecimal.valueOf(p);
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private String obtenerEstadoBeca(Student student) {
+        if (student == null || student.getBecasDescuentos() == null) return null;
+        return student.getBecasDescuentos().stream()
+                .filter(b -> b.getTipo() != null && b.getTipo().toUpperCase().contains("BECA"))
+                .map(BecaDescuentoInfo::getEstado)
+                .findFirst()
+                .orElse(null);
     }
 
     private FinancialReportConfig inicializarConfiguracionFinanciera(AcademicPeriod periodo) {
