@@ -71,9 +71,20 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                         .orElseThrow(() -> new EntityNotFoundException(
                                 "No existe ningún período académico registrado como referencia")));
 
-        // Auto-detectar tagPeriodo
-        int nuevoTag = (origen.getTagPeriodo() != null && origen.getTagPeriodo() == 1) ? 2 : 1;
+        // Auto-detectar tagPeriodo: alternar del origen, verificando no duplicar
         int anio = fechaInicio.getYear();
+        int nuevoTag = (origen.getTagPeriodo() != null && origen.getTagPeriodo() == 1) ? 2 : 1;
+
+        // Si el tag candidato ya existe para este año, intentar el otro
+        if (gateway.obtenerPeriodoPorTagYAnio(nuevoTag, anio).isPresent()) {
+            int otroTag = (nuevoTag == 1) ? 2 : 1;
+            if (gateway.obtenerPeriodoPorTagYAnio(otroTag, anio).isPresent()) {
+                throw new BusinessRuleViolatedException(
+                    "Ya existen períodos académicos " + anio + "-1 y " + anio + "-2. " +
+                    "No se puede crear una proyección para este año.");
+            }
+            nuevoTag = otroTag;
+        }
 
         // Crear nuevo período PROYECCION
         AcademicPeriod nuevo = new AcademicPeriod();
