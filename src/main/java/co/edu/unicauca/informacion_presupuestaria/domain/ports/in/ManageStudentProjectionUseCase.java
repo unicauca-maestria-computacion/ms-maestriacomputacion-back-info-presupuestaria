@@ -1,5 +1,7 @@
 package co.edu.unicauca.informacion_presupuestaria.domain.ports.in;
 
+import java.time.LocalDate;
+
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
