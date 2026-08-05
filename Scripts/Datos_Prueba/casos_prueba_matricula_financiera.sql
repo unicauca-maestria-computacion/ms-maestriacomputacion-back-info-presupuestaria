@@ -1,0 +1,25 @@
+-- ============================================================
+-- CASOS DE PRUEBA MATRÍCULA FINANCIERA - PERIODO 6 (2026-2)
+-- SMLV: 1,423,500 | Voto: 10% | Egresado: 5%
+--
+-- Reglas de negocio:
+-- 1. Voto (10%): SIEMPRE acumulable, se aplica primero
+-- 2. Beca (% según concejo): sobre base (matrícula - voto)
+-- 3. Egresado (5%): solo semestre 1-4 Y requiere voto
+-- 4. EXCLUSIVIDAD: beca y egresado NO se acumulan. Gana el mayor %.
+-- 5. Sin pago (estaPago=false): no se calcula nada
+--
+-- Fórmula: neto = matrícula - voto - max(beca, egresado) + derechos
+-- ============================================================
+
+-- Caso 1: Solo Voto (10%) - Est 101, sem 5
+-- Caso 2: Solo Beca 30% - Est 103, sem 7
+-- Caso 3: Voto + Beca 50% - Est 106, sem 7
+-- Caso 4: Voto + Egresado - Est 120, sem 1, es_egresado
+-- Caso 5: Voto + Beca 30% + Egresado (beca > egresado) - Est 121
+-- Caso 6: Sin descuentos - Est 107, sem 9
+-- Caso 7: Beca 100% - Est 115, sem 8
+-- Caso 8: Sin pago - Est 102 (no calcula)
+-- Caso 9: Egresado NO aplica (sem > 4) - Est 114, sem 6
+-- Caso 10: Voto + Beca 3% + Egresado (egresado > beca) - Est 122
+-- ============================================================

@@ -40,4 +40,17 @@ public class AcademicPeriodPersistenceMapper {
                 .map(this::toDomain)
                 .collect(Collectors.toList());
     }
+
+    public AcademicPeriodEntity toEntity(AcademicPeriod domain) {
+        if (domain == null) return null;
+        AcademicPeriodEntity entity = new AcademicPeriodEntity();
+        entity.setId(domain.getId());
+        entity.setTagPeriodo(domain.getTagPeriodo());
+        entity.setFechaInicio(domain.getFechaInicio());
+        entity.setFechaFin(domain.getFechaFin());
+        entity.setFechaFinMatricula(domain.getFechaFinMatricula());
+        entity.setDescripcion(domain.getDescripcion());
+        entity.setEstado(domain.getEstado());
+        return entity;
+    }
 }

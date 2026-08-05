@@ -12,4 +12,6 @@ public interface ManageStudentProjectionUseCase {
                                                           Integer tagPeriodo, Integer anio);
 
     AcademicPeriod obtenerPeriodoDeProyeccion();
+
+    AcademicPeriod proyectarPresupuesto(LocalDate fechaInicio, LocalDate fechaFin, Integer cantidadEstudiantesNuevos);
 }

@@ -16,6 +16,10 @@ public interface StudentProjectionGatewayPort {
      */
     Optional<AcademicPeriod> obtenerUltimoPeriodo();
 
+    Optional<AcademicPeriod> obtenerPeriodoActivo();
+
+    AcademicPeriod guardarPeriodo(AcademicPeriod periodo);
+
     Optional<AcademicPeriod> obtenerPeriodoPorTagYAnio(Integer tagPeriodo, Integer anio);
 
     /** Retorna el período académico inmediatamente anterior al período dado (por fecha_inicio). */

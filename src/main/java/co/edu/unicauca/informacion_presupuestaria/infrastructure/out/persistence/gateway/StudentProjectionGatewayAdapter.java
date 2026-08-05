@@ -57,6 +57,22 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerPeriodoActivo() {
+        return periodoRepository.findTopByEstadoOrderByFechaInicioDesc(
+                co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.ACTIVO)
+                .map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional
+    public AcademicPeriod guardarPeriodo(AcademicPeriod periodo) {
+        AcademicPeriodEntity entity = periodoMapper.toEntity(periodo);
+        AcademicPeriodEntity saved = periodoRepository.save(entity);
+        return periodoMapper.toDomain(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<AcademicPeriod> obtenerPeriodoAnterior(Long periodoId) {
         return periodoRepository.findById(periodoId)
                 .flatMap(p -> periodoRepository.findPeriodoAnterior(p.getFechaInicio()))

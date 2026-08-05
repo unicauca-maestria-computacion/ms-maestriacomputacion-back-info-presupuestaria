@@ -5,8 +5,13 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageAcademic
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageStudentProjectionUseCase;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.academicperiod.mapper.PeriodoAcademicoRestMapper;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.academicperiod.dtoResponse.PeriodoAcademicoResponseDto;
+import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentprojection.dtoRequest.ProyectarPresupuestoRequest;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,6 +62,16 @@ public class AcademicPeriodRestController {
     public ResponseEntity<PeriodoAcademicoResponseDto> obtenerPeriodoDeProyeccion() {
         AcademicPeriod periodo = proyeccionUseCase.obtenerPeriodoDeProyeccion();
         return ResponseEntity.ok(mapper.toResponse(periodo));
+    }
+
+    @PostMapping("/proyeccion")
+    public ResponseEntity<PeriodoAcademicoResponseDto> proyectarPresupuesto(
+            @Valid @RequestBody ProyectarPresupuestoRequest request) {
+        AcademicPeriod periodo = proyeccionUseCase.proyectarPresupuesto(
+                request.getFechaInicio(),
+                request.getFechaFin(),
+                request.getCantidadEstudiantesNuevos());
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(periodo));
     }
 
     private List<PeriodoAcademicoResponseDto> mapear(List<AcademicPeriod> periodos) {
