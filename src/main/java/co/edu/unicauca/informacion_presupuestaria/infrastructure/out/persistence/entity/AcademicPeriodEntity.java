@@ -32,6 +32,9 @@ public class AcademicPeriodEntity {
     @Enumerated(EnumType.STRING)
     private AcademicPeriodStatus estado;
 
+    @Column(name = "estudiantes_nuevos_esperados")
+    private Integer estudiantesNuevosEsperados;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Integer getTagPeriodo() { return tagPeriodo; }
@@ -46,4 +49,6 @@ public class AcademicPeriodEntity {
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public AcademicPeriodStatus getEstado() { return estado; }
     public void setEstado(AcademicPeriodStatus estado) { this.estado = estado; }
+    public Integer getEstudiantesNuevosEsperados() { return estudiantesNuevosEsperados; }
+    public void setEstudiantesNuevosEsperados(Integer estudiantesNuevosEsperados) { this.estudiantesNuevosEsperados = estudiantesNuevosEsperados; }
 }
