@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS periodo_academico (
     fecha_fin           DATE         NOT NULL,
     fecha_fin_matricula DATE         NOT NULL,
     descripcion         VARCHAR(255) NULL,
-    estado              VARCHAR(20)  NOT NULL DEFAULT 'ACTIVO' COMMENT 'ACTIVO | INACTIVO | FINALIZADO',
+    estado              VARCHAR(20)  NOT NULL DEFAULT 'ACTIVO' COMMENT 'ACTIVO | INACTIVO | FINALIZADO | PROYECCION',
+    estudiantes_nuevos_esperados INT DEFAULT 0 COMMENT 'Cantidad de estudiantes nuevos esperados en proyeccion',
     PRIMARY KEY (id),
     UNIQUE KEY uk_periodo_tag_anio (tag_periodo, fecha_inicio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
