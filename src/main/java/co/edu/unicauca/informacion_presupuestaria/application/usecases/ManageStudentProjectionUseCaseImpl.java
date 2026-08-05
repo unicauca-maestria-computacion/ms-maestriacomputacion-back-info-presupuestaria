@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageStudentProjectionUseCase;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentProjectionGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.model.BecaDescuentoInfo;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.FinancialReportConfig;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
