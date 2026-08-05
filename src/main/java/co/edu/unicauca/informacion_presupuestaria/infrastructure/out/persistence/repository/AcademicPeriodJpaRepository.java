@@ -23,7 +23,7 @@ public interface AcademicPeriodJpaRepository extends JpaRepository<AcademicPerio
     @Query("SELECT p FROM AcademicPeriodEntity p ORDER BY p.fechaInicio DESC")
     List<AcademicPeriodEntity> findAllOrderByFechaInicioDesc();
 
-    @Query("SELECT p FROM AcademicPeriodEntity p WHERE p.tagPeriodo = :tagPeriodo AND YEAR(p.fechaInicio) = :anio")
+    @Query("SELECT p FROM AcademicPeriodEntity p WHERE p.tagPeriodo = :tagPeriodo AND YEAR(p.fechaInicio) = :anio ORDER BY p.fechaInicio DESC LIMIT 1")
     Optional<AcademicPeriodEntity> findByTagPeriodoAndAnio(
             @Param("tagPeriodo") Integer tagPeriodo,
             @Param("anio") Integer anio);
