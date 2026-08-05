@@ -1,0 +1,64 @@
+name: DB Setup Practica Profesional informacion-presupuestaria
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_wipe:
+        description: 'Escribe CONFIRMAR para borrar y recrear la base de datos maestria-computacion'
+        required: true
+        default: ''
+
+jobs:
+  db-setup:
+    runs-on: self-hosted
+    steps:
+      - name: Validate confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm_wipe }}" != "CONFIRMAR" ]; then
+            echo "Debes escribir CONFIRMAR en el input para ejecutar este workflow (esto borra la base de datos)."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Ensure MySQL Database Container is Running
+        run: |
+          if [ -z "$(docker ps -a -q -f name=mysql-db)" ]; then
+            echo "ERROR: mysql-db container does not exist. Deploy a service first to create it."
+            exit 1
+          fi
+          docker start mysql-db 2>/dev/null || true
+          sleep 5
+
+      - name: Drop and recreate database
+        run: |
+          docker exec mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -e \
+            "DROP DATABASE IF EXISTS \`maestria-computacion\`; CREATE DATABASE \`maestria-computacion\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+      - name: Import base schema and seed data (all.sql)
+        run: |
+          cat Scripts/All/all.sql | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+
+      - name: Import test data - real students and becas
+        run: |
+          cat "Scripts/Datos_Prueba/INSERT_REAL_STUDENTS_AND_SIMULATE_BECAS.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+
+      - name: Import test data - tutores
+        run: |
+          cat "Scripts/Datos_Prueba/asociar_tutores_estudiantes.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+
+      - name: Import escenarios calculo matricula
+        run: |
+          cat "Scripts/All/escenariosCalculoMatricula.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+
+      - name: Verify tables and row counts
+        run: |
+          docker exec mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" -e "
+            SELECT 'periodo_academico' AS tabla, COUNT(*) AS filas FROM periodo_academico
+            UNION ALL SELECT 'estudiantes', COUNT(*) FROM estudiantes
+            UNION ALL SELECT 'docentes', COUNT(*) FROM docentes
+            UNION ALL SELECT 'cursos', COUNT(*) FROM cursos
+            UNION ALL SELECT 'matriculas', COUNT(*) FROM matriculas
+            UNION ALL SELECT 'matricula_financiera', COUNT(*) FROM matricula_financiera
+            UNION ALL SELECT 'proyeccion_estudiante', COUNT(*) FROM proyeccion_estudiante;
+          "
