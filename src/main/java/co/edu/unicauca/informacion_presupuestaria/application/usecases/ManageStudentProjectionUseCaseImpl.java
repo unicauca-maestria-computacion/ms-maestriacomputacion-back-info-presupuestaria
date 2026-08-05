@@ -144,7 +144,9 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 .filter(b -> b.getTipo() != null && b.getTipo().toUpperCase().contains("BECA"))
                 .map(b -> {
                     if (b.getPorcentaje() == null) return BigDecimal.ZERO;
-                    return BigDecimal.valueOf(b.getPorcentaje().doubleValue());
+                    double p = b.getPorcentaje().doubleValue();
+                    if (p > 1.0) p = p / 100.0;
+                    return BigDecimal.valueOf(p);
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
