@@ -190,10 +190,10 @@ create table cuestionarios_preguntas
 create table cursos
 (
    id             int auto_increment not null,
-   idmatricula          int not null,
+   idmatricula          int null,
    grupocurso           varchar(2) not null,
-   periodocurso         int not null,
-   aniocurso            int not null,
+   periodocurso         int null,
+   aniocurso            int null,
    horariocurso         varchar(20),
    saloncurso           varchar(10),
    estado               boolean,

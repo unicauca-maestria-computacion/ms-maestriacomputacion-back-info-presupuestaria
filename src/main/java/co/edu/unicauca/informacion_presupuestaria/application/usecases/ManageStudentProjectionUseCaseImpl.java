@@ -98,7 +98,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                                 newP.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
                                 newP.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
                                 newP.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
-                                newP.setPorcentajeBeca(BigDecimal.ZERO);
+                                newP.setPorcentajeBeca(calcularPorcentajeBecaReal(e));
                                 return newP;
                             });
 
@@ -108,14 +108,20 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                     p.setValorEnSMLV(e.getValorEnSMLV());
                     p.setGrupoInvestigacion(e.getGrupoNombre());
                     
+                    BigDecimal becaReal = calcularPorcentajeBecaReal(e);
                     if (esReporteReal) {
                         p.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
-                        p.setPorcentajeBeca(calcularPorcentajeBecaReal(e));
+                        p.setPorcentajeBeca(becaReal);
                         p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
                         p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
                     } else {
                         if (Boolean.TRUE.equals(e.getEstaPago())) {
                             p.setEstaPago(true);
+                        }
+                        // Si hay beca real aprobada y la proyeccion no tiene valor manual, auto-popular
+                        if (becaReal.compareTo(BigDecimal.ZERO) > 0
+                                && (p.getPorcentajeBeca() == null || p.getPorcentajeBeca().compareTo(BigDecimal.ZERO) == 0)) {
+                            p.setPorcentajeBeca(becaReal);
                         }
                     }
                     p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(e.getEstaPago()));
