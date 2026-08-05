@@ -49,7 +49,7 @@ jobs:
 
       - name: Import escenarios calculo matricula
         run: |
-          cat "Scripts/All/escenariosCalculoMatricula.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+          cat "Scripts/Datos_Prueba/escenarios_matricula.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
 
       - name: Verify tables and row counts
         run: |
