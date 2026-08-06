@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,6 +67,17 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = buildProblem(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_REQUEST_DATA, req,
                 ErrorCode.INVALID_REQUEST_DATA.getMessageKey());
         pd.setProperty("validationErrors", details);
+        return pd;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest req) {
+        log.warn("Data integrity violation on {} {}: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "Ya existe un registro con esos mismos datos. Verifica si ya fue creado antes de reintentar.");
+        pd.setProperty("errorCode", ErrorCode.ENTITY_ALREADY_EXISTS.getCode());
+        pd.setProperty("url", req.getRequestURI());
+        pd.setProperty("method", req.getMethod());
         return pd;
     }
 
