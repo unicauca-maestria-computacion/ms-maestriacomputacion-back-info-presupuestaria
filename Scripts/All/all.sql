@@ -1415,8 +1415,8 @@ create table documentos_requisitos_solicitud
       primary key (id)
 );
 
-ALTER TABLE documentos_requisitos_solicitud ADD COLUMN IF NOT EXISTS abreviatura_documento VARCHAR(100) NULL;
-ALTER TABLE documentos_requisitos_solicitud ADD COLUMN IF NOT EXISTS enlace BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE documentos_requisitos_solicitud ADD COLUMN abreviatura_documento VARCHAR(100) NULL;
+ALTER TABLE documentos_requisitos_solicitud ADD COLUMN enlace BOOLEAN NOT NULL DEFAULT FALSE;
 
 /*==============================================================*/
 /* table: enlaces_solicitudes                                   */
