@@ -1415,9 +1415,6 @@ create table documentos_requisitos_solicitud
       primary key (id)
 );
 
-ALTER TABLE documentos_requisitos_solicitud ADD COLUMN abreviatura_documento VARCHAR(100) NULL;
-ALTER TABLE documentos_requisitos_solicitud ADD COLUMN enlace BOOLEAN NOT NULL DEFAULT FALSE;
-
 /*==============================================================*/
 /* table: enlaces_solicitudes                                   */
 /*==============================================================*/
@@ -3152,6 +3149,9 @@ where id = 104;
 
 alter table documentos_requisitos_solicitud
 add column abreviatura_documento varchar(100) null;
+
+alter table documentos_requisitos_solicitud
+add column enlace boolean not null default false;
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado notas especializacion'

@@ -30,6 +30,14 @@ jobs:
           docker start mysql-db 2>/dev/null || true
           sleep 5
 
+      - name: Stop services with Hibernate ddl-auto=update (avoid schema race)
+        run: |
+          # ms-gestion-solicitudes usa ddl-auto=update contra esta misma BD. Si sigue
+          # corriendo mientras se borra/recrea la BD, Hibernate recrea sus tablas con el
+          # esquema de las entidades JPA (incompleto respecto a los scripts SQL) en medio
+          # del import, causando columnas faltantes y errores en cascada.
+          docker stop ms-gestion-solicitudes-service 2>/dev/null || echo "ms-gestion-solicitudes-service no estaba corriendo, se continua."
+
       - name: Drop and recreate database
         run: |
           docker exec mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -e \
@@ -60,5 +68,12 @@ jobs:
             UNION ALL SELECT 'cursos', COUNT(*) FROM cursos
             UNION ALL SELECT 'matriculas', COUNT(*) FROM matriculas
             UNION ALL SELECT 'matricula_financiera', COUNT(*) FROM matricula_financiera
-            UNION ALL SELECT 'proyeccion_estudiante', COUNT(*) FROM proyeccion_estudiante;
+            UNION ALL SELECT 'proyeccion_estudiante', COUNT(*) FROM proyeccion_estudiante
+            UNION ALL SELECT 'tipos_solicitudes', COUNT(*) FROM tipos_solicitudes
+            UNION ALL SELECT 'documentos_requisitos_solicitud', COUNT(*) FROM documentos_requisitos_solicitud;
           "
+
+      - name: Restart services stopped for the schema import
+        if: always()
+        run: |
+          docker start ms-gestion-solicitudes-service 2>/dev/null || echo "ms-gestion-solicitudes-service no existe en este servidor, se omite."
