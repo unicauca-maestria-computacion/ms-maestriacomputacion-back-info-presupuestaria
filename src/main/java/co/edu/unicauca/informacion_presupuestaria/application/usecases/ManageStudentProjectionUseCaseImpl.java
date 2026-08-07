@@ -117,6 +117,12 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             }
         } else {
             for (StudentProjection spOrigen : proyeccionesOrigen) {
+                // Los estudiantes simulados del periodo origen nunca se copian: son
+                // ficticios y su codigo sintetico ("SIM-{id}") no corresponde a ningun
+                // estudiante real, no tiene sentido propagarlos a la nueva proyeccion.
+                if (Boolean.TRUE.equals(spOrigen.getEsSimulado())) {
+                    continue;
+                }
                 StudentProjection sp = new StudentProjection();
                 sp.setCodigoEstudiante(spOrigen.getCodigoEstudiante());
                 sp.setEstaPago(false);
@@ -212,7 +218,28 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
     }
 
     private StudentFinancialReport construirReporte(AcademicPeriod periodo) {
-        List<StudentProjection> proyecciones = gateway.obtenerProyeccionesPorPeriodo(periodo);
+        List<StudentProjection> proyeccionesCrudas = gateway.obtenerProyeccionesPorPeriodo(periodo);
+
+        // Los estudiantes simulados solo tienen sentido mientras el periodo esta en
+        // PROYECCION. Si el periodo ya paso a ACTIVO/FINALIZADO, se eliminan aqui
+        // (auto-limpieza): nadie mas los borra al cambiar el estado del periodo, y si
+        // se dejan huerfanos terminan copiandose por error a la siguiente proyeccion
+        // que se cree tomando este periodo como origen.
+        boolean periodoEnProyeccion = co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.PROYECCION
+                .equals(periodo.getEstado());
+        final List<StudentProjection> proyecciones;
+        if (!periodoEnProyeccion) {
+            List<StudentProjection> simuladosHuerfanos = proyeccionesCrudas.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
+                    .collect(Collectors.toList());
+            simuladosHuerfanos.forEach(p -> gateway.eliminarEstudianteSimulado(p.getId()));
+            proyecciones = proyeccionesCrudas.stream()
+                    .filter(p -> !Boolean.TRUE.equals(p.getEsSimulado()))
+                    .collect(Collectors.toList());
+        } else {
+            proyecciones = proyeccionesCrudas;
+        }
+
         List<Student> estudiantes;
         try {
             estudiantes = matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(
@@ -295,25 +322,19 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 })
                 .collect(Collectors.toList());
 
-        // Los estudiantes simulados solo existen mientras el periodo esta en PROYECCION.
-        // Si el periodo ya paso a ACTIVO/FINALIZADO, se ignoran aqui aunque sus filas sigan
-        // en la BD (nadie las borra al cambiar el estado del periodo) — no deben aparecer
-        // en el reporte una vez el periodo deja de ser una proyeccion.
-        boolean periodoEnProyeccion = co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.PROYECCION
-                .equals(periodo.getEstado());
-        if (periodoEnProyeccion) {
-            // Los estudiantes simulados no vienen de matricula-financiera (path real de arriba),
-            // asi que se agregan aparte con los mismos defaults que usa el fallback de PROYECCION.
-            List<StudentProjection> simulados = proyecciones.stream()
-                    .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
-                    .peek(p -> {
-                        p.setValorEnSMLV(1);
-                        p.setEstadoMatriculaFinanciera(false);
-                    })
-                    .collect(Collectors.toList());
-            enriquecidas = new java.util.ArrayList<>(enriquecidas);
-            enriquecidas.addAll(simulados);
-        }
+        // Los estudiantes simulados no vienen de matricula-financiera (path real de arriba),
+        // asi que se agregan aparte con los mismos defaults que usa el fallback de PROYECCION.
+        // (Si el periodo no esta en PROYECCION, "proyecciones" ya no trae simulados: se
+        // eliminaron al inicio de este metodo, asi que esto no agrega nada en ese caso.)
+        List<StudentProjection> simulados = proyecciones.stream()
+                .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
+                .peek(p -> {
+                    p.setValorEnSMLV(1);
+                    p.setEstadoMatriculaFinanciera(false);
+                })
+                .collect(Collectors.toList());
+        enriquecidas = new java.util.ArrayList<>(enriquecidas);
+        enriquecidas.addAll(simulados);
 
         FinancialCalculationService.Totales totales = calculationService.calcular(
                 enriquecidas, estudiantes, config);
