@@ -295,17 +295,25 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 })
                 .collect(Collectors.toList());
 
-        // Los estudiantes simulados no vienen de matricula-financiera (path real de arriba),
-        // asi que se agregan aparte con los mismos defaults que usa el fallback de PROYECCION.
-        List<StudentProjection> simulados = proyecciones.stream()
-                .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
-                .peek(p -> {
-                    p.setValorEnSMLV(1);
-                    p.setEstadoMatriculaFinanciera(false);
-                })
-                .collect(Collectors.toList());
-        enriquecidas = new java.util.ArrayList<>(enriquecidas);
-        enriquecidas.addAll(simulados);
+        // Los estudiantes simulados solo existen mientras el periodo esta en PROYECCION.
+        // Si el periodo ya paso a ACTIVO/FINALIZADO, se ignoran aqui aunque sus filas sigan
+        // en la BD (nadie las borra al cambiar el estado del periodo) — no deben aparecer
+        // en el reporte una vez el periodo deja de ser una proyeccion.
+        boolean periodoEnProyeccion = co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.PROYECCION
+                .equals(periodo.getEstado());
+        if (periodoEnProyeccion) {
+            // Los estudiantes simulados no vienen de matricula-financiera (path real de arriba),
+            // asi que se agregan aparte con los mismos defaults que usa el fallback de PROYECCION.
+            List<StudentProjection> simulados = proyecciones.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
+                    .peek(p -> {
+                        p.setValorEnSMLV(1);
+                        p.setEstadoMatriculaFinanciera(false);
+                    })
+                    .collect(Collectors.toList());
+            enriquecidas = new java.util.ArrayList<>(enriquecidas);
+            enriquecidas.addAll(simulados);
+        }
 
         FinancialCalculationService.Totales totales = calculationService.calcular(
                 enriquecidas, estudiantes, config);
