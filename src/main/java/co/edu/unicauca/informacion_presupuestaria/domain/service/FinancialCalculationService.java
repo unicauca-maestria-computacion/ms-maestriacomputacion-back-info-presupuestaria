@@ -148,12 +148,17 @@ public class FinancialCalculationService {
                 .multiply(derechosComplementarios)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        totalNeto = totalNeto.setScale(2, RoundingMode.HALF_UP);
+        // Total bruto = matrícula + derechos complementarios de todos los estudiantes,
+        // sin descontar nada. Debe coincidir con la suma de totalNetoConDerechos de cada
+        // estudiante antes de descuentos, para que bruto - descuentos = neto general
+        // reconcilie con la suma de los netos individuales.
+        BigDecimal totalBruto = totalNeto.add(totalDerechosComplementarios)
+                .setScale(2, RoundingMode.HALF_UP);
         totalDescuentos = totalDescuentos.setScale(2, RoundingMode.HALF_UP);
-        BigDecimal totalIngresos = totalNeto.subtract(totalDescuentos)
+        BigDecimal totalIngresos = totalBruto.subtract(totalDescuentos)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        return new Totales(totalNeto, totalDescuentos, totalIngresos, totalDerechosComplementarios);
+        return new Totales(totalBruto, totalDescuentos, totalIngresos, totalDerechosComplementarios);
     }
 
 
