@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ProyeccionEstudianteResponse {
 
+    private Long id;
     private String codigoEstudiante;
     private Long identificacion;
     private String nombre;
@@ -19,6 +20,7 @@ public class ProyeccionEstudianteResponse {
     private List<MateriaResponseDto> materias;
     private String becaEstado;
     private Boolean estadoMatriculaFinanciera;
+    private Boolean esSimulado;
 
     // Campos calculados
     private BigDecimal valorMatricula;
@@ -32,6 +34,10 @@ public class ProyeccionEstudianteResponse {
     public ProyeccionEstudianteResponse() {
     }
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Boolean getEsSimulado() { return esSimulado; }
+    public void setEsSimulado(Boolean esSimulado) { this.esSimulado = esSimulado; }
     public String getCodigoEstudiante() { return codigoEstudiante; }
     public void setCodigoEstudiante(String codigoEstudiante) { this.codigoEstudiante = codigoEstudiante; }
     public Long getIdentificacion() { return identificacion; }

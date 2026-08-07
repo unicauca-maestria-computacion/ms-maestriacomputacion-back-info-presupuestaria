@@ -44,6 +44,7 @@ public class StudentProjection {
     private List<SubjectResponse> materias;
     private Boolean estadoMatriculaFinanciera;
     private String becaEstado;
+    private Boolean esSimulado;
 
     // Campos calculados por el servicio financiero
     private BigDecimal valorMatricula;

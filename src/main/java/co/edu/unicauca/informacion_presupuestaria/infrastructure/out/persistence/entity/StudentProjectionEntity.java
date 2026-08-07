@@ -22,7 +22,7 @@ public class StudentProjectionEntity {
     private AcademicPeriodEntity objPeriodoAcademico;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estudiante_id", nullable = false)
+    @JoinColumn(name = "estudiante_id", nullable = true)
     private StudentEntity objEstudiante;
 
     @Column(name = "esta_pago")
@@ -36,4 +36,16 @@ public class StudentProjectionEntity {
 
     @Column(name = "aplica_egresado")
     private Boolean aplicaEgresado;
+
+    @Column(name = "es_simulado", nullable = false)
+    private Boolean esSimulado = false;
+
+    @Column(name = "nombre_simulado")
+    private String nombreSimulado;
+
+    @Column(name = "apellido_simulado")
+    private String apellidoSimulado;
+
+    @Column(name = "identificacion_simulada")
+    private Long identificacionSimulada;
 }

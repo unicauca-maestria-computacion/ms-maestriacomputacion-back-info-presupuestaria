@@ -24,7 +24,14 @@ public class StudentProjectionPersistenceMapper {
         }
         StudentProjection domain = new StudentProjection();
         domain.setId(entity.getId());
-        if (entity.getObjEstudiante() != null) {
+        boolean esSimulado = Boolean.TRUE.equals(entity.getEsSimulado());
+        domain.setEsSimulado(esSimulado);
+        if (esSimulado) {
+            domain.setCodigoEstudiante("SIM-" + entity.getId());
+            domain.setNombre(entity.getNombreSimulado());
+            domain.setApellido(entity.getApellidoSimulado());
+            domain.setIdentificacion(entity.getIdentificacionSimulada());
+        } else if (entity.getObjEstudiante() != null) {
             domain.setCodigoEstudiante(entity.getObjEstudiante().getCodigo());
             if (entity.getObjEstudiante().getObjPersona() != null) {
                 domain.setNombre(entity.getObjEstudiante().getObjPersona().getNombre());
@@ -44,7 +51,7 @@ public class StudentProjectionPersistenceMapper {
     }
 
     public StudentProjection toDomainFromNative(Object[] row) {
-        if (row == null || row.length < 12) {
+        if (row == null || row.length < 13) {
             return null;
         }
         StudentProjection domain = new StudentProjection();
@@ -53,17 +60,18 @@ public class StudentProjectionPersistenceMapper {
         domain.setIdentificacion(row[3] != null ? ((Number) row[3]).longValue() : null);
         domain.setNombre((String) row[4]);
         domain.setApellido((String) row[5]);
-        
+
         // Obtenemos el pago simulado
         boolean pagoSimulado = row[6] != null && (row[6] instanceof Boolean ? (Boolean) row[6] : ((Number) row[6]).intValue() == 1);
-        
+
         // Por defecto en la proyección activa mostramos el SIMULADO
         domain.setEstaPago(pagoSimulado);
         domain.setGrupoInvestigacion((String) row[8]);
         domain.setPorcentajeBeca(row[9] != null ? new BigDecimal(row[9].toString()) : BigDecimal.ZERO);
         domain.setAplicaVotacion(row[10] != null && ((Number) row[10]).intValue() == 1);
         domain.setAplicaEgresado(row[11] != null && ((Number) row[11]).intValue() == 1);
-        
+        domain.setEsSimulado(row[12] != null && (row[12] instanceof Boolean ? (Boolean) row[12] : ((Number) row[12]).intValue() == 1));
+
         return domain;
     }
 

@@ -1,5 +1,6 @@
 package co.edu.unicauca.informacion_presupuestaria.domain.ports.out;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,32 @@ import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection
 
 public interface StudentProjectionGatewayPort {
 
+    /** Retorna un período académico por su id. */
+    Optional<AcademicPeriod> obtenerPeriodoPorId(Long id);
+
+    /** Retorna una proyección de estudiante (real o simulada) por su id, con el período asociado. */
+    Optional<StudentProjection> obtenerProyeccionPorId(Long id);
+
+    /**
+     * Crea un estudiante simulado (ficticio) dentro de un período de proyección.
+     * No crea ningún registro en la tabla de estudiantes reales.
+     */
+    StudentProjection crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido, Long identificacion);
+
+    /**
+     * Actualiza los datos de un estudiante simulado existente. No hace nada si el id
+     * no corresponde a una fila marcada como simulada.
+     */
+    Optional<StudentProjection> actualizarEstudianteSimulado(
+            Long id, String nombre, String apellido, Long identificacion,
+            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado);
+
+    /**
+     * Elimina un estudiante simulado. Retorna false si el id no corresponde a una fila
+     * marcada como simulada (nunca borra estudiantes reales).
+     */
+    boolean eliminarEstudianteSimulado(Long id);
+
     /**
      * Retorna el último período por fecha_inicio (ORDER BY fecha_inicio DESC LIMIT 1).
      *
@@ -17,6 +44,9 @@ public interface StudentProjectionGatewayPort {
     Optional<AcademicPeriod> obtenerUltimoPeriodo();
 
     Optional<AcademicPeriod> obtenerPeriodoActivo();
+
+    /** Retorna el último período FINALIZADO por fecha_inicio (nunca un PROYECCION). */
+    Optional<AcademicPeriod> obtenerUltimoPeriodoFinalizado();
 
     AcademicPeriod guardarPeriodo(AcademicPeriod periodo);
 

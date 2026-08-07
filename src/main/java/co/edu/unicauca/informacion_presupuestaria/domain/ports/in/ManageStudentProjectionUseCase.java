@@ -1,5 +1,6 @@
 package co.edu.unicauca.informacion_presupuestaria.domain.ports.in;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.model.AcademicPeriod;
@@ -16,4 +17,24 @@ public interface ManageStudentProjectionUseCase {
     AcademicPeriod obtenerPeriodoDeProyeccion();
 
     AcademicPeriod proyectarPresupuesto(LocalDate fechaInicio, LocalDate fechaFin, Integer cantidadEstudiantesNuevos);
+
+    /**
+     * Crea un estudiante simulado (ficticio) dentro de un período. Solo permitido
+     * si el período está en estado PROYECCION.
+     */
+    StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido, Long identificacion);
+
+    /**
+     * Actualiza los datos de un estudiante simulado existente. Solo permitido si el
+     * período asociado está en estado PROYECCION.
+     */
+    StudentFinancialReport actualizarEstudianteSimulado(
+            Long id, String nombre, String apellido, Long identificacion,
+            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado);
+
+    /**
+     * Elimina un estudiante simulado. Solo permitido si el período asociado está en
+     * estado PROYECCION.
+     */
+    StudentFinancialReport eliminarEstudianteSimulado(Long id);
 }

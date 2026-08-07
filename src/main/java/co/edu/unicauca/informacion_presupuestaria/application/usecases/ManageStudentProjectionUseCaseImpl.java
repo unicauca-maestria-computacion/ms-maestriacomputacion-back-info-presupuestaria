@@ -65,11 +65,12 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                     "La fecha de fin no puede ser anterior a la fecha de inicio");
         }
 
-        // Determinar el período origen (activo o último disponible)
+        // Determinar el período origen: ACTIVO si existe, si no el último FINALIZADO.
+        // Nunca se copia de otro período en PROYECCION (evita simular sobre simulado).
         AcademicPeriod origen = gateway.obtenerPeriodoActivo()
-                .orElseGet(() -> gateway.obtenerUltimoPeriodo()
-                        .orElseThrow(() -> new EntityNotFoundException(
-                                "No existe ningún período académico registrado como referencia")));
+                .or(gateway::obtenerUltimoPeriodoFinalizado)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No existe ningún período académico ACTIVO o FINALIZADO como referencia para la proyección"));
 
         // Auto-detectar tagPeriodo: alternar del origen, verificando no duplicar
         int anio = fechaInicio.getYear();
@@ -134,10 +135,67 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             }
         }
 
+        // Crear estudiantes simulados (ficticios) para los cupos nuevos esperados,
+        // editables luego desde el reporte de proyección.
+        if (cantidadEstudiantesNuevos != null && cantidadEstudiantesNuevos > 0) {
+            for (int i = 1; i <= cantidadEstudiantesNuevos; i++) {
+                gateway.crearEstudianteSimulado(guardado.getId(), "Estudiante nuevo " + i, "", null);
+            }
+        }
+
         // Inicializar configuración financiera para el nuevo período
         inicializarConfiguracionFinanciera(guardado);
 
         return guardado;
+    }
+
+    @Override
+    public StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido, Long identificacion) {
+        AcademicPeriod periodo = gateway.obtenerPeriodoPorId(periodoAcademicoId)
+                .orElseThrow(() -> new EntityNotFoundException("No existe el período académico"));
+        validarPeriodoProyeccion(periodo);
+        if (nombre == null || nombre.isBlank()) {
+            throw new BusinessRuleViolatedException("El nombre del estudiante simulado es requerido");
+        }
+        gateway.crearEstudianteSimulado(periodoAcademicoId, nombre, apellido, identificacion);
+        return construirReporte(periodo);
+    }
+
+    @Override
+    public StudentFinancialReport actualizarEstudianteSimulado(
+            Long id, String nombre, String apellido, Long identificacion,
+            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado) {
+        StudentProjection existente = gateway.obtenerProyeccionPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existe el estudiante simulado"));
+        AcademicPeriod periodo = existente.getAcademicPeriod();
+        validarPeriodoProyeccion(periodo);
+        if (nombre == null || nombre.isBlank()) {
+            throw new BusinessRuleViolatedException("El nombre del estudiante simulado es requerido");
+        }
+        gateway.actualizarEstudianteSimulado(id, nombre, apellido, identificacion,
+                estaPago, aplicaVotacion, porcentajeBeca, aplicaEgresado);
+        return construirReporte(periodo);
+    }
+
+    @Override
+    public StudentFinancialReport eliminarEstudianteSimulado(Long id) {
+        StudentProjection existente = gateway.obtenerProyeccionPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existe el estudiante simulado"));
+        AcademicPeriod periodo = existente.getAcademicPeriod();
+        validarPeriodoProyeccion(periodo);
+        boolean eliminado = gateway.eliminarEstudianteSimulado(id);
+        if (!eliminado) {
+            throw new BusinessRuleViolatedException("El estudiante indicado no es un estudiante simulado");
+        }
+        return construirReporte(periodo);
+    }
+
+    private void validarPeriodoProyeccion(AcademicPeriod periodo) {
+        if (periodo == null || periodo.getEstado() == null
+                || !co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.PROYECCION.equals(periodo.getEstado())) {
+            throw new BusinessRuleViolatedException(
+                    "Los estudiantes simulados solo se pueden crear, editar o eliminar en períodos con estado PROYECCION");
+        }
     }
 
     @Override
@@ -241,6 +299,18 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                     return p;
                 })
                 .collect(Collectors.toList());
+
+        // Los estudiantes simulados no vienen de matricula-financiera (path real de arriba),
+        // asi que se agregan aparte con los mismos defaults que usa el fallback de PROYECCION.
+        List<StudentProjection> simulados = proyecciones.stream()
+                .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
+                .peek(p -> {
+                    p.setValorEnSMLV(1);
+                    p.setEstadoMatriculaFinanciera(false);
+                })
+                .collect(Collectors.toList());
+        enriquecidas = new java.util.ArrayList<>(enriquecidas);
+        enriquecidas.addAll(simulados);
 
         FinancialCalculationService.Totales totales = calculationService.calcular(
                 enriquecidas, estudiantes, config);

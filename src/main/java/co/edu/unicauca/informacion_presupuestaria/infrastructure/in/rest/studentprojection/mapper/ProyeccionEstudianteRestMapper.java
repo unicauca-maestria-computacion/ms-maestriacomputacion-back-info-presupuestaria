@@ -30,6 +30,8 @@ public class ProyeccionEstudianteRestMapper {
         }
 
         ProyeccionEstudianteResponse dto = new ProyeccionEstudianteResponse();
+        dto.setId(proyeccion.getId());
+        dto.setEsSimulado(Boolean.TRUE.equals(proyeccion.getEsSimulado()));
         dto.setCodigoEstudiante(proyeccion.getCodigoEstudiante());
         dto.setIdentificacion(proyeccion.getIdentificacion());
         dto.setNombre(proyeccion.getNombre());

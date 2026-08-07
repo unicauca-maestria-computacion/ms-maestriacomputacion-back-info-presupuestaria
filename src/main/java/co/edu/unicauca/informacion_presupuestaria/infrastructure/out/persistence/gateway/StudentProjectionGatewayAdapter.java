@@ -17,6 +17,7 @@ import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +61,14 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
     public Optional<AcademicPeriod> obtenerPeriodoActivo() {
         return periodoRepository.findTopByEstadoOrderByFechaInicioDesc(
                 co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.ACTIVO)
+                .map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerUltimoPeriodoFinalizado() {
+        return periodoRepository.findTopByEstadoOrderByFechaInicioDesc(
+                co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.FINALIZADO)
                 .map(periodoMapper::toDomain);
     }
 
@@ -138,6 +147,68 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
 
         StudentProjectionEntity saved = proyeccionRepository.save(entity);
         return proyeccionMapper.toDomain(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<AcademicPeriod> obtenerPeriodoPorId(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return periodoRepository.findById(id).map(periodoMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<StudentProjection> obtenerProyeccionPorId(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return proyeccionRepository.findById(id).map(proyeccionMapper::toDomain);
+    }
+
+    @Override
+    @Transactional
+    public StudentProjection crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido, Long identificacion) {
+        StudentProjectionEntity entity = new StudentProjectionEntity();
+        entity.setObjPeriodoAcademico(periodoRepository.findById(periodoAcademicoId).orElse(null));
+        entity.setObjEstudiante(null);
+        entity.setEsSimulado(true);
+        entity.setNombreSimulado(nombre);
+        entity.setApellidoSimulado(apellido);
+        entity.setIdentificacionSimulada(identificacion);
+        entity.setEstaPago(false);
+        entity.setPorcentajeBeca(BigDecimal.ZERO);
+        entity.setAplicaVotacion(false);
+        entity.setAplicaEgresado(false);
+        StudentProjectionEntity saved = proyeccionRepository.save(entity);
+        return proyeccionMapper.toDomain(saved);
+    }
+
+    @Override
+    @Transactional
+    public Optional<StudentProjection> actualizarEstudianteSimulado(
+            Long id, String nombre, String apellido, Long identificacion,
+            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado) {
+        return proyeccionRepository.findById(id)
+                .filter(e -> Boolean.TRUE.equals(e.getEsSimulado()))
+                .map(entity -> {
+                    entity.setNombreSimulado(nombre);
+                    entity.setApellidoSimulado(apellido);
+                    entity.setIdentificacionSimulada(identificacion);
+                    entity.setEstaPago(estaPago);
+                    entity.setAplicaVotacion(aplicaVotacion);
+                    entity.setPorcentajeBeca(porcentajeBeca);
+                    entity.setAplicaEgresado(aplicaEgresado);
+                    StudentProjectionEntity saved = proyeccionRepository.save(entity);
+                    return proyeccionMapper.toDomain(saved);
+                });
+    }
+
+    @Override
+    @Transactional
+    public boolean eliminarEstudianteSimulado(Long id) {
+        return proyeccionRepository.deleteByIdAndEsSimuladoTrue(id) > 0;
     }
 
     @Override

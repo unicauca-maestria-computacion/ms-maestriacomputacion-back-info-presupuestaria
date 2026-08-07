@@ -30,18 +30,24 @@ public interface StudentProjectionJpaRepository extends JpaRepository<StudentPro
      * mf.esta_pago -> Pago REAL (fuente de verdad financiera)
      */
     @Query(value = """
-            SELECT pe.id, pe.periodo_academico_id, e.codigo as codigo_estudiante, 
-                   pers.identificacion, pers.nombre, pers.apellido, 
-                   COALESCE(pe.esta_pago, 0) as esta_pago_simulado, 
+            SELECT pe.id, pe.periodo_academico_id,
+                   COALESCE(e.codigo, CONCAT('SIM-', pe.id)) as codigo_estudiante,
+                   COALESCE(pers.identificacion, pe.identificacion_simulada) as identificacion,
+                   COALESCE(pers.nombre, pe.nombre_simulado) as nombre,
+                   COALESCE(pers.apellido, pe.apellido_simulado) as apellido,
+                   COALESCE(pe.esta_pago, 0) as esta_pago_simulado,
                    COALESCE(mf.esta_pago, 0) as esta_pago_real,
-                   g.nombre as grupo_investigacion, 
-                   pe.porcentaje_beca, pe.aplica_votacion, pe.aplica_egresado 
-            FROM proyeccion_estudiante pe 
-            JOIN estudiantes e ON pe.estudiante_id = e.id 
-            JOIN personas pers ON e.id_persona = pers.id 
-            LEFT JOIN matricula_financiera mf ON (mf.estudiante_id = pe.estudiante_id AND mf.periodo_id = pe.periodo_academico_id) 
-            LEFT JOIN grupo g ON mf.grupo_id = g.id 
+                   g.nombre as grupo_investigacion,
+                   pe.porcentaje_beca, pe.aplica_votacion, pe.aplica_egresado,
+                   pe.es_simulado
+            FROM proyeccion_estudiante pe
+            LEFT JOIN estudiantes e ON pe.estudiante_id = e.id
+            LEFT JOIN personas pers ON e.id_persona = pers.id
+            LEFT JOIN matricula_financiera mf ON (mf.estudiante_id = pe.estudiante_id AND mf.periodo_id = pe.periodo_academico_id)
+            LEFT JOIN grupo g ON mf.grupo_id = g.id
             WHERE pe.periodo_academico_id = :periodoAcademicoId
             """, nativeQuery = true)
     List<Object[]> findFullProjectionsByPeriodo(@Param("periodoAcademicoId") Long periodoAcademicoId);
+
+    long deleteByIdAndEsSimuladoTrue(Long id);
 }

@@ -3,12 +3,17 @@ package co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studen
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentFinancialReport;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageStudentProjectionUseCase;
+import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentprojection.dtoRequest.ActualizarEstudianteSimuladoRequest;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentprojection.dtoRequest.ActualizarProyeccionRequest;
+import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentprojection.dtoRequest.CrearEstudianteSimuladoRequest;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentprojection.dtoResponse.ReporteEstudiantesResponse;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.in.rest.studentprojection.mapper.ProyeccionEstudianteRestMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +48,30 @@ public class StudentProjectionRestController {
             @RequestParam(required = false) Integer anio) {
         StudentProjection proyeccion = mapper.toDomain(request);
         StudentFinancialReport reporte = useCase.actualizarProyeccionEstudiante(proyeccion, tagPeriodo, anio);
+        return ResponseEntity.ok(mapper.toReporteResponse(reporte));
+    }
+
+    @PostMapping("/simulados")
+    public ResponseEntity<ReporteEstudiantesResponse> crearEstudianteSimulado(
+            @Valid @RequestBody CrearEstudianteSimuladoRequest request) {
+        StudentFinancialReport reporte = useCase.crearEstudianteSimulado(
+                request.getPeriodoAcademicoId(), request.getNombre(), request.getApellido(), request.getIdentificacion());
+        return ResponseEntity.ok(mapper.toReporteResponse(reporte));
+    }
+
+    @PutMapping("/simulados/{id}")
+    public ResponseEntity<ReporteEstudiantesResponse> actualizarEstudianteSimulado(
+            @PathVariable Long id,
+            @Valid @RequestBody ActualizarEstudianteSimuladoRequest request) {
+        StudentFinancialReport reporte = useCase.actualizarEstudianteSimulado(
+                id, request.getNombre(), request.getApellido(), request.getIdentificacion(),
+                request.getEstaPago(), request.getAplicaVotacion(), request.getPorcentajeBeca(), request.getAplicaEgresado());
+        return ResponseEntity.ok(mapper.toReporteResponse(reporte));
+    }
+
+    @DeleteMapping("/simulados/{id}")
+    public ResponseEntity<ReporteEstudiantesResponse> eliminarEstudianteSimulado(@PathVariable Long id) {
+        StudentFinancialReport reporte = useCase.eliminarEstudianteSimulado(id);
         return ResponseEntity.ok(mapper.toReporteResponse(reporte));
     }
 }
