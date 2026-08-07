@@ -143,22 +143,23 @@ public class FinancialCalculationService {
         }
 
         // Derechos complementarios: se cobran a los estudiantes con estaPago = true,
-        // igual que el resto de los cálculos de matrícula.
+        // igual que el resto de los cálculos de matrícula. Se devuelven aparte
+        // (totalDerechosComplementarios) y NO se incluyen aquí en totalNeto/totalIngresos:
+        // el reporte por grupos usa estos dos campos como base de distribución entre
+        // grupos de investigación, y los derechos complementarios se transfieren aparte
+        // a la universidad (transferenciaUnicauca), no se reparten. Los consumidores que sí
+        // necesitan matrícula + derechos (Proyección Reporte, Reporte Final) los suman ellos
+        // mismos a partir de totalDerechosComplementarios.
         BigDecimal totalDerechosComplementarios = BigDecimal.valueOf(cantidadPagados)
                 .multiply(derechosComplementarios)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        // Total bruto = matrícula + derechos complementarios de todos los estudiantes,
-        // sin descontar nada. Debe coincidir con la suma de totalNetoConDerechos de cada
-        // estudiante antes de descuentos, para que bruto - descuentos = neto general
-        // reconcilie con la suma de los netos individuales.
-        BigDecimal totalBruto = totalNeto.add(totalDerechosComplementarios)
-                .setScale(2, RoundingMode.HALF_UP);
+        totalNeto = totalNeto.setScale(2, RoundingMode.HALF_UP);
         totalDescuentos = totalDescuentos.setScale(2, RoundingMode.HALF_UP);
-        BigDecimal totalIngresos = totalBruto.subtract(totalDescuentos)
+        BigDecimal totalIngresos = totalNeto.subtract(totalDescuentos)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        return new Totales(totalBruto, totalDescuentos, totalIngresos, totalDerechosComplementarios);
+        return new Totales(totalNeto, totalDescuentos, totalIngresos, totalDerechosComplementarios);
     }
 
 

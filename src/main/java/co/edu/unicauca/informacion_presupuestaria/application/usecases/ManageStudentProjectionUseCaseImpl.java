@@ -237,9 +237,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
 
             FinancialCalculationService.Totales totales = calculationService.calcular(
                     enriquecidas, estudiantes, config);
-            return new StudentFinancialReport(enriquecidas, config, periodo,
-                    totales.getTotalNeto(), totales.getTotalDescuentos(), totales.getTotalIngresos(),
-                    totales.getTotalDerechosComplementarios());
+            return construirStudentFinancialReport(enriquecidas, config, periodo, totales);
         }
 
         FinancialReportConfig config = gateway
@@ -312,8 +310,23 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
         FinancialCalculationService.Totales totales = calculationService.calcular(
                 enriquecidas, estudiantes, config);
 
+        return construirStudentFinancialReport(enriquecidas, config, periodo, totales);
+    }
+
+    /**
+     * Arma el StudentFinancialReport sumando los derechos complementarios (biblioteca +
+     * recursos computacionales) al bruto y al neto, para que estos totales reconcilien con
+     * la suma de totalNetoConDerechos de cada estudiante. Distinto del reporte por grupos,
+     * que usa totales.getTotalNeto()/getTotalIngresos() SIN derechos, porque esos se
+     * transfieren aparte a la universidad y no se reparten entre grupos.
+     */
+    private StudentFinancialReport construirStudentFinancialReport(
+            List<StudentProjection> enriquecidas, FinancialReportConfig config,
+            AcademicPeriod periodo, FinancialCalculationService.Totales totales) {
+        BigDecimal totalBrutoConDerechos = totales.getTotalNeto().add(totales.getTotalDerechosComplementarios());
+        BigDecimal totalIngresosConDerechos = totales.getTotalIngresos().add(totales.getTotalDerechosComplementarios());
         return new StudentFinancialReport(enriquecidas, config, periodo,
-                totales.getTotalNeto(), totales.getTotalDescuentos(), totales.getTotalIngresos(),
+                totalBrutoConDerechos, totales.getTotalDescuentos(), totalIngresosConDerechos,
                 totales.getTotalDerechosComplementarios());
     }
 

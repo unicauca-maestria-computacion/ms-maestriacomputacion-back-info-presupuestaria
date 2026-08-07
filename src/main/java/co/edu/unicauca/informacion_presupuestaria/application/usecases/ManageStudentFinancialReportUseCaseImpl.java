@@ -71,8 +71,15 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
         FinancialCalculationService.Totales totales = calculationService.calcular(
                 enriquecidas, estudiantes, config);
 
+        // Se suman los derechos complementarios (biblioteca + recursos computacionales) al
+        // bruto y al neto para que reconcilien con la suma de totalNetoConDerechos de cada
+        // estudiante. El reporte por grupos, en cambio, usa estos totales SIN derechos porque
+        // esos se transfieren aparte a la universidad y no se reparten entre grupos.
+        BigDecimal totalBrutoConDerechos = totales.getTotalNeto().add(totales.getTotalDerechosComplementarios());
+        BigDecimal totalIngresosConDerechos = totales.getTotalIngresos().add(totales.getTotalDerechosComplementarios());
+
         return new StudentFinancialReport(enriquecidas, config, periodoSolicitado,
-                totales.getTotalNeto(), totales.getTotalDescuentos(), totales.getTotalIngresos(),
+                totalBrutoConDerechos, totales.getTotalDescuentos(), totalIngresosConDerechos,
                 totales.getTotalDerechosComplementarios());
     }
 
