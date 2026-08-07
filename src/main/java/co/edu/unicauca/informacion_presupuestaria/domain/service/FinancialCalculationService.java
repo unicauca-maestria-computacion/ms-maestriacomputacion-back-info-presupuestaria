@@ -6,7 +6,6 @@ import co.edu.unicauca.informacion_presupuestaria.domain.model.StudentProjection
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -171,16 +170,14 @@ public class FinancialCalculationService {
 
     private BigDecimal resolverPorcentajeBeca(StudentProjection proyeccion, List<Student> estudiantes, FinancialReportConfig config) {
         // REGLA AUTOMÁTICA: Si el reporte está marcado como FINAL o el periodo académico está FINALIZADO,
-        // o si la fecha actual ya superó la fecha de fin del semestre,
         // se ignora el valor manual y se usan solo las becas avaladas por el concejo.
+        // Nota: un periodo ACTIVO nunca se trata como final, sin importar sus fechas —
+        // el estado administrativo manda, no una comparacion de fechas.
         boolean esReporteFinal = Boolean.TRUE.equals(config.getEsReporteFinal());
-        boolean esPeriodoCerrado = config.getAcademicPeriod() != null 
+        boolean esPeriodoCerrado = config.getAcademicPeriod() != null
                 && co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.FINALIZADO.equals(config.getAcademicPeriod().getEstado());
-        boolean esPeriodoVencido = config.getAcademicPeriod() != null 
-                && config.getAcademicPeriod().getFechaFin() != null 
-                && LocalDate.now().isAfter(config.getAcademicPeriod().getFechaFin());
 
-        if (esReporteFinal || esPeriodoCerrado || esPeriodoVencido) {
+        if (esReporteFinal || esPeriodoCerrado) {
             return estudiantes.stream()
                     .filter(e -> codesMatch(e.getCodigo(), proyeccion.getCodigoEstudiante()))
                     .flatMap(e -> e.getBecasDescuentos() != null ? e.getBecasDescuentos().stream() : java.util.stream.Stream.empty())

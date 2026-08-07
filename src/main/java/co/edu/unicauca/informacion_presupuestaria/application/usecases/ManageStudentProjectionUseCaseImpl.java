@@ -43,11 +43,8 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
     public StudentFinancialReport actualizarProyeccionEstudiante(StudentProjection proyeccion,
                                                                   Integer tagPeriodo, Integer anio) {
         AcademicPeriod periodo = resolverPeriodo(tagPeriodo, anio);
-        
-        LocalDate hoy = LocalDate.now();
-        boolean esEditable = periodo.getFechaFin() == null || !hoy.isAfter(periodo.getFechaFin());
-        
-        if (!esEditable) {
+
+        if (!periodo.esEditable()) {
             throw new BusinessRuleViolatedException(
                     "El período de proyección ha finalizado y ya no es editable");
         }
@@ -249,8 +246,8 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 .obtenerConfiguracionReporteFinanciero(periodo.getId())
                 .orElseGet(() -> inicializarConfiguracionFinanciera(periodo));
 
-        LocalDate hoy = LocalDate.now();
-        boolean esReporteReal = periodo.getFechaFin() != null && hoy.isAfter(periodo.getFechaFin());
+        boolean esReporteReal = co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.FINALIZADO
+                .equals(periodo.getEstado());
         config.setEsReporteFinal(esReporteReal);
 
         List<StudentProjection> enriquecidas = estudiantes.stream()
