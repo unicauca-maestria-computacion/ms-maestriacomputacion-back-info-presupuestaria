@@ -735,12 +735,7 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         if (configFinanciero != null && Boolean.TRUE.equals(configFinanciero.getEsReporteFinal())) {
             return true;
         }
-        if (periodo != null && AcademicPeriodStatus.FINALIZADO.equals(periodo.getEstado())) {
-            return true;
-        }
-        return periodo != null
-                && periodo.getFechaFin() != null
-                && LocalDate.now().isAfter(periodo.getFechaFin());
+        return periodo != null && AcademicPeriodStatus.FINALIZADO.equals(periodo.getEstado());
     }
 
     private String normalizarCodigo(String codigo) {

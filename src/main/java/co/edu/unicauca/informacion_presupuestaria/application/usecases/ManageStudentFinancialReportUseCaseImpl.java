@@ -1,7 +1,6 @@
 package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +38,10 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
                         "No existe el período académico " + tagPeriodo + "-" + anio,
                         "ENTIDAD_NO_ENCONTRADA"));
 
-        // Si la fecha de fin no ha pasado, se considera Proyección (incluye futuro y presente)
-        LocalDate hoy = LocalDate.now();
-        boolean esActivo = periodoSolicitado.getFechaFin() == null || !hoy.isAfter(periodoSolicitado.getFechaFin());
+        // Solo un período FINALIZADO se trata como reporte final; ACTIVO y PROYECCION
+        // se tratan como proyección, sin importar sus fechas.
+        boolean esActivo = !co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.FINALIZADO
+                .equals(periodoSolicitado.getEstado());
 
         FinancialReportConfig config = gateway
                 .obtenerConfiguracionReporteFinanciero(periodoSolicitado.getId())
@@ -125,8 +125,8 @@ public class ManageStudentFinancialReportUseCaseImpl implements ManageStudentFin
     private List<StudentProjection> enriquecerProyecciones(
             List<StudentProjection> proyecciones, List<Student> estudiantes, AcademicPeriod periodo) {
         
-        LocalDate hoy = LocalDate.now();
-        boolean esReporteReal = periodo.getFechaFin() != null && hoy.isAfter(periodo.getFechaFin());
+        boolean esReporteReal = co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.FINALIZADO
+                .equals(periodo.getEstado());
 
         return estudiantes.stream()
                 .filter(e -> e.getValorEnSMLV() != null)

@@ -22,6 +22,9 @@ public class AcademicPeriod {
     private AcademicPeriodStatus estado;
 
     public boolean esEditable() {
+        if (AcademicPeriodStatus.FINALIZADO.equals(this.estado)) {
+            return false;
+        }
         return AcademicPeriodStatus.ACTIVO.equals(this.estado)
                 || !LocalDate.now().isAfter(this.fechaFinMatricula);
     }
@@ -29,8 +32,12 @@ public class AcademicPeriod {
     /**
      * Un período es editable para el reporte por grupos si está ACTIVO
      * o si la fecha de fin del período académico aún no ha pasado.
+     * Un período FINALIZADO nunca es editable, sin importar sus fechas.
      */
     public boolean esEditableParaReporte() {
+        if (AcademicPeriodStatus.FINALIZADO.equals(this.estado)) {
+            return false;
+        }
         return AcademicPeriodStatus.ACTIVO.equals(this.estado)
                 || (this.fechaFin != null && !LocalDate.now().isAfter(this.fechaFin));
     }
