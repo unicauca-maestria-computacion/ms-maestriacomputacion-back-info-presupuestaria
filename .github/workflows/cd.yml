@@ -132,7 +132,7 @@ jobs:
             --network "maestria-network" \
             --network-alias "informacion-presupuestaria" \
             --restart "always" \
-            --cpus "0.5" \
+            --cpus "0.3" \
             --memory "320m" \
             --memory-swap "320m" \
             --label project="practica-u" \
