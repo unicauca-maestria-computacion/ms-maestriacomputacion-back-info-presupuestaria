@@ -150,8 +150,9 @@ jobs:
             --network "maestria-network" \
             --network-alias "informacion-presupuestaria" \
             --restart "always" \
-            --memory "384m" \
-            --memory-swap "768m" \
+            --cpus "0.3" \
+            --memory "320m" \
+            --memory-swap "512m" \
             --label project="practica-u" \
             --label service="informacion-presupuestaria" \
             -e SPRING_PROFILES_ACTIVE="dev" \
