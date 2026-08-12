@@ -39,6 +39,14 @@ public interface StudentProjectionGatewayPort {
     boolean eliminarEstudianteSimulado(Long id);
 
     /**
+     * Elimina todos los estudiantes simulados cuyo período ya no está en PROYECCION
+     * (ACTIVO o FINALIZADO). No toca simulados de otros períodos que sigan en PROYECCION.
+     *
+     * @return cantidad de filas eliminadas
+     */
+    int eliminarSimuladosDePeriodosNoProyeccion();
+
+    /**
      * Retorna el último período por fecha_inicio (ORDER BY fecha_inicio DESC LIMIT 1).
      *
      * @return Optional con el período más reciente, o empty si no existe ninguno

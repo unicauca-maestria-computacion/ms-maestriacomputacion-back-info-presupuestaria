@@ -2,6 +2,7 @@ package co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistenc
 
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.persistence.entity.StudentProjectionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -50,4 +51,17 @@ public interface StudentProjectionJpaRepository extends JpaRepository<StudentPro
     List<Object[]> findFullProjectionsByPeriodo(@Param("periodoAcademicoId") Long periodoAcademicoId);
 
     long deleteByIdAndEsSimuladoTrue(Long id);
+
+    /**
+     * Borra estudiantes simulados que quedaron huérfanos: pertenecen a un período que
+     * ya no está en PROYECCION (pasó a ACTIVO o FINALIZADO). Los simulados solo tienen
+     * sentido mientras el período sigue en PROYECCION; deliberadamente no se tocan los
+     * de otros períodos que sigan en PROYECCION (puede haber varias proyecciones a la vez).
+     */
+    @Modifying
+    @Query("DELETE FROM StudentProjectionEntity p " +
+           "WHERE p.esSimulado = true " +
+           "AND p.objPeriodoAcademico.estado IN (co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.ACTIVO, " +
+           "co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.FINALIZADO)")
+    int deleteSimuladosDePeriodosNoProyeccion();
 }

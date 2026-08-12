@@ -219,6 +219,12 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
     }
 
     @Override
+    @Transactional
+    public int eliminarSimuladosDePeriodosNoProyeccion() {
+        return proyeccionRepository.deleteSimuladosDePeriodosNoProyeccion();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<FinancialReportConfig> obtenerConfiguracionReporteFinanciero(
             Long periodoAcademicoId) {

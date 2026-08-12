@@ -62,10 +62,18 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                     "La fecha de fin no puede ser anterior a la fecha de inicio");
         }
 
-        // Determinar el período origen: ACTIVO si existe, si no el último FINALIZADO.
+        // Antes de crear la nueva proyección, limpiar simulados huérfanos de proyecciones
+        // anteriores cuyo período ya pasó a ACTIVO o FINALIZADO (no debieron quedar ahí).
+        gateway.eliminarSimuladosDePeriodosNoProyeccion();
+
+        // Determinar el período origen: preferir el último FINALIZADO (cerrado), porque
+        // ya tiene la matrícula financiera y el grupo de investigación de cada estudiante
+        // completamente registrados; el período ACTIVO normalmente todavía no los tiene
+        // (esos registros se completan más adelante en el semestre). Si no existe ningún
+        // período FINALIZADO, se usa el ACTIVO como respaldo.
         // Nunca se copia de otro período en PROYECCION (evita simular sobre simulado).
-        AcademicPeriod origen = gateway.obtenerPeriodoActivo()
-                .or(gateway::obtenerUltimoPeriodoFinalizado)
+        AcademicPeriod origen = gateway.obtenerUltimoPeriodoFinalizado()
+                .or(gateway::obtenerPeriodoActivo)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "No existe ningún período académico ACTIVO o FINALIZADO como referencia para la proyección"));
 
