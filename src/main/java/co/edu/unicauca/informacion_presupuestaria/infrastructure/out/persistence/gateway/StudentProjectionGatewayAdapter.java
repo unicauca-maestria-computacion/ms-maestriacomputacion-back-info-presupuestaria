@@ -144,6 +144,9 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
         entity.setPorcentajeBeca(proyeccion.getPorcentajeBeca());
         entity.setAplicaVotacion(proyeccion.getAplicaVotacion());
         entity.setAplicaEgresado(proyeccion.getAplicaEgresado());
+        if (proyeccion.getGrupoInvestigacion() != null) {
+            entity.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
+        }
 
         StudentProjectionEntity saved = proyeccionRepository.save(entity);
         return proyeccionMapper.toDomain(saved);

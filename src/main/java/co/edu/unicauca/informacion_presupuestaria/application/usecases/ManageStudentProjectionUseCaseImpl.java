@@ -95,25 +95,37 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
 
         AcademicPeriod guardado = gateway.guardarPeriodo(nuevo);
 
+        // Grupo de investigación real de cada estudiante del período origen (viene de
+        // matricula-financiera, nunca de la proyección guardada). Se usa para que los
+        // estudiantes copiados a la nueva proyección ya aparezcan con su grupo asignado.
+        java.util.Map<String, String> gruposPorCodigo = new java.util.HashMap<>();
+        List<Student> estudiantesOrigenMF;
+        try {
+            estudiantesOrigenMF = matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(
+                    origen.getTagPeriodo(), origen.getAño());
+            for (Student est : estudiantesOrigenMF) {
+                if (est.getCodigo() != null && est.getGrupoNombre() != null) {
+                    gruposPorCodigo.put(est.getCodigo(), est.getGrupoNombre());
+                }
+            }
+        } catch (Exception ignored) {
+            estudiantesOrigenMF = List.of();
+        }
+
         // Copiar estudiantes del período origen a proyeccion_estudiante
         List<StudentProjection> proyeccionesOrigen = gateway.obtenerProyeccionesPorPeriodo(origen);
         if (proyeccionesOrigen.isEmpty()) {
             // Fallback: copiar desde matricula-financiera del período origen
-            try {
-                List<Student> estudiantesMF = matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(
-                        origen.getTagPeriodo(), origen.getAño());
-                for (Student est : estudiantesMF) {
-                    StudentProjection sp = new StudentProjection();
-                    sp.setCodigoEstudiante(est.getCodigo());
-                    sp.setEstaPago(false);
-                    sp.setPorcentajeBeca(BigDecimal.ZERO);
-                    sp.setAplicaVotacion(false);
-                    sp.setAplicaEgresado(false);
-                    sp.setAcademicPeriod(guardado);
-                    gateway.guardarProyeccion(sp);
-                }
-            } catch (Exception ignored) {
-                // Si MF no tiene estudiantes para el período origen, continuar sin copiar
+            for (Student est : estudiantesOrigenMF) {
+                StudentProjection sp = new StudentProjection();
+                sp.setCodigoEstudiante(est.getCodigo());
+                sp.setEstaPago(false);
+                sp.setPorcentajeBeca(BigDecimal.ZERO);
+                sp.setAplicaVotacion(false);
+                sp.setAplicaEgresado(false);
+                sp.setGrupoInvestigacion(est.getGrupoNombre());
+                sp.setAcademicPeriod(guardado);
+                gateway.guardarProyeccion(sp);
             }
         } else {
             for (StudentProjection spOrigen : proyeccionesOrigen) {
@@ -129,6 +141,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 sp.setPorcentajeBeca(spOrigen.getPorcentajeBeca());
                 sp.setAplicaVotacion(spOrigen.getAplicaVotacion());
                 sp.setAplicaEgresado(spOrigen.getAplicaEgresado());
+                sp.setGrupoInvestigacion(gruposPorCodigo.get(spOrigen.getCodigoEstudiante()));
                 sp.setAcademicPeriod(guardado);
                 try {
                     gateway.guardarProyeccion(sp);

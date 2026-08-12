@@ -39,6 +39,11 @@ public class StudentProjectionPersistenceMapper {
                 domain.setApellido(entity.getObjEstudiante().getObjPersona().getApellido());
                 domain.setIdentificacion(entity.getObjEstudiante().getObjPersona().getIdentificacion());
             }
+            // Grupo persistido (útil como respaldo en períodos PROYECCION cuando
+            // matricula-financiera todavía no tiene datos del período nuevo).
+            // Para períodos con datos reales en MF, esto se sobrescribe en construirReporte()
+            // con el grupo actual de matricula-financiera.
+            domain.setGrupoInvestigacion(entity.getGrupoInvestigacion());
         }
         domain.setEstaPago(entity.getEstaPago()); // Este es el pago SIMULADO
         domain.setPorcentajeBeca(entity.getPorcentajeBeca());
@@ -86,6 +91,7 @@ public class StudentProjectionPersistenceMapper {
         entity.setPorcentajeBeca(domain.getPorcentajeBeca());
         entity.setAplicaVotacion(domain.getAplicaVotacion());
         entity.setAplicaEgresado(domain.getAplicaEgresado());
+        entity.setGrupoInvestigacion(domain.getGrupoInvestigacion());
         return entity;
     }
 
