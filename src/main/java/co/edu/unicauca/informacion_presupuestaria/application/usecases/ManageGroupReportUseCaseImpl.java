@@ -699,8 +699,12 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         boolean reporteReal = esReporteReal(periodo, configFinanciero);
 
         List<StudentProjection> resultado = new java.util.ArrayList<>();
+        java.util.Set<String> codigosCubiertosPorMF = new java.util.HashSet<>();
 
         if (estudiantes != null && !estudiantes.isEmpty()) {
+            estudiantes.stream()
+                    .filter(e -> e.getCodigo() != null)
+                    .forEach(e -> codigosCubiertosPorMF.add(normalizarCodigo(e.getCodigo())));
             resultado.addAll(estudiantes.stream()
                     .filter(e -> e.getCodigo() != null)
                     .filter(e -> e.getValorEnSMLV() != null)
@@ -739,6 +743,26 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                     .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
                     .forEach(p -> {
                         p.setValorEnSMLV(1);
+                        p.setAcademicPeriod(periodo);
+                        p.setEstadoMatriculaFinanciera(false);
+                        resultado.add(p);
+                    });
+        }
+
+        // Estudiantes reales copiados a un período en PROYECCION (o cualquier período que
+        // matricula-financiera todavía no reconozca): no aparecen en "estudiantes" porque
+        // ese período aún no existe allá, pero sí quedaron guardados en la proyección local
+        // al crearla desde el período origen. Sin esto, el reporte por grupos los ignoraba
+        // por completo mientras el período seguía en PROYECCION.
+        if (proyeccionesGuardadas != null) {
+            proyeccionesGuardadas.stream()
+                    .filter(p -> !Boolean.TRUE.equals(p.getEsSimulado()))
+                    .filter(p -> p.getCodigoEstudiante() != null)
+                    .filter(p -> !codigosCubiertosPorMF.contains(normalizarCodigo(p.getCodigoEstudiante())))
+                    .forEach(p -> {
+                        if (p.getValorEnSMLV() == null) {
+                            p.setValorEnSMLV(1);
+                        }
                         p.setAcademicPeriod(periodo);
                         p.setEstadoMatriculaFinanciera(false);
                         resultado.add(p);
