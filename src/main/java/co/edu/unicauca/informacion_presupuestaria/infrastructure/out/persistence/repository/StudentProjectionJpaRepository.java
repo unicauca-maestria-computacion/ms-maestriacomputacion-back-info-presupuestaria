@@ -38,7 +38,7 @@ public interface StudentProjectionJpaRepository extends JpaRepository<StudentPro
                    COALESCE(pers.apellido, pe.apellido_simulado) as apellido,
                    COALESCE(pe.esta_pago, 0) as esta_pago_simulado,
                    COALESCE(mf.esta_pago, 0) as esta_pago_real,
-                   g.nombre as grupo_investigacion,
+                   COALESCE(pe.grupo_investigacion, g.nombre) as grupo_investigacion,
                    pe.porcentaje_beca, pe.aplica_votacion, pe.aplica_egresado,
                    pe.es_simulado
             FROM proyeccion_estudiante pe
