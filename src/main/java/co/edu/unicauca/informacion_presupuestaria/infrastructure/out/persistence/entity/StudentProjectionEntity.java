@@ -48,4 +48,7 @@ public class StudentProjectionEntity {
 
     @Column(name = "identificacion_simulada")
     private Long identificacionSimulada;
+
+    @Column(name = "grupo_investigacion")
+    private String grupoInvestigacion;
 }

@@ -142,7 +142,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
         // editables luego desde el reporte de proyección.
         if (cantidadEstudiantesNuevos != null && cantidadEstudiantesNuevos > 0) {
             for (int i = 1; i <= cantidadEstudiantesNuevos; i++) {
-                gateway.crearEstudianteSimulado(guardado.getId(), "Estudiante nuevo " + i, "", null);
+                gateway.crearEstudianteSimulado(guardado.getId(), "Estudiante nuevo " + i, "", null, null);
             }
         }
 
@@ -153,21 +153,23 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
     }
 
     @Override
-    public StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido, Long identificacion) {
+    public StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido,
+            Long identificacion, String grupoInvestigacion) {
         AcademicPeriod periodo = gateway.obtenerPeriodoPorId(periodoAcademicoId)
                 .orElseThrow(() -> new EntityNotFoundException("No existe el período académico"));
         validarPeriodoProyeccion(periodo);
         if (nombre == null || nombre.isBlank()) {
             throw new BusinessRuleViolatedException("El nombre del estudiante simulado es requerido");
         }
-        gateway.crearEstudianteSimulado(periodoAcademicoId, nombre, apellido, identificacion);
+        gateway.crearEstudianteSimulado(periodoAcademicoId, nombre, apellido, identificacion, grupoInvestigacion);
         return construirReporte(periodo);
     }
 
     @Override
     public StudentFinancialReport actualizarEstudianteSimulado(
             Long id, String nombre, String apellido, Long identificacion,
-            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado) {
+            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado,
+            String grupoInvestigacion) {
         StudentProjection existente = gateway.obtenerProyeccionPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("No existe el estudiante simulado"));
         AcademicPeriod periodo = existente.getAcademicPeriod();
@@ -176,7 +178,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             throw new BusinessRuleViolatedException("El nombre del estudiante simulado es requerido");
         }
         gateway.actualizarEstudianteSimulado(id, nombre, apellido, identificacion,
-                estaPago, aplicaVotacion, porcentajeBeca, aplicaEgresado);
+                estaPago, aplicaVotacion, porcentajeBeca, aplicaEgresado, grupoInvestigacion);
         return construirReporte(periodo);
     }
 

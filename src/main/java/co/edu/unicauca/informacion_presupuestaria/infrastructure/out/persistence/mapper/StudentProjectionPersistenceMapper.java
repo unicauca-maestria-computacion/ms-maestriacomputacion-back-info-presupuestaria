@@ -31,6 +31,7 @@ public class StudentProjectionPersistenceMapper {
             domain.setNombre(entity.getNombreSimulado());
             domain.setApellido(entity.getApellidoSimulado());
             domain.setIdentificacion(entity.getIdentificacionSimulada());
+            domain.setGrupoInvestigacion(entity.getGrupoInvestigacion());
         } else if (entity.getObjEstudiante() != null) {
             domain.setCodigoEstudiante(entity.getObjEstudiante().getCodigo());
             if (entity.getObjEstudiante().getObjPersona() != null) {

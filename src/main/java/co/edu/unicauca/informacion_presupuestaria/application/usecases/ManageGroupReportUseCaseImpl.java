@@ -687,14 +687,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             List<StudentProjection> proyeccionesGuardadas,
             FinancialReportConfig configFinanciero) {
 
-        if (estudiantes == null || estudiantes.isEmpty()) {
-            return List.of();
-        }
-
         Map<String, StudentProjection> proyeccionesPorCodigo = proyeccionesGuardadas == null
                 ? Map.of()
                 : proyeccionesGuardadas.stream()
-                        .filter(p -> p.getCodigoEstudiante() != null)
+                        .filter(p -> p.getCodigoEstudiante() != null && !Boolean.TRUE.equals(p.getEsSimulado()))
                         .collect(Collectors.toMap(
                                 p -> normalizarCodigo(p.getCodigoEstudiante()),
                                 Function.identity(),
@@ -702,33 +698,54 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
 
         boolean reporteReal = esReporteReal(periodo, configFinanciero);
 
-        return estudiantes.stream()
-                .filter(e -> e.getCodigo() != null)
-                .filter(e -> e.getValorEnSMLV() != null)
-                .map(e -> {
-                    StudentProjection guardada = proyeccionesPorCodigo.get(normalizarCodigo(e.getCodigo()));
-                    StudentProjection p = guardada != null ? guardada : new StudentProjection();
+        List<StudentProjection> resultado = new java.util.ArrayList<>();
 
-                    p.setCodigoEstudiante(e.getCodigo());
-                    p.setIdentificacion(e.getIdentificacion());
-                    p.setNombre(e.getNombre());
-                    p.setApellido(e.getApellido());
-                    p.setValorEnSMLV(e.getValorEnSMLV());
-                    p.setAcademicPeriod(periodo);
-                    p.setGrupoInvestigacion(e.getGrupoNombre() != null
-                            ? e.getGrupoNombre()
-                            : p.getGrupoInvestigacion());
+        if (estudiantes != null && !estudiantes.isEmpty()) {
+            resultado.addAll(estudiantes.stream()
+                    .filter(e -> e.getCodigo() != null)
+                    .filter(e -> e.getValorEnSMLV() != null)
+                    .map(e -> {
+                        StudentProjection guardada = proyeccionesPorCodigo.get(normalizarCodigo(e.getCodigo()));
+                        StudentProjection p = guardada != null ? guardada : new StudentProjection();
 
-                    if (reporteReal || guardada == null) {
-                        p.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
-                        p.setPorcentajeBeca(BigDecimal.ZERO);
-                        p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
-                        p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
-                    }
-                    p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(e.getEstaPago()));
-                    return p;
-                })
-                .toList();
+                        p.setCodigoEstudiante(e.getCodigo());
+                        p.setIdentificacion(e.getIdentificacion());
+                        p.setNombre(e.getNombre());
+                        p.setApellido(e.getApellido());
+                        p.setValorEnSMLV(e.getValorEnSMLV());
+                        p.setAcademicPeriod(periodo);
+                        p.setGrupoInvestigacion(e.getGrupoNombre() != null
+                                ? e.getGrupoNombre()
+                                : p.getGrupoInvestigacion());
+
+                        if (reporteReal || guardada == null) {
+                            p.setEstaPago(Boolean.TRUE.equals(e.getEstaPago()));
+                            p.setPorcentajeBeca(BigDecimal.ZERO);
+                            p.setAplicaVotacion(Boolean.TRUE.equals(e.getAplicaVotacion()));
+                            p.setAplicaEgresado(Boolean.TRUE.equals(e.getEsEgresadoUnicauca()));
+                        }
+                        p.setEstadoMatriculaFinanciera(Boolean.TRUE.equals(e.getEstaPago()));
+                        return p;
+                    })
+                    .toList());
+        }
+
+        // Los estudiantes simulados (ficticios, creados solo en la proyección) no existen
+        // en matricula-financiera, así que nunca aparecen en "estudiantes". Se agregan aquí
+        // aparte para que el reporte por grupos también los tenga en cuenta mientras el
+        // período está en PROYECCION (fuera de PROYECCION ya fueron auto-eliminados).
+        if (proyeccionesGuardadas != null) {
+            proyeccionesGuardadas.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
+                    .forEach(p -> {
+                        p.setValorEnSMLV(1);
+                        p.setAcademicPeriod(periodo);
+                        p.setEstadoMatriculaFinanciera(false);
+                        resultado.add(p);
+                    });
+        }
+
+        return resultado;
     }
 
     private boolean esReporteReal(AcademicPeriod periodo, FinancialReportConfig configFinanciero) {

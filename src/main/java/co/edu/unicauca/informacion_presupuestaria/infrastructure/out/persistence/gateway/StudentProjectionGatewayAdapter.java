@@ -169,7 +169,8 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
 
     @Override
     @Transactional
-    public StudentProjection crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido, Long identificacion) {
+    public StudentProjection crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido,
+            Long identificacion, String grupoInvestigacion) {
         StudentProjectionEntity entity = new StudentProjectionEntity();
         entity.setObjPeriodoAcademico(periodoRepository.findById(periodoAcademicoId).orElse(null));
         entity.setObjEstudiante(null);
@@ -181,6 +182,7 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
         entity.setPorcentajeBeca(BigDecimal.ZERO);
         entity.setAplicaVotacion(false);
         entity.setAplicaEgresado(false);
+        entity.setGrupoInvestigacion(grupoInvestigacion);
         StudentProjectionEntity saved = proyeccionRepository.save(entity);
         return proyeccionMapper.toDomain(saved);
     }
@@ -189,7 +191,8 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
     @Transactional
     public Optional<StudentProjection> actualizarEstudianteSimulado(
             Long id, String nombre, String apellido, Long identificacion,
-            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado) {
+            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado,
+            String grupoInvestigacion) {
         return proyeccionRepository.findById(id)
                 .filter(e -> Boolean.TRUE.equals(e.getEsSimulado()))
                 .map(entity -> {
@@ -200,6 +203,7 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
                     entity.setAplicaVotacion(aplicaVotacion);
                     entity.setPorcentajeBeca(porcentajeBeca);
                     entity.setAplicaEgresado(aplicaEgresado);
+                    entity.setGrupoInvestigacion(grupoInvestigacion);
                     StudentProjectionEntity saved = proyeccionRepository.save(entity);
                     return proyeccionMapper.toDomain(saved);
                 });

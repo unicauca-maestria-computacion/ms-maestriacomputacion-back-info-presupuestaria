@@ -22,7 +22,8 @@ public interface ManageStudentProjectionUseCase {
      * Crea un estudiante simulado (ficticio) dentro de un período. Solo permitido
      * si el período está en estado PROYECCION.
      */
-    StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido, Long identificacion);
+    StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido,
+            Long identificacion, String grupoInvestigacion);
 
     /**
      * Actualiza los datos de un estudiante simulado existente. Solo permitido si el
@@ -30,7 +31,8 @@ public interface ManageStudentProjectionUseCase {
      */
     StudentFinancialReport actualizarEstudianteSimulado(
             Long id, String nombre, String apellido, Long identificacion,
-            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado);
+            Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado,
+            String grupoInvestigacion);
 
     /**
      * Elimina un estudiante simulado. Solo permitido si el período asociado está en

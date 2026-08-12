@@ -15,6 +15,8 @@ public class CrearEstudianteSimuladoRequest {
 
     private Long identificacion;
 
+    private String grupoInvestigacion;
+
     public CrearEstudianteSimuladoRequest() {
     }
 
@@ -26,4 +28,6 @@ public class CrearEstudianteSimuladoRequest {
     public void setApellido(String apellido) { this.apellido = apellido; }
     public Long getIdentificacion() { return identificacion; }
     public void setIdentificacion(Long identificacion) { this.identificacion = identificacion; }
+    public String getGrupoInvestigacion() { return grupoInvestigacion; }
+    public void setGrupoInvestigacion(String grupoInvestigacion) { this.grupoInvestigacion = grupoInvestigacion; }
 }

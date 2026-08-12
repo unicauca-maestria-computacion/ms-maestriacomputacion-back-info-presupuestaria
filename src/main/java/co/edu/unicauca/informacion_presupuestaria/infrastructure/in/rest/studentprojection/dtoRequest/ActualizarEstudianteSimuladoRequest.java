@@ -25,6 +25,8 @@ public class ActualizarEstudianteSimuladoRequest {
 
     private Boolean aplicaEgresado;
 
+    private String grupoInvestigacion;
+
     public ActualizarEstudianteSimuladoRequest() {
     }
 
@@ -42,4 +44,6 @@ public class ActualizarEstudianteSimuladoRequest {
     public void setPorcentajeBeca(BigDecimal porcentajeBeca) { this.porcentajeBeca = porcentajeBeca; }
     public Boolean getAplicaEgresado() { return aplicaEgresado; }
     public void setAplicaEgresado(Boolean aplicaEgresado) { this.aplicaEgresado = aplicaEgresado; }
+    public String getGrupoInvestigacion() { return grupoInvestigacion; }
+    public void setGrupoInvestigacion(String grupoInvestigacion) { this.grupoInvestigacion = grupoInvestigacion; }
 }

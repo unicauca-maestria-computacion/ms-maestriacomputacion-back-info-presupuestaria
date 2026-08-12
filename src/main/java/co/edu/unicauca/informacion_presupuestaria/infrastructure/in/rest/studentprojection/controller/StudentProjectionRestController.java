@@ -55,7 +55,8 @@ public class StudentProjectionRestController {
     public ResponseEntity<ReporteEstudiantesResponse> crearEstudianteSimulado(
             @Valid @RequestBody CrearEstudianteSimuladoRequest request) {
         StudentFinancialReport reporte = useCase.crearEstudianteSimulado(
-                request.getPeriodoAcademicoId(), request.getNombre(), request.getApellido(), request.getIdentificacion());
+                request.getPeriodoAcademicoId(), request.getNombre(), request.getApellido(),
+                request.getIdentificacion(), request.getGrupoInvestigacion());
         return ResponseEntity.ok(mapper.toReporteResponse(reporte));
     }
 
@@ -65,7 +66,8 @@ public class StudentProjectionRestController {
             @Valid @RequestBody ActualizarEstudianteSimuladoRequest request) {
         StudentFinancialReport reporte = useCase.actualizarEstudianteSimulado(
                 id, request.getNombre(), request.getApellido(), request.getIdentificacion(),
-                request.getEstaPago(), request.getAplicaVotacion(), request.getPorcentajeBeca(), request.getAplicaEgresado());
+                request.getEstaPago(), request.getAplicaVotacion(), request.getPorcentajeBeca(), request.getAplicaEgresado(),
+                request.getGrupoInvestigacion());
         return ResponseEntity.ok(mapper.toReporteResponse(reporte));
     }
 
