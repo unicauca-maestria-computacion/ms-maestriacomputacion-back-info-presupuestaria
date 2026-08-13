@@ -3728,14 +3728,7 @@ JOIN (
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Actividad con estud o egresados', 3000000.00
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Apoyo estudiantes para segunda lengua', 1500000.00
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contratacion de monitores de apoyo al programa de pregrado o de posgrado', 2100000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS Secretaria apoyo coordinacion Maestria, jefatura y programa ing. Sistemas', 27000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Aporte Contrato OPS Enlace FIET', 3445120.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Pago de elementos publicitarios para la Maestria en Computacion', 2000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS disenador publicidad para la Maestria en Computacion', 3000000.00
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Compra papeleria incluidos toners, kits de tinta', 1000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Servicios de comida a la mesa para expertos invitados', 3000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Publicaciones', 26000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Ajuste gastos generales', 2499999.80
 ) gastos_2025
     ON gg.configuracion_reporte_grupos_id = gastos_2025.configuracion_reporte_grupos_id
     AND gg.descripcion = gastos_2025.descripcion
@@ -3755,14 +3748,7 @@ FROM (
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Actividad con estud o egresados', 3000000.00
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Apoyo estudiantes para segunda lengua', 1500000.00
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contratacion de monitores de apoyo al programa de pregrado o de posgrado', 2100000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS Secretaria apoyo coordinacion Maestria, jefatura y programa ing. Sistemas', 27000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Aporte Contrato OPS Enlace FIET', 3445120.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Pago de elementos publicitarios para la Maestria en Computacion', 2000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Contrato OPS disenador publicidad para la Maestria en Computacion', 3000000.00
     UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Compra papeleria incluidos toners, kits de tinta', 1000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Servicios de comida a la mesa para expertos invitados', 3000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Publicaciones', 26000000.00
-    UNION ALL SELECT @cfg_grupos_2025_1, 'Gastos Generales', 'Ajuste gastos generales', 2499999.80
 ) gastos_2025
 WHERE NOT EXISTS (
     SELECT 1
