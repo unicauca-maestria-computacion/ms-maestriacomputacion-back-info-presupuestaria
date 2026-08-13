@@ -1,4 +1,4 @@
-﻿﻿/*==============================================================*/
+/*==============================================================*/
 /* dbms name:      mysql 5.0                                    */
 /* modificate on:     3/06/23 9:04:38                           */
 /* modificate on:     26/11/23 16:28:21                         */
@@ -2164,16 +2164,16 @@ alter table enlaces_actividades_realizadas add constraint fk_enl_act_realizadas_
 /*TABLE tipos_solicitudes*/
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('AdiciÃ³n de asignaturas', 'ACTIVO', 'AD_ASIG');
+VALUES('Adición de asignaturas', 'ACTIVO', 'AD_ASIG');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('CancelaciÃ³n de asignaturas', 'ACTIVO', 'CA_ASIG');
+VALUES('Cancelación de asignaturas', 'ACTIVO', 'CA_ASIG');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('HomologaciÃ³n asignaturas de especializaciÃ³n', 'ACTIVO', 'HO_ASIG_ESP');
+VALUES('Homologación asignaturas de especialización', 'ACTIVO', 'HO_ASIG_ESP');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('HomologaciÃ³n asignaturas de postgrados', 'ACTIVO', 'HO_ASIG_POS');
+VALUES('Homologación asignaturas de postgrados', 'ACTIVO', 'HO_ASIG_POS');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
 VALUES('Aplazamiento de semestre', 'ACTIVO', 'AP_SEME');
@@ -2182,70 +2182,70 @@ INSERT INTO tipos_solicitudes
 VALUES('Cursar asignaturas en otros programas', 'ACTIVO', 'CU_ASIG');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Aval para realizar pasantÃ­a de investigaciÃ³n', 'ACTIVO', 'AV_PASA_INV');
+VALUES('Aval para realizar pasantía de investigación', 'ACTIVO', 'AV_PASA_INV');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Apoyo econÃ³mico para estancias de investigaciÃ³n', 'ACTIVO', 'AP_ECON_INV');
+VALUES('Apoyo económico para estancias de investigación', 'ACTIVO', 'AP_ECON_INV');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por pasantÃ­as de investigaciÃ³n', 'ACTIVO', 'RE_CRED_PAS');
+VALUES('Reconocimiento de créditos por pasantías de investigación', 'ACTIVO', 'RE_CRED_PAS');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por actividades de prÃ¡ctica docente', 'ACTIVO', 'RE_CRED_PR_DOC');
+VALUES('Reconocimiento de créditos por actividades de práctica docente', 'ACTIVO', 'RE_CRED_PR_DOC');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por diseÃ±o curricular de curso teÃ³rico/prÃ¡ctico nuevo', 'INACTIVO', 'RE_CRED_DIS');
+VALUES('Reconocimiento de créditos por diseño curricular de curso teórico/práctico nuevo', 'INACTIVO', 'RE_CRED_DIS');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('PreparaciÃ³n de cursos teÃ³ricos/prÃ¡cticos nuevos', 'INACTIVO', 'PR_CURS_TEO');
+VALUES('Preparación de cursos teóricos/prácticos nuevos', 'INACTIVO', 'PR_CURS_TEO');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('AsignaciÃ³n de crÃ©ditos por docencia en pregrado o posgrado', 'INACTIVO', 'AS_CRED_DO');
+VALUES('Asignación de créditos por docencia en pregrado o posgrado', 'INACTIVO', 'AS_CRED_DO');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Aval para realizaciÃ³n de seminario de actualizaciÃ³n', 'INACTIVO', 'AV_SEMI_ACT');
+VALUES('Aval para realización de seminario de actualización', 'INACTIVO', 'AV_SEMI_ACT');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por realizaciÃ³n de seminario de actualizaciÃ³n', 'INACTIVO', 'RE_CRED_SEM');
+VALUES('Reconocimiento de créditos por realización de seminario de actualización', 'INACTIVO', 'RE_CRED_SEM');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('AsignaciÃ³n de crÃ©ditos por monitorias de cursos', 'INACTIVO', 'AS_CRED_MON');
+VALUES('Asignación de créditos por monitorias de cursos', 'INACTIVO', 'AS_CRED_MON');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('AsignaciÃ³n de crÃ©ditos por la elaboraciÃ³n de material de apoyo para pregrado/posgrado', 'INACTIVO', 'AS_CRED_MAT');
+VALUES('Asignación de créditos por la elaboración de material de apoyo para pregrado/posgrado', 'INACTIVO', 'AS_CRED_MAT');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('AsignaciÃ³n de crÃ©ditos por direcciÃ³n de trabajo de grado en pregrado o posgrado', 'INACTIVO', 'TG_PREG_POS');
+VALUES('Asignación de créditos por dirección de trabajo de grado en pregrado o posgrado', 'INACTIVO', 'TG_PREG_POS');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por ser jurado de trabajo de grado de pregrado o posgrado', 'INACTIVO', 'JU_PREG_POS');
+VALUES('Reconocimiento de créditos por ser jurado de trabajo de grado de pregrado o posgrado', 'INACTIVO', 'JU_PREG_POS');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por evaluaciÃ³n de anteproyecto de pregrado o jurado de anteproyecto de posgrado', 'INACTIVO', 'EV_ANTE_PRE');
+VALUES('Reconocimiento de créditos por evaluación de anteproyecto de pregrado o jurado de anteproyecto de posgrado', 'INACTIVO', 'EV_ANTE_PRE');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por evaluaciÃ³n de productividad intelectual', 'INACTIVO', 'EV_PROD_INT');
+VALUES('Reconocimiento de créditos por evaluación de productividad intelectual', 'INACTIVO', 'EV_PROD_INT');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por evaluaciÃ³n informe sabÃ¡tico', 'INACTIVO', 'EV_INFO_SAB');
+VALUES('Reconocimiento de créditos por evaluación informe sabático', 'INACTIVO', 'EV_INFO_SAB');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por participaciÃ³n en el comitÃ© de programa', 'INACTIVO', 'PA_COMI_PRO');
+VALUES('Reconocimiento de créditos por participación en el comité de programa', 'INACTIVO', 'PA_COMI_PRO');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por realizaciÃ³n de otras actividades de apoyo al departamento', 'INACTIVO', 'OT_ACTI_APO');
+VALUES('Reconocimiento de créditos por realización de otras actividades de apoyo al departamento', 'INACTIVO', 'OT_ACTI_APO');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Reconocimiento de crÃ©ditos por publicaciones', 'ACTIVO', 'RE_CRED_PUB');
+VALUES('Reconocimiento de créditos por publicaciones', 'ACTIVO', 'RE_CRED_PUB');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Apoyo econÃ³mico para asistencia a congresos, presentando artÃ­culos', 'ACTIVO', 'AP_ECON_ASI');
+VALUES('Apoyo económico para asistencia a congresos, presentando artículos', 'ACTIVO', 'AP_ECON_ASI');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Apoyo econÃ³mico para pago de publicaciÃ³n o inscripciÃ³n a eventos', 'ACTIVO', 'PA_PUBL_EVE');
+VALUES('Apoyo económico para pago de publicación o inscripción a eventos', 'ACTIVO', 'PA_PUBL_EVE');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
-VALUES('Aval para la realizaciÃ³n de actividades de prÃ¡ctica docente', 'ACTIVO', 'AV_COMI_PR');
+VALUES('Aval para la realización de actividades de práctica docente', 'ACTIVO', 'AV_COMI_PR');
 INSERT INTO tipos_solicitudes
 (nombre, estado, codigo)
 VALUES('Solicitud Beca/Descuento', 'ACTIVO', 'SO_BECA');
@@ -2257,22 +2257,22 @@ VALUES('Otra', 'ACTIVO', 'SO_OTRA');
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'DIS_CUR_PREG', 
-'Apoyo al diseÃ±o curricular de nuevo curso teÃ³rico/prÃ¡ctico pregrado', 12, null, 'ACTIVO');
+'Apoyo al diseño curricular de nuevo curso teórico/práctico pregrado', 12, null, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'DIS_CUR_POSG', 
-'Apoyo al diseÃ±o curricular de nuevo curso teÃ³rico/prÃ¡ctico posgrado', 16, null, 'ACTIVO');
+'Apoyo al diseño curricular de nuevo curso teórico/práctico posgrado', 16, null, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'PRE_CUR_PREG', 
-'PreparaciÃ³n de nuevo curso teÃ³rico/prÃ¡ctico pregrado', 36, null, 'ACTIVO');
+'Preparación de nuevo curso teórico/práctico pregrado', 36, null, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'PRE_CUR_POSG', 
-'PreparaciÃ³n de nuevo curso teÃ³rico/prÃ¡ctico posgrado', 48, null, 'ACTIVO');
+'Preparación de nuevo curso teórico/práctico posgrado', 48, null, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
@@ -2287,27 +2287,27 @@ VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'DOC_C
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'CUR_COR_SEM', 
-'Curso corto (seminario actualizaciÃ³n)', 2.5, null, 'ACTIVO');
+'Curso corto (seminario actualización)', 2.5, null, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'MON_CUR', 
-'MonitorÃ­as cursos', null, 48, 'ACTIVO');
+'Monitorías cursos', null, 48, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'ELA_MAT_APOY', 
-'ElaboraciÃ³n de material de apoyo para pregrado/posgrado', null, 96, 'ACTIVO');
+'Elaboración de material de apoyo para pregrado/posgrado', null, 96, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'DIR_TRA_PREG', 
-'DirecciÃ³n de trabajo de grado en pregrado', null, 96, 'ACTIVO');
+'Dirección de trabajo de grado en pregrado', null, 96, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'DIR_TRA_POSG', 
-'DirecciÃ³n de trabajo de grado en posgrado', null, 144, 'ACTIVO');
+'Dirección de trabajo de grado en posgrado', null, 144, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
@@ -2317,52 +2317,52 @@ VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'JUR_T
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'JUR_ANT_MAE', 
-'Jurado anteproyecto de maestrÃ­a', null, 48, 'ACTIVO');
+'Jurado anteproyecto de maestría', null, 48, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'JUR_TRA_MAE', 
-'Jurado trabajo de grado de maestrÃ­a', null, 72, 'ACTIVO');
+'Jurado trabajo de grado de maestría', null, 72, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'ASE_PAS_EMP', 
-'AsesorÃ­a de pasantÃ­a empresarial', null, 48, 'ACTIVO');
+'Asesoría de pasantía empresarial', null, 48, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'EVA_JUR_EMP', 
-'EvaluaciÃ³n como jurado de pasantÃ­a empresarial', null, 24, 'ACTIVO');
+'Evaluación como jurado de pasantía empresarial', null, 24, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'EVA_TRA_EMP', 
-'EvaluaciÃ³n de plan de trabajo para pasantÃ­a empresarial', null, 8, 'ACTIVO');
+'Evaluación de plan de trabajo para pasantía empresarial', null, 8, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'EVA_ANT_PREG_DEP', 
-'EvaluaciÃ³n anteproyectos de pregrado y propuestas de posgrado en los departamentos', null, 8, 'ACTIVO');
+'Evaluación anteproyectos de pregrado y propuestas de posgrado en los departamentos', null, 8, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'EVA_PRO_INT_PON', 
-'EvaluaciÃ³n productividad intelectual (Ponencias)', null, 12, 'ACTIVO');
+'Evaluación productividad intelectual (Ponencias)', null, 12, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'EVA_PRO_INT_LIB', 
-'EvaluaciÃ³n productividad intelectual (Libros)', null, 48, 'ACTIVO');
+'Evaluación productividad intelectual (Libros)', null, 48, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'EVA_INF_SAB', 
-'EvaluaciÃ³n informe periodo sabÃ¡tico', null, 48, 'ACTIVO');
+'Evaluación informe periodo sabático', null, 48, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
 VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'PAR_COM_PRO', 
-'ParticipaciÃ³n en comitÃ© de programa', null, 48, 'ACTIVO');
+'Participación en comité de programa', null, 48, 'ACTIVO');
 
 INSERT INTO sub_tipos_solicitudes
 (id_tipo_solicitud,codigo,nombre, peso, horas_asignadas, estado)
@@ -2373,19 +2373,19 @@ VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'),'ACT_A
 /*TABLE DOCUMENTOS_SUBTIPOS*/
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIS_CUR_PREG'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIS_CUR_POSG'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'PRE_CUR_PREG'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'PRE_CUR_POSG'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DOC_CUR_PREG'), 
@@ -2405,59 +2405,59 @@ VALUES ((select id from sub_tipos_solicitudes where codigo = 'CUR_COR_SEM'),
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'MON_CUR'), 
-'CertificaciÃ³n del profesor de la asignatura (s) indicando intensidad y trabajo realizado, con visto bueno del Jefe de Departamento.');
+'Certificación del profesor de la asignatura (s) indicando intensidad y trabajo realizado, con visto bueno del Jefe de Departamento.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'MON_CUR'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'ELA_MAT_APOY'), 
-'Carta de aceptaciÃ³n del tutor o profesor de la asignatura validando el material entregado.');
+'Carta de aceptación del tutor o profesor de la asignatura validando el material entregado.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'ELA_MAT_APOY'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIR_TRA_PREG'), 
-'ResoluciÃ³n de aprobaciÃ³n del anteproyecto.');
+'Resolución de aprobación del anteproyecto.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIR_TRA_PREG'), 
-'Acta de sustentaciÃ³n.');
+'Acta de sustentación.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIR_TRA_POSG'), 
-'ResoluciÃ³n de aprobaciÃ³n del anteproyecto.');
+'Resolución de aprobación del anteproyecto.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIR_TRA_POSG'), 
-'Acta de sustentaciÃ³n.');
+'Acta de sustentación.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'JUR_TRA_PREG'), 
-'Acta de sustentaciÃ³n firmada por todos los jurados');
+'Acta de sustentación firmada por todos los jurados');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'JUR_TRA_MAE'), 
-'Acta de sustentaciÃ³n firmada por todos los jurados');
+'Acta de sustentación firmada por todos los jurados');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'JUR_ANT_MAE'), 
-'Formato(S) de la evaluaciÃ³n realizada');
+'Formato(S) de la evaluación realizada');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'JUR_ANT_MAE'), 
-'Carta o correo donde conste la asignaciÃ³n como evaluador.');
+'Carta o correo donde conste la asignación como evaluador.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'EVA_PRO_INT_LIB'), 
-'Carta de respuesta al ComitÃ© de Personal Docente (CPD).');
+'Carta de respuesta al Comité de Personal Docente (CPD).');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'EVA_PRO_INT_PON'), 
-'Carta de respuesta al ComitÃ© de Personal Docente (CPD).');
+'Carta de respuesta al Comité de Personal Docente (CPD).');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'EVA_INF_SAB'), 
@@ -2465,7 +2465,7 @@ VALUES ((select id from sub_tipos_solicitudes where codigo = 'EVA_INF_SAB'),
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'EVA_INF_SAB'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'PAR_COM_PRO'), 
@@ -2473,7 +2473,7 @@ VALUES ((select id from sub_tipos_solicitudes where codigo = 'PAR_COM_PRO'),
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'ACT_APO_DEP'), 
-'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.');
+'Aval del Comité de programa de la Maestría para la realización de la actividad.');
 
 INSERT INTO documentos_subtipos (id_sub_tipo_solicitud, documento)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'ACT_APO_DEP'), 
@@ -2492,32 +2492,32 @@ VALUES((select id from tipos_solicitudes where codigo = 'CU_ASIG'), 'Acuerdo Sup
 'https://bit.ly/3WVLfSC');
 
 INSERT INTO enlaces_tipos_solicitudes (id_tipo_solicitud, nombre, url_real, url_acortada)
-VALUES((select id from tipos_solicitudes where codigo = 'AV_PASA_INV'), 'Formato de exoneraciÃ³n de responsabilidades',
+VALUES((select id from tipos_solicitudes where codigo = 'AV_PASA_INV'), 'Formato de exoneración de responsabilidades',
 'https://docs.google.com/document/d/13_IQxt8mhHm4V_3jCBi8w1wZMZNdAodQ/edit#heading=h.gjdgxs',
 'https://bit.ly/3WYkDQL');
 
 INSERT INTO enlaces_tipos_solicitudes (id_tipo_solicitud, nombre, url_real, url_acortada)
-VALUES((select id from tipos_solicitudes where codigo = 'AV_PASA_INV'), 'Solicitud de movilidad acadÃ©mica saliente',
+VALUES((select id from tipos_solicitudes where codigo = 'AV_PASA_INV'), 'Solicitud de movilidad académica saliente',
 'https://docs.google.com/document/d/1kdoV4_Ft-AzaLLjYrMXFfvmLJpWCj8FE/edit',
 'https://bit.ly/4cl3hC3');
 
 INSERT INTO enlaces_tipos_solicitudes (id_tipo_solicitud, nombre, url_real, url_acortada)
-VALUES((select id from tipos_solicitudes where codigo = 'AV_PASA_INV'), 'InformaciÃ³n del estudiante',
+VALUES((select id from tipos_solicitudes where codigo = 'AV_PASA_INV'), 'Información del estudiante',
 'https://docs.google.com/document/d/1Ieu3WaaVJLLvhJKks7bycFlS94H92DK7/edit',
 'https://bit.ly/4fysKuV');
 
 INSERT INTO enlaces_tipos_solicitudes (id_tipo_solicitud, nombre, url_real, url_acortada)
-VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PAS'), 'PÃ¡gina de la maestrÃ­a',
+VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PAS'), 'Página de la maestría',
 'https://fiet.unicauca.edu.co/maestriacomputacion/noticia/maestr%C3%ADa-en-computaci%C3%B3n-pasant%C3%ADa-en-investigaci%C3%B3n',
 'https://bit.ly/3Ad00aD');
 
 INSERT INTO enlaces_tipos_solicitudes (id_tipo_solicitud, nombre, url_real, url_acortada)
-VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PAS'), 'ParÃ¡grafo 3 del ArtÃ­culo 12 del Reglamento EspecÃ­fico de la MaestrÃ­a en ComputaciÃ³n',
+VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PAS'), 'Parágrafo 3 del Artículo 12 del Reglamento Específico de la Maestría en Computación',
 'https://drive.google.com/file/d/1DZeLEg4gamjiE1PGBheT_9XlrVpbWbKR/view',
 'https://bit.ly/3LYbBwW');
 
 INSERT INTO enlaces_tipos_solicitudes (id_tipo_solicitud, nombre, url_real, url_acortada)
-VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'), 'ResoluciÃ³n 276 de 2023 de la FIET',
+VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'), 'Resolución 276 de 2023 de la FIET',
 'https://drive.google.com/file/d/1T_pUiU3NIZ7fVkcUCizYFliyNlpXCtm4/view',
 'https://bit.ly/3WX0V8c');
 
@@ -2525,7 +2525,7 @@ VALUES((select id from tipos_solicitudes where codigo = 'RE_CRED_PR_DOC'), 'Reso
 /*TABLE ENLACES_SUBTIPOS*/
 INSERT INTO enlaces_subtipos (id_sub_tipo_solicitud, nombre_requisito)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIS_CUR_PREG'), 
-'DocumentaciÃ³n segÃºn especificaciones establecidas por el Consejo de Facultad para cursos nuevos.');
+'Documentación según especificaciones establecidas por el Consejo de Facultad para cursos nuevos.');
 
 INSERT INTO enlaces_subtipos (id_sub_tipo_solicitud, nombre_requisito)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIS_CUR_PREG'), 
@@ -2533,7 +2533,7 @@ VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIS_CUR_PREG'),
 
 INSERT INTO enlaces_subtipos (id_sub_tipo_solicitud, nombre_requisito)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIS_CUR_POSG'), 
-'DocumentaciÃ³n segÃºn especificaciones establecidas por el Consejo de Facultad para cursos nuevos.');
+'Documentación según especificaciones establecidas por el Consejo de Facultad para cursos nuevos.');
 
 INSERT INTO enlaces_subtipos (id_sub_tipo_solicitud, nombre_requisito)
 VALUES ((select id from sub_tipos_solicitudes where codigo = 'DIS_CUR_POSG'), 
@@ -2554,29 +2554,29 @@ VALUES ((select id from sub_tipos_solicitudes where codigo = 'ELA_MAT_APOY'),
 /*TABLE REQUISITOS_SOLICITUD*/
 -- ADICION ASIGNATURAS
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar adiciÃ³n de asignaturas:',NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes 
+VALUES ('Documentos requeridos para solicitar adición de asignaturas:',NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes 
 WHERE codigo = 'AD_ASIG'));
 
 -- CANCELAR ASIGNATURAS
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar cancelaciÃ³n de asignaturas:',NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes 
+VALUES ('Documentos requeridos para solicitar cancelación de asignaturas:',NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes 
 WHERE codigo = 'CA_ASIG'));
 
 -- HOMOLOGACION ASIGNATURAS ESPECIALIZACION
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar homologaciÃ³n de asignaturas cursadas en la EspecializaciÃ³n en Desarrollo de Soluciones InformÃ¡ticas:',
-'Las asignaturas y seminarios cuyo reconocimiento se solicite deben haber sido aprobados de acuerdo con las normas del programa de origen. No obstante, el ComitÃ© de Programa podrÃ¡ recomendar para su reconocimiento la realizaciÃ³n de exÃ¡menes de suficiencia o de actividades complementarias.',
-'ARTÃCULO 28: Los estudiantes que hayan cursado asignaturas y/o seminarios de Doctorado, MaestrÃ­a o EspecializaciÃ³n con anterioridad a su ingreso al Programa, podrÃ¡n solicitar homologaciÃ³n de Ã©stas al Consejo de Facultad previo concepto del ComitÃ© de Programa, mediante el cumplimiento de los siguientes requisitos:',
-'Tener en cuenta que para optar al tÃ­tulo, el estudiante deberÃ¡ cursar en la Universidad del Cauca por lo menos el 60% de los crÃ©ditos acadÃ©micos correspondientes a asignaturas y seminarios.',
+VALUES ('Documentos requeridos para solicitar homologación de asignaturas cursadas en la Especialización en Desarrollo de Soluciones Informáticas:',
+'Las asignaturas y seminarios cuyo reconocimiento se solicite deben haber sido aprobados de acuerdo con las normas del programa de origen. No obstante, el Comité de Programa podrá recomendar para su reconocimiento la realización de exámenes de suficiencia o de actividades complementarias.',
+'ARTÍCULO 28: Los estudiantes que hayan cursado asignaturas y/o seminarios de Doctorado, Maestría o Especialización con anterioridad a su ingreso al Programa, podrán solicitar homologación de éstas al Consejo de Facultad previo concepto del Comité de Programa, mediante el cumplimiento de los siguientes requisitos:',
+'Tener en cuenta que para optar al título, el estudiante deberá cursar en la Universidad del Cauca por lo menos el 60% de los créditos académicos correspondientes a asignaturas y seminarios.',
 (SELECT id FROM tipos_solicitudes WHERE codigo = 'HO_ASIG_ESP'));
 
 -- HOMOLOGACION ASIGNATURAS POSGRADO
 INSERT INTO requisitos_solicitud
 (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES('Documentos requeridos para solicitar homologaciÃ³n de asignaturas cursadas en programas de postgrado (Ver ArtÃ­culo 28 y 29 del Acuerdo Superior 022 de 2013):',
-'Las asignaturas y seminarios cuyo reconocimiento se solicite deben haber sido aprobados de acuerdo con las normas del programa de origen. No obstante, el ComitÃ© de Programa podrÃ¡ recomendar para su reconocimiento la realizaciÃ³n de exÃ¡menes de suficiencia o de actividades complementarias.',
-'ARTÃCULO 28: Los estudiantes que hayan cursado asignaturas y/o seminarios de Doctorado, MaestrÃ­a o EspecializaciÃ³n con anterioridad a su ingreso al Programa, podrÃ¡n solicitar homologaciÃ³n de Ã©stas al Consejo de Facultad previo concepto del ComitÃ© de Programa, mediante el cumplimiento de los siguientes requisitos:',
-'Tener en cuenta que para optar al tÃ­tulo, el estudiante deberÃ¡ cursar en la Universidad del Cauca por lo menos el 60% de los crÃ©ditos acadÃ©micos correspondientes a asignaturas y seminarios.',
+VALUES('Documentos requeridos para solicitar homologación de asignaturas cursadas en programas de postgrado (Ver Artículo 28 y 29 del Acuerdo Superior 022 de 2013):',
+'Las asignaturas y seminarios cuyo reconocimiento se solicite deben haber sido aprobados de acuerdo con las normas del programa de origen. No obstante, el Comité de Programa podrá recomendar para su reconocimiento la realización de exámenes de suficiencia o de actividades complementarias.',
+'ARTÍCULO 28: Los estudiantes que hayan cursado asignaturas y/o seminarios de Doctorado, Maestría o Especialización con anterioridad a su ingreso al Programa, podrán solicitar homologación de éstas al Consejo de Facultad previo concepto del Comité de Programa, mediante el cumplimiento de los siguientes requisitos:',
+'Tener en cuenta que para optar al título, el estudiante deberá cursar en la Universidad del Cauca por lo menos el 60% de los créditos académicos correspondientes a asignaturas y seminarios.',
 (SELECT id FROM tipos_solicitudes WHERE codigo = 'HO_ASIG_POS'));
 
 -- APLAZAR SEMESTRE
@@ -2587,126 +2587,126 @@ VALUES ('Documentos requeridos para aplazamiento de semestre:',NULL,NULL,NULL,
 -- CURSAR ASIGNATURAS OTRO PROGRAMA
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
 VALUES ('Documentos requeridos para cursar asignaturas en otros programas (Ver articulo 26 del Acuerdo Superior 022 de 2013):',
-NULL,'ARTÃCULO 26.  Los estudiantes podrÃ¡n tomar, con el aval de su Director, asignaturas o seminarios ofrecidos por otros programas de posgrado de la Universidad del Cauca o de otra InstituciÃ³n de educaciÃ³n superior nacional  o extranjera  legalmente reconocida, siempre y cuando Ã©stas hayan sido previamente aprobadas por el ComitÃ© de Programa.',
+NULL,'ARTÍCULO 26.  Los estudiantes podrán tomar, con el aval de su Director, asignaturas o seminarios ofrecidos por otros programas de posgrado de la Universidad del Cauca o de otra Institución de educación superior nacional  o extranjera  legalmente reconocida, siempre y cuando éstas hayan sido previamente aprobadas por el Comité de Programa.',
 NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'CU_ASIG'));
 
--- SOLICITUD DE AVAL PARA REALIZAR PASANTÃA DE INVESTIGACIÃ“N
+-- SOLICITUD DE AVAL PARA REALIZAR PASANTÍA DE INVESTIGACIÓN
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Solicitudes de aval para estancias de InvestigaciÃ³n:',
-'La solicitud de aval para la realizaciÃ³n de la pasantÃ­a debe presentarse mÃ­nimo dos (2) meses antes de la fecha de inicio de la pasantÃ­a y con los documentos completos descritos a continuaciÃ³n:',
+VALUES ('Solicitudes de aval para estancias de Investigación:',
+'La solicitud de aval para la realización de la pasantía debe presentarse mínimo dos (2) meses antes de la fecha de inicio de la pasantía y con los documentos completos descritos a continuación:',
 NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'AV_PASA_INV'));
 
--- SOLICITUD APOYO ECONÃ“MICO PARA ESTANCIAS DE INVESTIGACIÃ“N
+-- SOLICITUD APOYO ECONÓMICO PARA ESTANCIAS DE INVESTIGACIÓN
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Solicitudes de apoyo econÃ³mico para estancias de InvestigaciÃ³n:',
-'La solicitud de apoyo econÃ³mico para estancias de investigaciÃ³n debe presentarse mÃ­nimo dos (2) meses antes de la fecha de inicio de la pasantÃ­a y con los documentos completos descritos a continuaciÃ³n:',
+VALUES ('Solicitudes de apoyo económico para estancias de Investigación:',
+'La solicitud de apoyo económico para estancias de investigación debe presentarse mínimo dos (2) meses antes de la fecha de inicio de la pasantía y con los documentos completos descritos a continuación:',
 NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'AP_ECON_INV'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR PASANTÃAS DE INVESTIGACIÃ“N
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR PASANTÍAS DE INVESTIGACIÓN
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Solicitud de reconocimiento de crÃ©ditos por pasantÃ­as de investigaciÃ³n:',
-'La solicitud de reconocimiento de crÃ©ditos por pasantÃ­a de investigaciÃ³n debe realizarse como mÃ¡ximo un (1) mes despuÃ©s de la finalizaciÃ³n de la misma, anexando los siguientes documentos:',
+VALUES ('Solicitud de reconocimiento de créditos por pasantías de investigación:',
+'La solicitud de reconocimiento de créditos por pasantía de investigación debe realizarse como máximo un (1) mes después de la finalización de la misma, anexando los siguientes documentos:',
 NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'RE_CRED_PAS'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR DISEÃ‘O CURRICULAR DE CURSO TEÃ“RICO/PRÃCTICO NUEVO
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR DISEÑO CURRICULAR DE CURSO TEÓRICO/PRÁCTICO NUEVO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar reconocimiento de crÃ©ditos por diseÃ±o curricular de curso teÃ³rico/prÃ¡ctico nuevo de pregrado o posgrado:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:',
+VALUES ('Documentos requeridos para solicitar reconocimiento de créditos por diseño curricular de curso teórico/práctico nuevo de pregrado o posgrado:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:',
 NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'RE_CRED_DIS'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR PREPARACIÃ“N DE CURSOS TEÃ“RICOS/PRÃCTICOS NUEVOS
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR PREPARACIÓN DE CURSOS TEÓRICOS/PRÁCTICOS NUEVOS
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitud de reconocimiento de crÃ©ditos por preparaciÃ³n de cursos teÃ³ricos/prÃ¡cticos nuevos - pregrado y posgrado:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:',
+VALUES ('Documentos requeridos para solicitud de reconocimiento de créditos por preparación de cursos teóricos/prácticos nuevos - pregrado y posgrado:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:',
 NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'PR_CURS_TEO'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR DOCENCIA EN PREGRADO O POSGRADO
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR DOCENCIA EN PREGRADO O POSGRADO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar asignaciÃ³n de crÃ©ditos por docencia en pregrado o posgrado:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:',
-NULL,'Las actividades que el estudiante puede realizar para completar los crÃ©ditos correspondientes a la Actividad PrÃ¡ctica Docente pueden consultarse en ResoluciÃ³n 276 de 2023 de la FIET.'
+VALUES ('Documentos requeridos para solicitar asignación de créditos por docencia en pregrado o posgrado:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:',
+NULL,'Las actividades que el estudiante puede realizar para completar los créditos correspondientes a la Actividad Práctica Docente pueden consultarse en Resolución 276 de 2023 de la FIET.'
 ,(SELECT id FROM tipos_solicitudes WHERE codigo = 'AS_CRED_DO'));
 
--- SOLICITUD AVAL PARA REALIZACIÃ“N DE SEMINARIO DE ACTUALIZACIÃ“N
+-- SOLICITUD AVAL PARA REALIZACIÓN DE SEMINARIO DE ACTUALIZACIÓN
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitud de Aval para realizaciÃ³n del curso:',
+VALUES ('Documentos requeridos para solicitud de Aval para realización del curso:',
 NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'AV_SEMI_ACT'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR REALIZACIÃ“N DE SEMINARIO DE ACTUALIZACIÃ“N
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR REALIZACIÓN DE SEMINARIO DE ACTUALIZACIÓN
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitud de Aval para realizaciÃ³n del curso:',
+VALUES ('Documentos requeridos para solicitud de Aval para realización del curso:',
 NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'RE_CRED_SEM'));
 
--- ASIGNACIÃ“N DE CRÃ‰DITOS POR MONITORIAS DE CURSOS
+-- ASIGNACIÓN DE CRÉDITOS POR MONITORIAS DE CURSOS
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar asignaciÃ³n de crÃ©ditos por monitorÃ­as de cursos:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar asignación de créditos por monitorías de cursos:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes 
 WHERE codigo = 'AS_CRED_MON'));
 
--- ASIGNACIÃ“N DE CRÃ‰DITOS POR LA ELABORACIÃ“N DE MATERIAL DE APOYO PARA PREGRADO/POSGRADO
+-- ASIGNACIÓN DE CRÉDITOS POR LA ELABORACIÓN DE MATERIAL DE APOYO PARA PREGRADO/POSGRADO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar asignaciÃ³n de crÃ©ditos por la elaboraciÃ³n de material de apoyo para pregrado/posgrado:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar asignación de créditos por la elaboración de material de apoyo para pregrado/posgrado:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes 
 WHERE codigo = 'AS_CRED_MAT'));
 
--- ASIGNACIÃ“N DE CRÃ‰DITOS POR DIRECCIÃ“N DE TRABAJO DE GRADO EN PREGRADO O POSGRADO
+-- ASIGNACIÓN DE CRÉDITOS POR DIRECCIÓN DE TRABAJO DE GRADO EN PREGRADO O POSGRADO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar asignaciÃ³n de crÃ©ditos por direcciÃ³n de trabajo de grado en pregrado o posgrado:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar asignación de créditos por dirección de trabajo de grado en pregrado o posgrado:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'TG_PREG_POS'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR SER JURADO DE TRABAJO DE GRADO DE PREGRADO O POSGRADO
+-- RECONOCIMIENTO DE CRÉDITOS POR SER JURADO DE TRABAJO DE GRADO DE PREGRADO O POSGRADO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar el reconocimiento de crÃ©ditos por ser jurado de trabajo de grado de pregrado o posgrado:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar el reconocimiento de créditos por ser jurado de trabajo de grado de pregrado o posgrado:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'JU_PREG_POS'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR EVALUACIÃ“N DE ANTEPROYECTO DE PREGRADO O JURADO DE ANTEPROYECTO DE POSGRADO
+-- RECONOCIMIENTO DE CRÉDITOS POR EVALUACIÓN DE ANTEPROYECTO DE PREGRADO O JURADO DE ANTEPROYECTO DE POSGRADO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar el reconocimiento de crÃ©ditos por evaluaciÃ³n de anteproyecto de pregrado o jurado de anteproyecto de posgrado:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar el reconocimiento de créditos por evaluación de anteproyecto de pregrado o jurado de anteproyecto de posgrado:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'EV_ANTE_PRE'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR EVALUACIÃ“N DE PRODUCTIVIDAD INTELECTUAL
+-- RECONOCIMIENTO DE CRÉDITOS POR EVALUACIÓN DE PRODUCTIVIDAD INTELECTUAL
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar el reconocimiento de crÃ©ditos por evaluaciÃ³n de productividad intelectual:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar el reconocimiento de créditos por evaluación de productividad intelectual:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'EV_PROD_INT'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR EVALUACIÃ“N INFORME SABÃTICO
+-- RECONOCIMIENTO DE CRÉDITOS POR EVALUACIÓN INFORME SABÁTICO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar el reconocimiento de crÃ©ditos por evaluaciÃ³n informe sabÃ¡tico:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar el reconocimiento de créditos por evaluación informe sabático:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'EV_INFO_SAB'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR PARTICIPACIÃ“N EN EL COMITÃ‰ DE PROGRAMA
+-- RECONOCIMIENTO DE CRÉDITOS POR PARTICIPACIÓN EN EL COMITÉ DE PROGRAMA
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar el reconocimiento de crÃ©ditos por participaciÃ³n en el comitÃ© de programa:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar el reconocimiento de créditos por participación en el comité de programa:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'PA_COMI_PRO'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR REALIZACIÃ“N DE OTRAS ACTIVIDADES DE APOYO AL DEPARTAMENTO
+-- RECONOCIMIENTO DE CRÉDITOS POR REALIZACIÓN DE OTRAS ACTIVIDADES DE APOYO AL DEPARTAMENTO
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Documentos requeridos para solicitar el reconocimiento de crÃ©ditos por realizaciÃ³n de otras actividades de apoyo al departamento:',
-'Solicitud de reconocimiento de crÃ©ditos dirigida al Coordinador o al ComitÃ© de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
+VALUES ('Documentos requeridos para solicitar el reconocimiento de créditos por realización de otras actividades de apoyo al departamento:',
+'Solicitud de reconocimiento de créditos dirigida al Coordinador o al Comité de Programa con Visto Bueno del tutor anexando los siguientes documentos:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'OT_ACTI_APO'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR PUBLICACIONES
+-- RECONOCIMIENTO DE CRÉDITOS POR PUBLICACIONES
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Solicitudes de reconocimiento de crÃ©ditos por publicaciones',
-'Documentos requeridos para solicitar asignaciÃ³n de crÃ©ditos por publicaciones:'
+VALUES ('Solicitudes de reconocimiento de créditos por publicaciones',
+'Documentos requeridos para solicitar asignación de créditos por publicaciones:'
 ,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'RE_CRED_PUB'));
 
--- APOYO ECONÃ“MICO PARA ASISTENCIA A CONGRESOS, PRESENTANDO ARTÃCULOS
+-- APOYO ECONÓMICO PARA ASISTENCIA A CONGRESOS, PRESENTANDO ARTÍCULOS
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Solicitudes de apoyo econÃ³mico para asistencia a congresos, presentando articulos:',
+VALUES ('Solicitudes de apoyo económico para asistencia a congresos, presentando articulos:',
 NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'AP_ECON_ASI'));
 
--- APOYO ECONÃ“MICO PARA ASISTENCIA A CONGRESOS, PRESENTANDO ARTÃCULOS
+-- APOYO ECONÓMICO PARA ASISTENCIA A CONGRESOS, PRESENTANDO ARTÍCULOS
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
-VALUES ('Pago de publicaciÃ³n o inscripciÃ³n a eventos.',
+VALUES ('Pago de publicación o inscripción a eventos.',
 NULL,NULL,NULL,(SELECT id FROM tipos_solicitudes WHERE codigo = 'PA_PUBL_EVE'));
 
 -- SOLICITUD BECAS
@@ -2721,21 +2721,21 @@ NULL, NULL, NULL, 29, 1, current_timestamp, 1, current_timestamp);
 -- CANCELAR ASIGNATURAS
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Soporte/JustificaciÃ³n cancelaciÃ³n de la materia (si aplica).',
+VALUES('Soporte/Justificación cancelación de la materia (si aplica).',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'CA_ASIG'));
 
 -- APLAZAR SEMESTRE
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Soporte/JustificaciÃ³n para aplazar semestre (si aplica).',
+VALUES('Soporte/Justificación para aplazar semestre (si aplica).',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_SEME'));
 
 -- HOMOLOGACION ASIGNATURAS ESPECIALIZACION
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Certificado de notas de la especializaciÃ³n.',
+VALUES('Certificado de notas de la especialización.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'HO_ASIG_ESP'));
 
@@ -2748,7 +2748,7 @@ WHERE ts.codigo = 'HO_ASIG_POS'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Certificado oficial de no haber perdido el derecho a continuar estudios por motivos de Ã­ndole acadÃ©mica o disciplinaria',
+VALUES('Certificado oficial de no haber perdido el derecho a continuar estudios por motivos de índole académica o disciplinaria',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'HO_ASIG_POS'));
 
@@ -2767,61 +2767,61 @@ WHERE ts.codigo = 'HO_ASIG_POS'));
 -- CURSAR ASIGNATURAS OTRO PROGRAMA
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('El estudiante debe presentar al ComitÃ© de Programa la solicitud de aprobaciÃ³n de la asignatura o seminario con un mÃ­nimo de dos (2) meses de anticipaciÃ³n a su inicio, con el visto bueno de su Director, y acompaÃ±ada del plan de estudios correspondiente.   El plan de estudios debe ser detallado, incluyendo el tiempo de dedicaciÃ³n a las distintas actividades, el rÃ©gimen de evaluaciÃ³n, y la escala de calificaciones cuando fuere distinta a la usada en la Universidad del Cauca.',
+VALUES('El estudiante debe presentar al Comité de Programa la solicitud de aprobación de la asignatura o seminario con un mínimo de dos (2) meses de anticipación a su inicio, con el visto bueno de su Director, y acompañada del plan de estudios correspondiente.   El plan de estudios debe ser detallado, incluyendo el tiempo de dedicación a las distintas actividades, el régimen de evaluación, y la escala de calificaciones cuando fuere distinta a la usada en la Universidad del Cauca.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'CU_ASIG'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('El ComitÃ© de Programa, en un tÃ©rmino de un (1) mes contado a partir de la fecha de su presentaciÃ³n, estudiarÃ¡ los  contenidos programÃ¡ticos detallados de las asignaturas o seminarios y le indicarÃ¡ el nÃºmero de crÃ©ditos correspondientes, teniendo en cuenta la normatividad vigente sobre la materia.',
+VALUES('El Comité de Programa, en un término de un (1) mes contado a partir de la fecha de su presentación, estudiará los  contenidos programáticos detallados de las asignaturas o seminarios y le indicará el número de créditos correspondientes, teniendo en cuenta la normatividad vigente sobre la materia.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'CU_ASIG'));
 
--- SOLICITUD DE AVAL PARA REALIZAR PASANTÃA DE INVESTIGACIÃ“N
+-- SOLICITUD DE AVAL PARA REALIZAR PASANTÍA DE INVESTIGACIÓN
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Plan de trabajo con la descripciÃ³n de las actividades a realizar con visto bueno del tutor y del supervisor de la estancia.',
+VALUES('Plan de trabajo con la descripción de las actividades a realizar con visto bueno del tutor y del supervisor de la estancia.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AV_PASA_INV'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Carta de invitaciÃ³n.',
+VALUES('Carta de invitación.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AV_PASA_INV'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Formatos de exoneraciÃ³n de responsabilidades, solicitud de movilidad acadÃ©mica saliente e informaciÃ³n del estudiante.',
+VALUES('Formatos de exoneración de responsabilidades, solicitud de movilidad académica saliente e información del estudiante.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AV_PASA_INV'));
 
--- SOLICITUD APOYO ECONÃ“MICO PARA ESTANCIAS DE INVESTIGACIÃ“N
+-- SOLICITUD APOYO ECONÓMICO PARA ESTANCIAS DE INVESTIGACIÓN
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Copia de la cÃ©dula del estudiante.',
+VALUES('Copia de la cédula del estudiante.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_INV'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Copia de recibo de pago de matrÃ­cula vigente.',
+VALUES('Copia de recibo de pago de matrícula vigente.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_INV'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('CertificaciÃ³n de la cuenta bancaria.',
+VALUES('Certificación de la cuenta bancaria.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_INV'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Carta de invitaciÃ³n.',
+VALUES('Carta de invitación.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_INV'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR PASANTÃAS DE INVESTIGACIÃ“N
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR PASANTÍAS DE INVESTIGACIÓN
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
 VALUES('Informe de las actividades realizadas en el lugar de la estancia (con soportes) ',
@@ -2830,7 +2830,7 @@ WHERE ts.codigo = 'RE_CRED_PAS'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('CertificaciÃ³n de la culminaciÃ³n de las actividades firmada por el asesor.',
+VALUES('Certificación de la culminación de las actividades firmada por el asesor.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_PAS'));
 
@@ -2842,14 +2842,14 @@ WHERE ts.codigo = 'RE_CRED_PAS'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Video corto como evidencia de la socializaciÃ³n de la pasantÃ­a realizada, contando la experiencia personal, profesional y de formaciÃ³n al realizar la pasantÃ­a. Por favor indicar con la debida antelaciÃ³n la fecha, hora y enlace de la reuniÃ³n de socializaciÃ³n (sino es posible realizar la socializaciÃ³n, entonces entregar video bien elaborado para ser publicado en la pÃ¡gina de la maestria en este enlace https://bit.ly/3GXE5Ce.',
+VALUES('Video corto como evidencia de la socialización de la pasantía realizada, contando la experiencia personal, profesional y de formación al realizar la pasantía. Por favor indicar con la debida antelación la fecha, hora y enlace de la reunión de socialización (sino es posible realizar la socialización, entonces entregar video bien elaborado para ser publicado en la página de la maestria en este enlace https://bit.ly/3GXE5Ce.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_PAS'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR DISEÃ‘O CURRICULAR DE CURSO TEÃ“RICO/PRÃCTICO NUEVO
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR DISEÑO CURRICULAR DE CURSO TEÓRICO/PRÁCTICO NUEVO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Entrega documentaciÃ³n segÃºn especificaciones establecidas por el Consejo de Facultad para cursos nuevos, incluyendo contenido programÃ¡tico, microcurrÃ­culo, presentaciÃ³n del curso y justificaciÃ³n, aval del programa y/o del grupo de investigaciÃ³n para el cual se propone el curso.',
+VALUES('Entrega documentación según especificaciones establecidas por el Consejo de Facultad para cursos nuevos, incluyendo contenido programático, microcurrículo, presentación del curso y justificación, aval del programa y/o del grupo de investigación para el cual se propone el curso.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_DIS'));
 
@@ -2861,32 +2861,32 @@ WHERE ts.codigo = 'RE_CRED_DIS'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Entrega documentaciÃ³n segÃºn especificaciones establecidas por el Consejo de Facultad para cursos nuevos, incluyendo contenido programÃ¡tico, microcurrÃ­culo, presentaciÃ³n del curso y justificaciÃ³n, aval del programa y/o del grupo de investigaciÃ³n para el cual se propone el curso.',
+VALUES('Entrega documentación según especificaciones establecidas por el Consejo de Facultad para cursos nuevos, incluyendo contenido programático, microcurrículo, presentación del curso y justificación, aval del programa y/o del grupo de investigación para el cual se propone el curso.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_DIS'));
 
--- SOLICITUD PREPARACIÃ“N DE CURSOS TEÃ“RICOS/PRÃCTICOS NUEVOS
+-- SOLICITUD PREPARACIÓN DE CURSOS TEÓRICOS/PRÁCTICOS NUEVOS
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Material de apoyo elaborado para el curso, guÃ­as de prÃ¡cticas, transparencias o diapositivas, recursos educativos, diseÃ±o de actividades, conferencias, literatura cientÃ­fica o gris, entre otras que apoyen el desarrollo del curso, discriminado segÃºn contenido programÃ¡tico o microcurriculo (de preferencia en formato digital).',
+VALUES('Material de apoyo elaborado para el curso, guías de prácticas, transparencias o diapositivas, recursos educativos, diseño de actividades, conferencias, literatura científica o gris, entre otras que apoyen el desarrollo del curso, discriminado según contenido programático o microcurriculo (de preferencia en formato digital).',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'PR_CURS_TEO'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR DOCENCIA EN PREGRADO O POSGRADO
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR DOCENCIA EN PREGRADO O POSGRADO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Labor docente asignada (descargada de SIMCA) con la descripciÃ³n de la intensidad horaria total desarrollada.',
+VALUES('Labor docente asignada (descargada de SIMCA) con la descripción de la intensidad horaria total desarrollada.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AS_CRED_DO'));
 
--- SOLICITUD AVAL PARA REALIZACIÃ“N DE SEMINARIO DE ACTUALIZACIÃ“N
+-- SOLICITUD AVAL PARA REALIZACIÓN DE SEMINARIO DE ACTUALIZACIÓN
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Contenido ProgramÃ¡tico del curso que incluya (temÃ¡tica a orientar, intensidad, poblaciÃ³n objetivo, profesor, costos, recursos, etc). Se recomienda utilizar recursos de los grupos de I+D, no vincular labor docente de profesores de cÃ¡tedra, ocasionales o planta de Unicauca y que sea de carÃ¡cter gratuito.',
+VALUES('Contenido Programático del curso que incluya (temática a orientar, intensidad, población objetivo, profesor, costos, recursos, etc). Se recomienda utilizar recursos de los grupos de I+D, no vincular labor docente de profesores de cátedra, ocasionales o planta de Unicauca y que sea de carácter gratuito.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AV_SEMI_ACT'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR REALIZACIÃ“N DE SEMINARIO DE ACTUALIZACIÃ“N
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR REALIZACIÓN DE SEMINARIO DE ACTUALIZACIÓN
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
 VALUES('Carta de aval del Consejo de Facultad.',
@@ -2899,73 +2899,73 @@ VALUES('Listado de asistencia.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_SEM'));
 
--- SOLICITUD ASIGNACIÃ“N DE CRÃ‰DITOS POR MONITORIAS DE CURSOS
+-- SOLICITUD ASIGNACIÓN DE CRÉDITOS POR MONITORIAS DE CURSOS
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('CertificaciÃ³n del profesor de la asignatura (s) indicando intensidad y trabajo realizado, con visto bueno del Jefe de Departamento.',
+VALUES('Certificación del profesor de la asignatura (s) indicando intensidad y trabajo realizado, con visto bueno del Jefe de Departamento.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AS_CRED_MON'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.',
+VALUES('Aval del Comité de programa de la Maestría para la realización de la actividad.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AS_CRED_MON'));
 
--- ASIGNACIÃ“N DE CRÃ‰DITOS POR LA ELABORACIÃ“N DE MATERIAL DE APOYO PARA PREGRADO/POSGRADO
+-- ASIGNACIÓN DE CRÉDITOS POR LA ELABORACIÓN DE MATERIAL DE APOYO PARA PREGRADO/POSGRADO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Material de apoyo elaborado para el curso, guÃ­as de prÃ¡cticas, transparencias o diapositivas, recursos educativos, diseÃ±o de actividades, conferencias, literatura cientÃ­fica o gris, entre otras que apoyen el desarrollo del curso, discriminado segÃºn contenido programÃ¡tico o microcurriculo (de preferencia en formato digital).',
+VALUES('Material de apoyo elaborado para el curso, guías de prácticas, transparencias o diapositivas, recursos educativos, diseño de actividades, conferencias, literatura científica o gris, entre otras que apoyen el desarrollo del curso, discriminado según contenido programático o microcurriculo (de preferencia en formato digital).',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AS_CRED_MAT'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Carta de aceptaciÃ³n del tutor o profesor de la asignatura validando el material entregado.',
+VALUES('Carta de aceptación del tutor o profesor de la asignatura validando el material entregado.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AS_CRED_MAT'));
 
--- ASIGNACIÃ“N DE CRÃ‰DITOS POR DIRECCIÃ“N DE TRABAJO DE GRADO EN PREGRADO O POSGRADO
+-- ASIGNACIÓN DE CRÉDITOS POR DIRECCIÓN DE TRABAJO DE GRADO EN PREGRADO O POSGRADO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('ResoluciÃ³n de aprobaciÃ³n del anteproyecto.',
+VALUES('Resolución de aprobación del anteproyecto.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'TG_PREG_POS'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Acta de sustentaciÃ³n.',
+VALUES('Acta de sustentación.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'TG_PREG_POS'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR SER JURADO DE TRABAJO DE GRADO DE PREGRADO O POSGRADO
+-- RECONOCIMIENTO DE CRÉDITOS POR SER JURADO DE TRABAJO DE GRADO DE PREGRADO O POSGRADO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Acta de sustentaciÃ³n firmada por todos los jurados.',
+VALUES('Acta de sustentación firmada por todos los jurados.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'JU_PREG_POS'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR EVALUACIÃ“N DE ANTEPROYECTO DE PREGRADO O JURADO DE ANTEPROYECTO DE POSGRADO
+-- RECONOCIMIENTO DE CRÉDITOS POR EVALUACIÓN DE ANTEPROYECTO DE PREGRADO O JURADO DE ANTEPROYECTO DE POSGRADO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Formato(S) de la evaluaciÃ³n realizada.',
+VALUES('Formato(S) de la evaluación realizada.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'EV_ANTE_PRE'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Carta o correo donde conste la asignaciÃ³n como evaluador.',
+VALUES('Carta o correo donde conste la asignación como evaluador.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'EV_ANTE_PRE'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR EVALUACIÃ“N DE PRODUCTIVIDAD INTELECTUAL
+-- RECONOCIMIENTO DE CRÉDITOS POR EVALUACIÓN DE PRODUCTIVIDAD INTELECTUAL
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Carta de respuesta al ComitÃ© de Personal Docente (CPD).',
+VALUES('Carta de respuesta al Comité de Personal Docente (CPD).',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'EV_PROD_INT'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR EVALUACIÃ“N INFORME SABÃTICO
+-- RECONOCIMIENTO DE CRÉDITOS POR EVALUACIÓN INFORME SABÁTICO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
 VALUES('Carta de respuesta al Consejo de Facultad.',
@@ -2978,98 +2978,98 @@ VALUES('Carta de respuesta al Consejo de Facultad.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'EV_INFO_SAB'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR PARTICIPACIÃ“N EN EL COMITÃ‰ DE PROGRAMA
+-- RECONOCIMIENTO DE CRÉDITOS POR PARTICIPACIÓN EN EL COMITÉ DE PROGRAMA
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
 VALUES('Carta de nombramiento como representante de los estudiantes.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'PA_COMI_PRO'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR REALIZACIÃ“N DE OTRAS ACTIVIDADES DE APOYO AL DEPARTAMENTO
+-- RECONOCIMIENTO DE CRÉDITOS POR REALIZACIÓN DE OTRAS ACTIVIDADES DE APOYO AL DEPARTAMENTO
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
 VALUES('Carta del jefe de departamento con actividades relacionadas y soportes.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'OT_ACTI_APO'));
 
--- RECONOCIMIENTO DE CRÃ‰DITOS POR PUBLICACIONES
+-- RECONOCIMIENTO DE CRÉDITOS POR PUBLICACIONES
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Copia del artÃ­culo publicado o aceptado.',
+VALUES('Copia del artículo publicado o aceptado.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_PUB'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Portada impresa de la revista y tabla de contenido o correo o carta de aceptaciÃ³n indicando el volumen y la fecha de la publicaciÃ³n del artÃ­culo.',
+VALUES('Portada impresa de la revista y tabla de contenido o correo o carta de aceptación indicando el volumen y la fecha de la publicación del artículo.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_PUB'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('En el caso de revistas indexadas u homologadas, debe adjuntarse pantallazo del Publindex con la informaciÃ³n de la categorÃ­a asignada segÃºn la fecha de publicaciÃ³n del artÃ­culo.',
+VALUES('En el caso de revistas indexadas u homologadas, debe adjuntarse pantallazo del Publindex con la información de la categoría asignada según la fecha de publicación del artículo.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_PUB'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('En el caso en que el artÃ­culo se vaya a publicar en un evento de pago o revista de pago deberÃ¡ entregar recibo de pago, esto aplica para cuando el artÃ­culo no ha sido publicado, es decir, solo se encuentra aprobado.',
+VALUES('En el caso en que el artículo se vaya a publicar en un evento de pago o revista de pago deberá entregar recibo de pago, esto aplica para cuando el artículo no ha sido publicado, es decir, solo se encuentra aprobado.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_PUB'));
 
--- APOYO ECONÃ“MICO PARA ASISTENCIA A CONGRESOS, PRESENTANDO ARTÃCULOS
+-- APOYO ECONÓMICO PARA ASISTENCIA A CONGRESOS, PRESENTANDO ARTÍCULOS
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Solicitud al ComitÃ© de Programa con visto bueno del tutor y del director del grupo de investigaciÃ³n, indicando tipo de congreso, nombre, fechas, auxilio de requerido y nombre de la publicaciÃ³n, direcciÃ³n de residencia, nÃºmero de cedula, telefono y nÃºmero de cuenta bancaria. ',
+VALUES('Solicitud al Comité de Programa con visto bueno del tutor y del director del grupo de investigación, indicando tipo de congreso, nombre, fechas, auxilio de requerido y nombre de la publicación, dirección de residencia, número de cedula, telefono y número de cuenta bancaria. ',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_ASI'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('InformaciÃ³n del evento.',
+VALUES('Información del evento.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_ASI'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Carta de aceptaciÃ³n del artÃ­culo a presentar.',
+VALUES('Carta de aceptación del artículo a presentar.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_ASI'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('ArtÃ­culo completo.',
+VALUES('Artículo completo.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_ASI'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('CertificaciÃ³n cuenta bancaria.',
+VALUES('Certificación cuenta bancaria.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_ASI'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Recibo de matrÃ­cula del periodo acadÃ©mico vigente.',
+VALUES('Recibo de matrícula del periodo académico vigente.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_ASI'));
 
--- Pago de publicaciÃ³n o inscripciÃ³n a eventos.
+-- Pago de publicación o inscripción a eventos.
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('InformaciÃ³n del evento.',
+VALUES('Información del evento.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'PA_PUBL_EVE'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Carta de aceptaciÃ³n del artÃ­culo a presentar.',
+VALUES('Carta de aceptación del artículo a presentar.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'PA_PUBL_EVE'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('ArtÃ­culo completo.',
+VALUES('Artículo completo.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'PA_PUBL_EVE'));
 
@@ -3081,7 +3081,7 @@ WHERE ts.codigo = 'PA_PUBL_EVE'));
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud)
-VALUES('Recibo de matrÃ­cula del periodo acadÃ©mico vigente.',
+VALUES('Recibo de matrícula del periodo académico vigente.',
 (SELECT rs.id FROM requisitos_solicitud rs INNER JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'PA_PUBL_EVE'));
 
@@ -3091,49 +3091,49 @@ WHERE ts.codigo = 'PA_PUBL_EVE'));
 -- ADICION ASIGNATURAS
 INSERT INTO notas_documentos_requerido
 (nota, id_req_solicitud)
-VALUES('La solicitud debe enviarse mÃ¡ximo una (1) semana despuÃ©s del inicio del periodo acadÃ©mico.',
+VALUES('La solicitud debe enviarse máximo una (1) semana después del inicio del periodo académico.',
 (select rs.id from requisitos_solicitud rs inner JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AD_ASIG'));
 
 -- CANCELAR ASIGNATURAS
 INSERT INTO notas_documentos_requerido
 (nota, id_req_solicitud)
-VALUES('No se aceptarÃ¡n cancelaciones una vez terminado el periodo acadÃ©mico, despuÃ©s de finalizar las clases y/o despuÃ©s de tener notas asignadas.',
+VALUES('No se aceptarán cancelaciones una vez terminado el periodo académico, después de finalizar las clases y/o después de tener notas asignadas.',
 (select rs.id from requisitos_solicitud rs inner JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'CA_ASIG'));
 
 -- HOMOLOGACION ASIGNATURAS ESPECIALIZACION
 INSERT INTO notas_documentos_requerido
 (nota, id_req_solicitud)
-VALUES('No se reconocerÃ¡n asignaturas o seminarios de programas de posgrado que no estÃ©n debidamente registrados ante las autoridades competentes. Si las asignaturas o seminarios han sido realizados dentro de un programa de una universidad extranjera, deberÃ¡ seguirse el trÃ¡mite para la convalidaciÃ³n del tÃ­tulo o la homologaciÃ³n de estudios parciales, segÃºn el caso, establecido por el Ministerio de EducaciÃ³n Nacional.',
+VALUES('No se reconocerán asignaturas o seminarios de programas de posgrado que no estén debidamente registrados ante las autoridades competentes. Si las asignaturas o seminarios han sido realizados dentro de un programa de una universidad extranjera, deberá seguirse el trámite para la convalidación del título o la homologación de estudios parciales, según el caso, establecido por el Ministerio de Educación Nacional.',
 (select rs.id from requisitos_solicitud rs inner JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'HO_ASIG_ESP'));
 
 -- HOMOLOGACION ASIGNATURAS POSGRADO
 INSERT INTO notas_documentos_requerido
 (nota, id_req_solicitud)
-VALUES('No se reconocerÃ¡n asignaturas o seminarios de programas de posgrado que no estÃ©n debidamente registrados ante las autoridades competentes. Si las asignaturas o seminarios han sido realizados dentro de un programa de una universidad extranjera, deberÃ¡ seguirse el trÃ¡mite para la convalidaciÃ³n del tÃ­tulo o la homologaciÃ³n de estudios parciales, segÃºn el caso, establecido por el Ministerio de EducaciÃ³n Nacional.',
+VALUES('No se reconocerán asignaturas o seminarios de programas de posgrado que no estén debidamente registrados ante las autoridades competentes. Si las asignaturas o seminarios han sido realizados dentro de un programa de una universidad extranjera, deberá seguirse el trámite para la convalidación del título o la homologación de estudios parciales, según el caso, establecido por el Ministerio de Educación Nacional.',
 (select rs.id from requisitos_solicitud rs inner JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'HO_ASIG_POS'));
 
--- SOLICITUD DE AVAL PARA REALIZAR PASANTÃA DE INVESTIGACIÃ“N
+-- SOLICITUD DE AVAL PARA REALIZAR PASANTÍA DE INVESTIGACIÓN
 INSERT INTO notas_documentos_requerido
 (nota, id_req_solicitud)
 VALUES('Para la entrega de este documento, se debe contar con la firma a mano.',
 (select rs.id from requisitos_solicitud rs inner JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AV_PASA_INV'));
 
--- SOLICITUD APOYO ECONÃ“MICO PARA ESTANCIAS DE INVESTIGACIÃ“N
+-- SOLICITUD APOYO ECONÓMICO PARA ESTANCIAS DE INVESTIGACIÓN
 INSERT INTO notas_documentos_requerido
 (nota, id_req_solicitud)
 VALUES('Para la entrega de este documento, se debe contar con la firma a mano.',
 (select rs.id from requisitos_solicitud rs inner JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'AP_ECON_INV'));
 
--- SOLICITUD RECONOCIMIENTO DE CRÃ‰DITOS POR PASANTÃAS DE INVESTIGACIÃ“N
+-- SOLICITUD RECONOCIMIENTO DE CRÉDITOS POR PASANTÍAS DE INVESTIGACIÓN
 INSERT INTO notas_documentos_requerido
 (nota, id_req_solicitud)
-VALUES('Tener en cuenta el ParÃ¡grafo 3 del ArtÃ­culo 12 del Reglamento EspecÃ­fico de la MaestrÃ­a en ComputaciÃ³n.',
+VALUES('Tener en cuenta el Parágrafo 3 del Artículo 12 del Reglamento Específico de la Maestría en Computación.',
 (select rs.id from requisitos_solicitud rs inner JOIN tipos_solicitudes ts ON ts.id = rs.id_tipo_solicitud 
 WHERE ts.codigo = 'RE_CRED_PAS'));
 
@@ -3152,7 +3152,7 @@ add column abreviatura_documento varchar(100) null;
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado notas especializacion'
-where nombre_documento = 'Certificado de notas de la especializaciÃ³n.';
+where nombre_documento = 'Certificado de notas de la especialización.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado de estudios'
@@ -3160,7 +3160,7 @@ where nombre_documento = 'Certificado completo de estudios realizados en la univ
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado derecho de estudios'
-where nombre_documento = 'Certificado oficial de no haber perdido el derecho a continuar estudios por motivos de Ã­ndole acadÃ©mica o disciplinaria';
+where nombre_documento = 'Certificado oficial de no haber perdido el derecho a continuar estudios por motivos de índole académica o disciplinaria';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Plan de estudios'
@@ -3172,59 +3172,59 @@ where nombre_documento = 'Certificado de notas oficial';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Plan de trabajo'
-where nombre_documento = 'Plan de trabajo con la descripciÃ³n de las actividades a realizar con visto bueno del tutor y del supervisor de la estancia.';
+where nombre_documento = 'Plan de trabajo con la descripción de las actividades a realizar con visto bueno del tutor y del supervisor de la estancia.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Carta de invitaciÃ³n'
-where nombre_documento = 'Carta de invitaciÃ³n.';
+set abreviatura_documento = 'Carta de invitación'
+where nombre_documento = 'Carta de invitación.';
 
 update documentos_requisitos_solicitud
-set nombre_documento = 'Formatos de exoneraciÃ³n de responsabilidades.'
-where nombre_documento = 'Formatos de exoneraciÃ³n de responsabilidades, solicitud de movilidad acadÃ©mica saliente e informaciÃ³n del estudiante.';
+set nombre_documento = 'Formatos de exoneración de responsabilidades.'
+where nombre_documento = 'Formatos de exoneración de responsabilidades, solicitud de movilidad académica saliente e información del estudiante.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Formatos exoneraciÃ³n de responsabilidades'
-where nombre_documento = 'Formatos de exoneraciÃ³n de responsabilidades.';
+set abreviatura_documento = 'Formatos exoneración de responsabilidades'
+where nombre_documento = 'Formatos de exoneración de responsabilidades.';
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud, adjuntar_documento, usuario_creacion, fecha_creacion, usuario_modificacion, fecha_modificacion, abreviatura_documento)
-VALUES('Solicitud de movilidad acadÃ©mica saliente.', 7, 1, 1, '2024-08-07 12:50:46', 1, '2024-08-07 12:50:46', 'Movilidad acadÃ©mica');
+VALUES('Solicitud de movilidad académica saliente.', 7, 1, 1, '2024-08-07 12:50:46', 1, '2024-08-07 12:50:46', 'Movilidad académica');
 
 INSERT INTO documentos_requisitos_solicitud
 (nombre_documento, id_requisito_solicitud, adjuntar_documento, usuario_creacion, fecha_creacion, usuario_modificacion, fecha_modificacion, abreviatura_documento)
-VALUES('InformaciÃ³n del estudiante.', 7, 1, 1, '2024-08-07 12:50:46', 1, '2024-08-07 12:50:46', 'InformaciÃ³n del estudiante');
+VALUES('Información del estudiante.', 7, 1, 1, '2024-08-07 12:50:46', 1, '2024-08-07 12:50:46', 'Información del estudiante');
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'CÃ©dula estudiante'
-where nombre_documento = 'Copia de la cÃ©dula del estudiante.';
+set abreviatura_documento = 'Cédula estudiante'
+where nombre_documento = 'Copia de la cédula del estudiante.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Recibo pago matricula'
-where nombre_documento = 'Copia de recibo de pago de matrÃ­cula vigente.';
+where nombre_documento = 'Copia de recibo de pago de matrícula vigente.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado bancario.'
-where nombre_documento = 'CertificaciÃ³n de la cuenta bancaria.';
+where nombre_documento = 'Certificación de la cuenta bancaria.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Carta de invitaciÃ³n'
-where nombre_documento = 'Carta de invitaciÃ³n.';
+set abreviatura_documento = 'Carta de invitación'
+where nombre_documento = 'Carta de invitación.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Informe de actividades'
 where nombre_documento = 'Informe de las actividades realizadas en el lugar de la estancia (con soportes) ';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Certificado culminaciÃ³n de actividades'
-where nombre_documento = 'CertificaciÃ³n de la culminaciÃ³n de las actividades firmada por el asesor.';
+set abreviatura_documento = 'Certificado culminación de actividades'
+where nombre_documento = 'Certificación de la culminación de las actividades firmada por el asesor.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Labor docente'
-where nombre_documento = 'Labor docente asignada (descargada de SIMCA) con la descripciÃ³n de la intensidad horaria total desarrollada.';
+where nombre_documento = 'Labor docente asignada (descargada de SIMCA) con la descripción de la intensidad horaria total desarrollada.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Contenido programatico'
-where nombre_documento = 'Contenido ProgramÃ¡tico del curso que incluya (temÃ¡tica a orientar, intensidad, poblaciÃ³n objetivo, profesor, costos, recursos, etc). Se recomienda utilizar recursos de los grupos de I+D, no vincular labor docente de profesores de cÃ¡tedra, ocasionales o planta de Unicauca y que sea de carÃ¡cter gratuito.';
+where nombre_documento = 'Contenido Programático del curso que incluya (temática a orientar, intensidad, población objetivo, profesor, costos, recursos, etc). Se recomienda utilizar recursos de los grupos de I+D, no vincular labor docente de profesores de cátedra, ocasionales o planta de Unicauca y que sea de carácter gratuito.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Aval del Consejo de Facultad'
@@ -3236,43 +3236,43 @@ where nombre_documento = 'Listado de asistencia.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado de asignatura'
-where nombre_documento = 'CertificaciÃ³n del profesor de la asignatura (s) indicando intensidad y trabajo realizado, con visto bueno del Jefe de Departamento.';
+where nombre_documento = 'Certificación del profesor de la asignatura (s) indicando intensidad y trabajo realizado, con visto bueno del Jefe de Departamento.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Aval comitÃ© programa'
-where nombre_documento = 'Aval del ComitÃ© de programa de la MaestrÃ­a para la realizaciÃ³n de la actividad.';
+set abreviatura_documento = 'Aval comité programa'
+where nombre_documento = 'Aval del Comité de programa de la Maestría para la realización de la actividad.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Carta de aceptaciÃ³n'
-where nombre_documento = 'Carta de aceptaciÃ³n del tutor o profesor de la asignatura validando el material entregado.';
+set abreviatura_documento = 'Carta de aceptación'
+where nombre_documento = 'Carta de aceptación del tutor o profesor de la asignatura validando el material entregado.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'ResoluciÃ³n aprobada'
-where nombre_documento = 'ResoluciÃ³n de aprobaciÃ³n del anteproyecto.';
+set abreviatura_documento = 'Resolución aprobada'
+where nombre_documento = 'Resolución de aprobación del anteproyecto.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Acta de sustentaciÃ³n'
-where nombre_documento = 'Acta de sustentaciÃ³n.';
+set abreviatura_documento = 'Acta de sustentación'
+where nombre_documento = 'Acta de sustentación.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Acta sustentaciÃ³n firma jurados'
-where nombre_documento = 'Acta de sustentaciÃ³n firmada por todos los jurados.';
+set abreviatura_documento = 'Acta sustentación firma jurados'
+where nombre_documento = 'Acta de sustentación firmada por todos los jurados.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Formato evaluaciÃ³n'
-where nombre_documento = 'Formato(S) de la evaluaciÃ³n realizada.';
+set abreviatura_documento = 'Formato evaluación'
+where nombre_documento = 'Formato(S) de la evaluación realizada.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado de notas'
-where nombre_documento = 'Certificado de notas de la especializaciÃ³n.';
+where nombre_documento = 'Certificado de notas de la especialización.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'AsiganciÃ³n de evaluador'
-where nombre_documento = 'Carta o correo donde conste la asignaciÃ³n como evaluador.';
+set abreviatura_documento = 'Asiganción de evaluador'
+where nombre_documento = 'Carta o correo donde conste la asignación como evaluador.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Respuesta de comitÃ©'
-where nombre_documento = 'Carta de respuesta al ComitÃ© de Personal Docente (CPD).';
+set abreviatura_documento = 'Respuesta de comité'
+where nombre_documento = 'Carta de respuesta al Comité de Personal Docente (CPD).';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Respuesta Consejo de Facultad.'
@@ -3288,33 +3288,33 @@ where nombre_documento = 'Carta del jefe de departamento con actividades relacio
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Copia del articulo'
-where nombre_documento = 'Copia del artÃ­culo publicado o aceptado.';
+where nombre_documento = 'Copia del artículo publicado o aceptado.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'InformaciÃ³n de evento'
-where nombre_documento = 'InformaciÃ³n del evento.';
+set abreviatura_documento = 'Información de evento'
+where nombre_documento = 'Información del evento.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'Carta aceptaciÃ³n del articulo'
-where nombre_documento = 'Carta de aceptaciÃ³n del artÃ­culo a presentar.';
+set abreviatura_documento = 'Carta aceptación del articulo'
+where nombre_documento = 'Carta de aceptación del artículo a presentar.';
 
 update documentos_requisitos_solicitud
-set abreviatura_documento = 'ArtÃ­culo completo'
-where nombre_documento = 'ArtÃ­culo completo.';
+set abreviatura_documento = 'Artículo completo'
+where nombre_documento = 'Artículo completo.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Certificado bancario'
-where nombre_documento = 'CertificaciÃ³n cuenta bancaria.';
+where nombre_documento = 'Certificación cuenta bancaria.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Recibo de matricula'
-where nombre_documento = 'Recibo de matrÃ­cula del periodo acadÃ©mico vigente.';
+where nombre_documento = 'Recibo de matrícula del periodo académico vigente.';
 
 update documentos_requisitos_solicitud
 set abreviatura_documento = 'Factura cuenta cobro'
 where nombre_documento = 'Factura o cuenta de cobro o proforma o invoice.';
 
--- Certificado de votaciÃ³n (del script modificado)
+-- Certificado de votación (del script modificado)
 INSERT INTO tipos_solicitudes (codigo, nombre, estado, usuario_creacion, fecha_creacion, usuario_modificacion, fecha_modificacion)
 SELECT 'CER_VOTO', 'Registro de certificado de votacion', 'ACTIVO', 1, '2024-08-06 07:19:37', 1, '2024-08-06 07:19:37'
 WHERE NOT EXISTS (
@@ -3339,13 +3339,13 @@ WHERE ts.codigo = 'CER_VOTO' AND ts.estado = 'ACTIVO' LIMIT 1;
 
 
 -- =============================================================
--- MÃ“DULO: MATRÃCULA ACADÃ‰MICA
--- Objetivo: GestiÃ³n de periodos, cursos, asignaturas y calificaciones.
+-- MÓDULO: MATRÍCULA ACADÉMICA
+-- Objetivo: Gestión de periodos, cursos, asignaturas y calificaciones.
 -- =============================================================
 
 SET sql_notes = 0;
 
--- 1. Periodo AcadÃ©mico (Tabla Base Compartida)
+-- 1. Periodo Académico (Tabla Base Compartida)
 CREATE TABLE IF NOT EXISTS periodo_academico (
     id                  BIGINT       NOT NULL AUTO_INCREMENT,
     tag_periodo         INT          NOT NULL COMMENT '1 = primer semestre, 2 = segundo semestre',
@@ -3359,7 +3359,7 @@ CREATE TABLE IF NOT EXISTS periodo_academico (
     UNIQUE KEY uk_periodo_tag_anio (tag_periodo, fecha_inicio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 2. Ãreas de FormaciÃ³n
+-- 2. Áreas de Formación
 CREATE TABLE IF NOT EXISTS areas_formacion (
     id          BIGINT       NOT NULL AUTO_INCREMENT,
     nombre      VARCHAR(255),
@@ -3367,8 +3367,8 @@ CREATE TABLE IF NOT EXISTS areas_formacion (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 3. Modificaciones a tablas base (Cursos y MatrÃ­culas)
--- Primero eliminamos la relaciÃ³n antigua que bloquea los cambios
+-- 3. Modificaciones a tablas base (Cursos y Matrículas)
+-- Primero eliminamos la relación antigua que bloquea los cambios
 ALTER TABLE cursos DROP FOREIGN KEY fk_curso_matricula;
 
 ALTER TABLE cursos ADD COLUMN periodo_id       BIGINT       NULL;
@@ -3430,7 +3430,7 @@ CREATE TABLE IF NOT EXISTS matricula_calificaciones (
     CONSTRAINT fk_mc_asignatura FOREIGN KEY (id_asignatura) REFERENCES asignaturas (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 8. TutorÃ­a Estudiante
+-- 8. Tutoría Estudiante
 CREATE TABLE IF NOT EXISTS docente_estudiante (
     id            BIGINT NOT NULL AUTO_INCREMENT,
     id_docente    BIGINT NOT NULL,
@@ -3444,8 +3444,8 @@ CREATE TABLE IF NOT EXISTS docente_estudiante (
 
 SET sql_notes = 1;
 -- =============================================================
--- MÃ“DULO: MATRÃCULA FINANCIERA
--- Objetivo: GestiÃ³n de pagos reales, grupos de investigaciÃ³n, becas y descuentos.
+-- MÓDULO: MATRÍCULA FINANCIERA
+-- Objetivo: Gestión de pagos reales, grupos de investigación, becas y descuentos.
 -- =============================================================
 
 SET sql_notes = 0;
@@ -3453,7 +3453,7 @@ SET sql_notes = 0;
 -- 1. Modificaciones a tabla Estudiantes (Atributos Financieros)
 ALTER TABLE estudiantes ADD COLUMN es_egresado_unicauca BOOLEAN NOT NULL DEFAULT FALSE;
 
--- 2. Grupos de InvestigaciÃ³n
+-- 2. Grupos de Investigación
 CREATE TABLE IF NOT EXISTS grupo (
     id     BIGINT       NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE,
@@ -3462,7 +3462,7 @@ CREATE TABLE IF NOT EXISTS grupo (
 
 INSERT IGNORE INTO grupo (nombre) VALUES ('GTI'), ('IDIS'), ('GICO');
 
--- 3. MatrÃ­cula Financiera (Fuente de Verdad Real)
+-- 3. Matrícula Financiera (Fuente de Verdad Real)
 CREATE TABLE IF NOT EXISTS matricula_financiera (
     id                   BIGINT       NOT NULL AUTO_INCREMENT,
     estudiante_id        BIGINT       NOT NULL,
@@ -3478,7 +3478,7 @@ CREATE TABLE IF NOT EXISTS matricula_financiera (
     CONSTRAINT fk_mat_fin_grupo      FOREIGN KEY (grupo_id)      REFERENCES grupo (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Estado de pago real y grupo asignado';
 
--- 4. CatÃ¡logo de Tipos de Solicitud
+-- 4. Catálogo de Tipos de Solicitud
 CREATE TABLE IF NOT EXISTS tipos_solicitudes (
     id     BIGINT       NOT NULL AUTO_INCREMENT,
     codigo VARCHAR(20)  NOT NULL UNIQUE,
@@ -3542,15 +3542,15 @@ CREATE TABLE IF NOT EXISTS descuentos (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 SET sql_notes = 1;
--- MODULO 3: INFORMACIÃ“N PRESUPUESTARIA
--- Responsabilidad: GestiÃ³n de proyecciones financieras y reportes presupuestales
+-- MODULO 3: INFORMACIÓN PRESUPUESTARIA
+-- Responsabilidad: Gestión de proyecciones financieras y reportes presupuestales
 
 USE `maestria-computacion`;
 
 -- Silenciar advertencias de "tabla ya existe"
 SET sql_notes = 0;
 
--- 1. Proyecciones de Estudiantes (SimulaciÃ³n para planeaciÃ³n)
+-- 1. Proyecciones de Estudiantes (Simulación para planeación)
 CREATE TABLE IF NOT EXISTS proyeccion_estudiante (
     id                   BIGINT       NOT NULL AUTO_INCREMENT,
     periodo_academico_id BIGINT       NOT NULL,
@@ -3565,7 +3565,7 @@ CREATE TABLE IF NOT EXISTS proyeccion_estudiante (
     CONSTRAINT fk_proyeccion_estudiante FOREIGN KEY (estudiante_id) REFERENCES estudiantes (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 2. ConfiguraciÃ³n Global de Reportes Financieros (SMLV, Derechos complementarios)
+-- 2. Configuración Global de Reportes Financieros (SMLV, Derechos complementarios)
 CREATE TABLE IF NOT EXISTS configuracion_reporte_financiero (
     id                       BIGINT         NOT NULL AUTO_INCREMENT,
     periodo_academico_id     BIGINT         NOT NULL,
@@ -3580,7 +3580,7 @@ CREATE TABLE IF NOT EXISTS configuracion_reporte_financiero (
     CONSTRAINT fk_config_fin_periodo FOREIGN KEY (periodo_academico_id) REFERENCES periodo_academico (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 3. ConfiguraciÃ³n de Reportes por Grupos (AUI, Items de distribuciÃ³n)
+-- 3. Configuración de Reportes por Grupos (AUI, Items de distribución)
 CREATE TABLE IF NOT EXISTS configuracion_reporte_grupos (
     id                   BIGINT         NOT NULL AUTO_INCREMENT,
     periodo_academico_id BIGINT         NOT NULL,
@@ -3594,7 +3594,7 @@ CREATE TABLE IF NOT EXISTS configuracion_reporte_grupos (
     CONSTRAINT fk_config_grupos_periodo FOREIGN KEY (periodo_academico_id) REFERENCES periodo_academico (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 4. ParticipaciÃ³n de Grupos en el presupuesto
+-- 4. Participación de Grupos en el presupuesto
 CREATE TABLE IF NOT EXISTS participacion_grupo (
     id                             BIGINT         NOT NULL AUTO_INCREMENT,
     configuracion_reporte_grupos_id BIGINT         NOT NULL,
@@ -3609,7 +3609,7 @@ CREATE TABLE IF NOT EXISTS participacion_grupo (
     CONSTRAINT fk_part_grupo FOREIGN KEY (grupo_id) REFERENCES grupo (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 5. Gastos Generales de la MaestrÃ­a (Globales)
+-- 5. Gastos Generales de la Maestría (Globales)
 CREATE TABLE IF NOT EXISTS gasto_general (
     id                             BIGINT         NOT NULL AUTO_INCREMENT,
     configuracion_reporte_grupos_id BIGINT         NOT NULL,
@@ -3620,16 +3620,16 @@ CREATE TABLE IF NOT EXISTS gasto_general (
     CONSTRAINT fk_gastos_config FOREIGN KEY (configuracion_reporte_grupos_id) REFERENCES configuracion_reporte_grupos (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Restaurar configuraciÃ³n de notas
+-- Restaurar configuración de notas
 SET sql_notes = 1;
 
 SELECT 'Modulo 3: Info Presupuestaria cargado correctamente (Tipos de datos corregidos para moneda).' AS Resultado;
 -- =============================================================
--- MÃ“DULO: SOLICITUD DE REVISIÃ“N DE MATRÃCULA
+-- MÓDULO: SOLICITUD DE REVISIÓN DE MATRÍCULA
 -- Objetivo: Registrar el nuevo tipo de solicitud RE_MATR que permite
---           a los estudiantes solicitar una revisiÃ³n de su matrÃ­cula
---           financiera o acadÃ©mica desde el mÃ³dulo de GestiÃ³n de
---           MatrÃ­cula Financiera del frontend Angular.
+--           a los estudiantes solicitar una revisión de su matrícula
+--           financiera o académica desde el módulo de Gestión de
+--           Matrícula Financiera del frontend Angular.
 -- Repositorio frontend: ms-maestriacomputacion-front
 -- Componente: ResumenMatriculaEstudianteComponent
 -- Repositorio backend solicitudes: ms-gestion-solicitudes
@@ -3638,17 +3638,17 @@ SELECT 'Modulo 3: Info Presupuestaria cargado correctamente (Tipos de datos corr
 
 SET sql_notes = 0;
 
--- 1. Insertar tipo de solicitud: RevisiÃ³n de MatrÃ­cula
+-- 1. Insertar tipo de solicitud: Revisión de Matrícula
 INSERT INTO tipos_solicitudes (nombre, estado, codigo)
-VALUES ('RevisiÃ³n de matrÃ­cula', 'ACTIVO', 'RE_MATR');
+VALUES ('Revisión de matrícula', 'ACTIVO', 'RE_MATR');
 
 -- 2. Insertar requisitos de la solicitud RE_MATR
 -- La tabla requisitos_solicitud define el texto informativo que ve el estudiante
--- antes de radicar la solicitud (tÃ­tulo, descripciÃ³n, artÃ­culo, consideraciones).
+-- antes de radicar la solicitud (título, descripción, artículo, consideraciones).
 INSERT INTO requisitos_solicitud (titulo_documento, descripcion, articulo, tener_en_cuenta, id_tipo_solicitud)
 VALUES (
-    'Consideraciones importantes antes de solicitar una revisiÃ³n:',
-    'I. Antes de solicitar una revisiÃ³n, es necesario verificar que toda la informaciÃ³n en el apartado "MATRÃCULAS" sea correcta. II. Si la matrÃ­cula aÃºn no ha sido generada y se considera que esto es un error, se puede solicitar una revisiÃ³n. III. En caso de identificar un error en la matrÃ­cula acadÃ©mica o financiera, se puede proceder con la solicitud de revisiÃ³n.',
+    'Consideraciones importantes antes de solicitar una revisión:',
+    'I. Antes de solicitar una revisión, es necesario verificar que toda la información en el apartado "MATRÍCULAS" sea correcta. II. Si la matrícula aún no ha sido generada y se considera que esto es un error, se puede solicitar una revisión. III. En caso de identificar un error en la matrícula académica o financiera, se puede proceder con la solicitud de revisión.',
     NULL,
     NULL,
     (SELECT id FROM tipos_solicitudes WHERE codigo = 'RE_MATR')
@@ -3656,17 +3656,17 @@ VALUES (
 
 SET sql_notes = 1;
 
-SELECT 'Script 4: Solicitud RevisiÃ³n de MatrÃ­cula (RE_MATR) cargado correctamente.' AS Resultado;
+SELECT 'Script 4: Solicitud Revisión de Matrícula (RE_MATR) cargado correctamente.' AS Resultado;
 -- =============================================================================
--- Script: InserciÃ³n de Estudiantes Reales y SimulaciÃ³n de Becas/Descuentos
--- Objetivo: PoblaciÃ³n TOTAL 26 Estudiantes + Materias + Flujo de Becas Realista
+-- Script: Inserción de Estudiantes Reales y Simulación de Becas/Descuentos
+-- Objetivo: Población TOTAL 26 Estudiantes + Materias + Flujo de Becas Realista
 -- =============================================================================
 
 USE `maestria-computacion`;
 
 SET sql_notes = 0;
 
--- 1. PERIODOS ACADÃ‰MICOS
+-- 1. PERIODOS ACADÉMICOS
 INSERT IGNORE INTO periodo_academico (id, tag_periodo, fecha_inicio, fecha_fin, fecha_fin_matricula, descripcion, estado)
 VALUES
     (3, 1, '2025-02-01', '2025-06-30', '2025-02-15', 'Primer Periodo 2025',  'FINALIZADO'),
@@ -3799,7 +3799,7 @@ WHERE NOT EXISTS (
       AND gg.descripcion = gastos_2025.descripcion
 );
 
--- 1.1 CORRECCIÃ“N DE ESQUEMA (solicitudes_en_concejo)
+-- 1.1 CORRECCIÓN DE ESQUEMA (solicitudes_en_concejo)
 DROP PROCEDURE IF EXISTS patch_concejo_schema;
 DELIMITER //
 CREATE PROCEDURE patch_concejo_schema()
@@ -3929,25 +3929,25 @@ INSERT IGNORE INTO asignaturas (id, codigo_asignatura, nombre_asignatura, credit
 VALUES 
     (1, 27712, 'Trabajo de Grado 2', 4, 1), 
     (2, 27709, 'Trabajo de Grado 1', 4, 1), 
-    (3, 27691, 'MetodologÃ­a de la InvestigaciÃ³n', 4, 1), 
+    (3, 27691, 'Metodología de la Investigación', 4, 1), 
     (4, 11,    'Competencias Empresariales', 4, 1), 
-    (5, 27701, 'GestiÃ³n de la TecnologÃ­a', 4, 1);
+    (5, 27701, 'Gestión de la Tecnología', 4, 1);
 
--- Cursos por PerÃ­odo
+-- Cursos por Período
 INSERT IGNORE INTO cursos (id, idmatricula, id_asignatura, periodo_id, grupocurso, periodocurso, aniocurso, horariocurso, saloncurso, estado)
 VALUES 
     (301, 0, 1, 3, 'A', 1, 2025, 'Lun 18-22', 'L1', 1), (302, 0, 2, 3, 'A', 1, 2025, 'Mar 18-22', 'L2', 1), (303, 0, 3, 3, 'A', 1, 2025, 'Mie 18-22', 'L3', 1),
     (401, 0, 1, 4, 'A', 2, 2025, 'Lun 18-22', 'L1', 1), (402, 0, 2, 4, 'A', 2, 2025, 'Mar 18-22', 'L2', 1), (404, 0, 4, 4, 'A', 2, 2025, 'Jue 18-22', 'L4', 1),
     (501, 0, 1, 5, 'A', 1, 2026, 'Lun 18-22', 'L1', 1), (502, 0, 2, 5, 'A', 1, 2026, 'Mar 18-22', 'L2', 1), (503, 0, 3, 5, 'A', 1, 2026, 'Mie 18-22', 'L3', 1), (505, 0, 5, 5, 'A', 1, 2026, 'Vie 08-12', 'L5', 1);
 
--- 4.1 ASIGNACIÃ“N DOCENTE A CURSOS (curso_docente)
+-- 4.1 ASIGNACIÓN DOCENTE A CURSOS (curso_docente)
 INSERT IGNORE INTO curso_docente (id_curso, id_docente)
 VALUES 
     (301, 2), (302, 2), (303, 3), -- 2025-1
     (401, 2), (402, 2), (404, 5), -- 2025-2
     (501, 2), (502, 2), (503, 3), (505, 5); -- 2026-1
 
--- 5. MATRÃCULAS (Mapeo Detallado por Estudiante y Materia)
+-- 5. MATRÍCULAS (Mapeo Detallado por Estudiante y Materia)
 -- =============================================================================
 
 -- Periodo 2025-1 (ID 3)
@@ -3960,7 +3960,7 @@ SELECT e.id, 301, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (10
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 302, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (110, 111, 114);
 
--- MetodologÃ­a de la InvestigaciÃ³n (Curso 303): Admitidos Nuevos 2025-1
+-- Metodología de la Investigación (Curso 303): Admitidos Nuevos 2025-1
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 303, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (117, 118, 119);
 
@@ -3971,7 +3971,7 @@ SELECT e.id, 303, 3, 1, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (11
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 401, 4, 2, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (101, 102, 103, 104, 105, 106, 107, 108, 109, 111, 112, 113, 114, 115, 116);
 
--- Trabajo de Grado 1 (Curso 402): ContinÃºan en TG1
+-- Trabajo de Grado 1 (Curso 402): Continúan en TG1
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 402, 4, 2, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (110);
 
@@ -3986,7 +3986,7 @@ SELECT e.id, 404, 4, 2, 2025, 1, 'APROBADA' FROM estudiantes e WHERE e.id IN (11
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 501, 5, 1, 2026, 1, 'CREADA' FROM estudiantes e WHERE e.id BETWEEN 101 AND 116;
 
--- MetodologÃ­a de la InvestigaciÃ³n (Curso 503): Admitidos Nuevos 2026-1
+-- Metodología de la Investigación (Curso 503): Admitidos Nuevos 2026-1
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 SELECT e.id, 503, 5, 1, 2026, 1, 'CREADA' FROM estudiantes e WHERE e.id IN (120, 121, 122, 125, 126);
 
@@ -3994,7 +3994,7 @@ SELECT e.id, 503, 5, 1, 2026, 1, 'CREADA' FROM estudiantes e WHERE e.id IN (120,
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 VALUES (123, 502, 5, 1, 2026, 1, 'CREADA');
 
--- GestiÃ³n de la TecnologÃ­a (Curso 505): Admitido especial con GestiÃ³n
+-- Gestión de la Tecnología (Curso 505): Admitido especial con Gestión
 INSERT IGNORE INTO matriculas (id_estudiante, id_curso, id_periodo, periodo, anio, estado, estado_matricula)
 VALUES (124, 505, 5, 1, 2026, 1, 'CREADA');
 
@@ -4022,7 +4022,7 @@ WHERE NOT EXISTS (
     SELECT 1 FROM tipos_solicitudes WHERE codigo = 'SO_BECA'
 );
 
--- 6.1 MATRÃCULA FINANCIERA (Realidad: Pago y Grupo asignado)
+-- 6.1 MATRÍCULA FINANCIERA (Realidad: Pago y Grupo asignado)
 -- =============================================================================
 -- ID 3: 2025-1 | ID 4: 2025-2 | ID 5: 2026-1
 -- -----------------------------------------------------------------------------
@@ -4048,33 +4048,33 @@ FROM matriculas WHERE id_periodo = 5;
 SET @id_tipo_beca = (SELECT id FROM tipos_solicitudes WHERE codigo = 'SO_BECA' LIMIT 1);
 SET @id_tipo_voto = (SELECT id FROM tipos_solicitudes WHERE codigo = 'CER_VOTO' LIMIT 1);
 
--- BECAS 2025 (REALIDAD: ALGUNAS RESUELTAS, OTRAS EN TRÃMITE)
+-- BECAS 2025 (REALIDAD: ALGUNAS RESUELTAS, OTRAS EN TRÁMITE)
 INSERT IGNORE INTO solicitudes (id, id_tipo_solicitud, id_estudiante, id_tutor, estado, radicado)
 VALUES 
-    (2003, @id_tipo_beca, 103, 2, 'RESUELTA', 'RAD-25-103'), -- Cristian MuÃ±oz (Aprobada)
-    (2006, @id_tipo_beca, 106, 3, 'RESUELTA', 'RAD-25-106'), -- Fabian MartÃ­nez (Aprobada 2025-1)
-    (2015, @id_tipo_beca, 115, 4, 'RESUELTA', 'RAD-25-115'), -- Pedro GÃ³mez (Aprobada)
+    (2003, @id_tipo_beca, 103, 2, 'RESUELTA', 'RAD-25-103'), -- Cristian Muñoz (Aprobada)
+    (2006, @id_tipo_beca, 106, 3, 'RESUELTA', 'RAD-25-106'), -- Fabian Martínez (Aprobada 2025-1)
+    (2015, @id_tipo_beca, 115, 4, 'RESUELTA', 'RAD-25-115'), -- Pedro Gómez (Aprobada)
     (2012, @id_tipo_beca, 112, 2, 'RESUELTA', 'RAD-25-112'), -- Jhoan Hurtado (50%)
-    (2001, @id_tipo_beca, 101, 2, 'EN COMITE', 'RAD-25-101'), -- AndrÃ©s Agudelo (Pendiente)
+    (2001, @id_tipo_beca, 101, 2, 'EN COMITE', 'RAD-25-101'), -- Andrés Agudelo (Pendiente)
     (2017, @id_tipo_beca, 117, 3, 'EN COMITE', 'RAD-25-117'); -- Fernando Rosero (Pendiente)
 
 INSERT IGNORE INTO solicitud_beca_descuento (id_solicitud, tipo, motivo)
 VALUES 
-    (2003, 'Beca - Trabajo', 'Excelencia AcadÃ©mica'),
-    (2006, 'Beca - Trabajo', 'MonitorÃ­a de InvestigaciÃ³n'),
-    (2015, 'Beca - Trabajo', 'MonitorÃ­a de InvestigaciÃ³n'),
+    (2003, 'Beca - Trabajo', 'Excelencia Académica'),
+    (2006, 'Beca - Trabajo', 'Monitoría de Investigación'),
+    (2015, 'Beca - Trabajo', 'Monitoría de Investigación'),
     (2012, 'Beca - Convenio (cidesco)', 'Convenio Interinstitucional'),
-    (2001, 'Beca - Trabajo', 'En trÃ¡mite desde 2025-1'),
-    (2017, 'Beca - Mejor promedio en pregrado', 'En trÃ¡mite desde 2025-1');
+    (2001, 'Beca - Trabajo', 'En trámite desde 2025-1'),
+    (2017, 'Beca - Mejor promedio en pregrado', 'En trámite desde 2025-1');
 
 INSERT IGNORE INTO solicitudes_en_comite (id_solicitud, avalado_comite, concepto_comite)
 VALUES 
     (2003, 'SI', 'Cumple requisitos'), 
-    (2006, 'SI', 'VÃ¡lido'), 
+    (2006, 'SI', 'Válido'), 
     (2015, 'SI', 'Excelente'), 
-    (2012, 'SI', 'VÃ¡lido'),
-    (2001, 'SI', 'Pendiente sesiÃ³n concejo'),
-    (2017, 'SI', 'Pendiente sesiÃ³n concejo');
+    (2012, 'SI', 'Válido'),
+    (2001, 'SI', 'Pendiente sesión concejo'),
+    (2017, 'SI', 'Pendiente sesión concejo');
 
 INSERT IGNORE INTO solicitudes_en_concejo (id_solicitud, avalado_concejo, porcentaje, resolucion, fecha_inicio, fecha_fin)
 VALUES 
@@ -4088,10 +4088,10 @@ VALUES
 
 
 
--- BECAS 2026 (REALIDAD: EN TRÃMITE PERO CON % VISIBLE)
+-- BECAS 2026 (REALIDAD: EN TRÁMITE PERO CON % VISIBLE)
 INSERT IGNORE INTO solicitudes (id, id_tipo_solicitud, id_estudiante, id_tutor, estado, radicado)
 VALUES 
-    (2020, @id_tipo_beca, 120, 3, 'EN CONCEJO', 'RAD-26-120'), -- Jhony MuÃ±oz
+    (2020, @id_tipo_beca, 120, 3, 'EN CONCEJO', 'RAD-26-120'), -- Jhony Muñoz
     (2021, @id_tipo_beca, 121, 1, 'EN COMITE',  'RAD-26-121'),
     (2022, @id_tipo_beca, 122, 1, 'EN COMITE',  'RAD-26-122'),
     (2023, @id_tipo_beca, 123, 4, 'RADICADA',   'RAD-26-123'),
@@ -4205,7 +4205,7 @@ INSERT IGNORE INTO descuentos (id_estudiante, fechainiciodes, fechafindes, tipod
 SELECT e.id, '2025-02-01', '2026-12-31', 'EGRESADO', 10, 'ACTA-EGRESADO', TRUE 
 FROM estudiantes e WHERE e.id IN (114,119,120,121,122,123,124,125);
 
--- 8. PROYECCIONES FINANCIERAS (SimulaciÃ³n)
+-- 8. PROYECCIONES FINANCIERAS (Simulación)
 -- =============================================================================
 
 -- Generamos proyecciones para todos los estudiantes matriculados en cada periodo.
@@ -4222,12 +4222,12 @@ SELECT 4, id_estudiante, 1, 0, 1, (CASE WHEN id_estudiante IN (114, 119) THEN 1 
 FROM matriculas WHERE id_periodo = 4;
 
 -- Periodo 2026-1 (ACTIVO - El espacio de trabajo actual)
--- AquÃ­ simulamos que algunos tienen beca proyectada, otros votaciÃ³n, etc.
+-- Aquí simulamos que algunos tienen beca proyectada, otros votación, etc.
 INSERT IGNORE INTO proyeccion_estudiante (periodo_academico_id, estudiante_id, esta_pago, porcentaje_beca, aplica_votacion, aplica_egresado)
 SELECT 5, id_estudiante, 
        (CASE WHEN id_estudiante % 5 != 0 THEN 1 ELSE 0 END), -- Pago simulado
        (CASE WHEN id_estudiante = 103 THEN 100.0 WHEN id_estudiante = 112 THEN 50.0 ELSE 0 END), -- Beca simulada
-       1, -- Casi todos aplican votaciÃ³n
+       1, -- Casi todos aplican votación
        (CASE WHEN id_estudiante BETWEEN 119 AND 125 THEN 1 ELSE 0 END) -- Egresados
 FROM matriculas WHERE id_periodo = 5;
 
