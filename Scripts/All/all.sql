@@ -3563,6 +3563,7 @@ CREATE TABLE IF NOT EXISTS proyeccion_estudiante (
     nombre_simulado      VARCHAR(150) NULL,
     apellido_simulado    VARCHAR(150) NULL,
     identificacion_simulada BIGINT    NULL,
+    grupo_investigacion  VARCHAR(50)  NULL COMMENT 'Solo se persiste para estudiantes simulados; los reales usan el grupo de matricula-financiera',
     PRIMARY KEY (id),
     UNIQUE KEY uk_proyeccion_est_periodo (periodo_academico_id, estudiante_id),
     CONSTRAINT fk_proyeccion_periodo FOREIGN KEY (periodo_academico_id) REFERENCES periodo_academico (id),

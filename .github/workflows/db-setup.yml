@@ -45,32 +45,32 @@ jobs:
 
       - name: Drop and recreate database
         run: |
-          docker exec mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -e \
+          docker exec mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" --default-character-set=utf8mb4 -e \
             "DROP DATABASE IF EXISTS \`maestria-computacion\`; CREATE DATABASE \`maestria-computacion\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
       - name: Import base schema and seed data (all.sql)
         run: |
           set -o pipefail
-          cat Scripts/All/all.sql | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+          cat Scripts/All/all.sql | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" --default-character-set=utf8mb4 -D "maestria-computacion" --force
 
       - name: Import test data - real students and becas
         run: |
           set -o pipefail
-          cat "Scripts/Datos_Prueba/INSERT_REAL_STUDENTS_AND_SIMULATE_BECAS.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+          cat "Scripts/Datos_Prueba/INSERT_REAL_STUDENTS_AND_SIMULATE_BECAS.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" --default-character-set=utf8mb4 -D "maestria-computacion" --force
 
       - name: Import test data - tutores
         run: |
           set -o pipefail
-          cat "Scripts/Datos_Prueba/asociar_tutores_estudiantes.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+          cat "Scripts/Datos_Prueba/asociar_tutores_estudiantes.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" --default-character-set=utf8mb4 -D "maestria-computacion" --force
 
       - name: Import escenarios calculo matricula
         run: |
           set -o pipefail
-          cat "Scripts/Datos_Prueba/escenarios_matricula.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" --force
+          cat "Scripts/Datos_Prueba/escenarios_matricula.sql" | docker exec -i mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" --default-character-set=utf8mb4 -D "maestria-computacion" --force
 
       - name: Verify tables and row counts
         run: |
-          docker exec mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" -D "maestria-computacion" -e "
+          docker exec mysql-db mysql -u root -p"${{ secrets.BD_PASSWORD }}" --default-character-set=utf8mb4 -D "maestria-computacion" -e "
             SELECT 'periodo_academico' AS tabla, COUNT(*) AS filas FROM periodo_academico
             UNION ALL SELECT 'estudiantes', COUNT(*) FROM estudiantes
             UNION ALL SELECT 'docentes', COUNT(*) FROM docentes
