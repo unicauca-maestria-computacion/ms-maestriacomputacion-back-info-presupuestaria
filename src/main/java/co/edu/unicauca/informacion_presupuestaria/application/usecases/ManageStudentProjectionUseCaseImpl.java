@@ -145,7 +145,10 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             for (Student est : estudiantesOrigenMF) {
                 StudentProjection sp = new StudentProjection();
                 sp.setCodigoEstudiante(est.getCodigo());
-                sp.setEstaPago(false);
+                // La proyeccion parte del supuesto optimista de que todos los estudiantes
+                // copiados del periodo origen se van a matricular; el usuario desmarca los
+                // que no aplique.
+                sp.setEstaPago(true);
                 sp.setPorcentajeBeca(BigDecimal.ZERO);
                 sp.setAplicaVotacion(false);
                 sp.setAplicaEgresado(false);
@@ -164,7 +167,10 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 }
                 StudentProjection sp = new StudentProjection();
                 sp.setCodigoEstudiante(spOrigen.getCodigoEstudiante());
-                sp.setEstaPago(false);
+                // La proyeccion parte del supuesto optimista de que todos los estudiantes
+                // copiados del periodo origen se van a matricular; el usuario desmarca los
+                // que no aplique.
+                sp.setEstaPago(true);
                 sp.setPorcentajeBeca(spOrigen.getPorcentajeBeca());
                 sp.setAplicaVotacion(spOrigen.getAplicaVotacion());
                 sp.setAplicaEgresado(spOrigen.getAplicaEgresado());
