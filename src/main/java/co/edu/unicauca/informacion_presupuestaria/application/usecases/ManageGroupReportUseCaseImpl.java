@@ -146,9 +146,13 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 .subtract(excedentes)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        // Usar las participaciones configuradas como fuente de verdad para distribuir los aportes.
+        // La participación de cada grupo se recalcula dinámicamente a partir de los
+        // ingresos reales por grupo del período (estudiantes efectivamente pagados),
+        // en lugar de usar un porcentaje configurado/negociado a mano.
+        List<GroupParticipation> participacionesDinamicas = actualizarParticipacionesDinamicas(
+                config.getParticipaciones(), resumen1, resumen2, ingreso1, ingreso2);
         List<GroupReport> reportesPorGrupo = calcularReportesPorGrupo(
-                config.getParticipaciones(), valorADistribuir, ingreso1, ingreso2, config, anio, calcularVigencias);
+                participacionesDinamicas, valorADistribuir, ingreso1, ingreso2, config, anio, calcularVigencias);
 
         BigDecimal totalItem1 = reportesPorGrupo.stream()
                 .map(r -> r.getPresupuestoPorGrupoItem1() != null ? r.getPresupuestoPorGrupoItem1() : BigDecimal.ZERO)
@@ -798,10 +802,6 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             return participaciones;
         }
 
-        if (tieneParticipacionesConfiguradasNoNormalizadas(participaciones)) {
-            return participaciones;
-        }
-
         // Calcular porcentajes individuales
         for (GroupParticipation p : participaciones) {
             BigDecimal ingresoG1 = resumen1.stream()
@@ -873,36 +873,6 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                 && lastValue.compareTo(BigDecimal.ONE) <= 0) {
             setter.accept(participaciones.get(participaciones.size() - 1), lastValue);
         }
-    }
-
-    private boolean tieneParticipacionesConfiguradasNoNormalizadas(
-            List<GroupParticipation> participaciones) {
-
-        BigDecimal sumaPrimerSemestre = sumarPorcentaje(
-                participaciones, GroupParticipation::getPorcentajePrimerSemestre);
-        BigDecimal sumaSegundoSemestre = sumarPorcentaje(
-                participaciones, GroupParticipation::getPorcentajeSegundoSemestre);
-
-        if (sumaPrimerSemestre.compareTo(BigDecimal.ZERO) <= 0
-                || sumaSegundoSemestre.compareTo(BigDecimal.ZERO) <= 0) {
-            return false;
-        }
-
-        return estaFueraDeToleranciaDeUno(sumaPrimerSemestre)
-                || estaFueraDeToleranciaDeUno(sumaSegundoSemestre);
-    }
-
-    private BigDecimal sumarPorcentaje(
-            List<GroupParticipation> participaciones,
-            java.util.function.Function<GroupParticipation, BigDecimal> getter) {
-
-        return participaciones.stream()
-                .map(p -> getter.apply(p) != null ? getter.apply(p) : BigDecimal.ZERO)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private boolean estaFueraDeToleranciaDeUno(BigDecimal valor) {
-        return BigDecimal.ONE.subtract(valor).abs().compareTo(ROUNDING_TOLERANCE) > 0;
     }
 
     private static class ResumenIngresosPeriodo {
