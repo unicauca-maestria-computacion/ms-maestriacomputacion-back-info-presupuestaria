@@ -2,6 +2,7 @@ package co.edu.unicauca.informacion_presupuestaria.application.usecases;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentProjectionGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
+import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageGroupReportUseCase;
 import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.BaseException;
 import net.jqwik.api.ForAll;
@@ -46,12 +47,14 @@ class DomainExceptionPropertyTest {
                 Mockito.mock(FinancialEnrollmentClientPort.class);
         FinancialCalculationService calcService =
                 Mockito.mock(FinancialCalculationService.class);
+        ManageGroupReportUseCase groupReportUseCase =
+                Mockito.mock(ManageGroupReportUseCase.class);
 
         when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.empty());
         when(gateway.obtenerConfiguracionReporteFinanciero(any())).thenReturn(Optional.empty());
 
         ManageStudentProjectionUseCaseImpl useCase =
-                new ManageStudentProjectionUseCaseImpl(gateway, client, calcService);
+                new ManageStudentProjectionUseCaseImpl(gateway, client, calcService, groupReportUseCase);
 
         // Act & Assert — any exception thrown must be a BaseException (canonical exception)
         assertThatThrownBy(useCase::obtenerPeriodoDeProyeccion)
