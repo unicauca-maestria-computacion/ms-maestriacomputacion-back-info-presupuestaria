@@ -328,6 +328,10 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         }
         AcademicPeriod periodo = resolverPeriodoEditable(periodoAcademicoId);
         GroupReportConfig config = obtenerConfigOFail(periodo.getId());
+
+        BigDecimal totalGastosExistentes = sumarGastosGenerales(config, null);
+        validarNoSuperaDineroDisponible(periodo, config, totalGastosExistentes, gasto.getMonto());
+
         gasto.setGroupReportConfig(config);
         return gateway.guardarGastoGeneral(gasto);
     }
@@ -338,8 +342,78 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
             throw new EntityNotFoundException(
                     "El gasto general o su ID no pueden ser nulos", "ENTIDAD_NO_ENCONTRADA");
         }
-        resolverPeriodoEditable(periodoAcademicoId);
+        if (gasto.getMonto() != null && gasto.getMonto().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessRuleViolatedException("El monto debe ser un valor positivo");
+        }
+        AcademicPeriod periodo = resolverPeriodoEditable(periodoAcademicoId);
+        GroupReportConfig config = obtenerConfigOFail(periodo.getId());
+
+        // Se excluye el propio gasto (por id) de la suma existente: se está reemplazando
+        // su monto, no sumándolo aparte.
+        BigDecimal totalGastosExistentes = sumarGastosGenerales(config, gasto.getId());
+        validarNoSuperaDineroDisponible(periodo, config, totalGastosExistentes, gasto.getMonto());
+
         return gateway.guardarGastoGeneral(gasto);
+    }
+
+    private BigDecimal sumarGastosGenerales(GroupReportConfig config, Long idExcluido) {
+        if (config.getGastosGenerales() == null) {
+            return BigDecimal.ZERO;
+        }
+        return config.getGastosGenerales().stream()
+                .filter(g -> idExcluido == null || !idExcluido.equals(g.getId()))
+                .map(g -> g.getMonto() != null ? g.getMonto() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Un gasto general nuevo (o editado) no puede hacer que la suma de todos los gastos
+     * generales del año supere el dinero disponible para distribuir entre los grupos
+     * (ingresos netos del año, después del AUI y de los excedentes de maestría, antes de
+     * restar los propios gastos generales). Si se permitiera, valorADistribuir quedaría
+     * negativo y los presupuestos por grupo/item también.
+     */
+    private void validarNoSuperaDineroDisponible(
+            AcademicPeriod periodo, GroupReportConfig config,
+            BigDecimal totalGastosExistentes, BigDecimal montoNuevo) {
+        if (montoNuevo == null) {
+            return;
+        }
+        BigDecimal dineroDisponible = calcularDineroDisponibleParaGastos(periodo, config);
+        BigDecimal totalConNuevoGasto = totalGastosExistentes.add(montoNuevo).setScale(2, RoundingMode.HALF_UP);
+        if (totalConNuevoGasto.compareTo(dineroDisponible) > 0) {
+            throw new BusinessRuleViolatedException(
+                    "El gasto general supera el dinero disponible para distribuir. "
+                            + "Disponible: " + dineroDisponible
+                            + ", gastos generales acumulados con este: " + totalConNuevoGasto);
+        }
+    }
+
+    /** Ingresos netos del año (tras AUI y excedentes de maestría) antes de restar gastos generales. */
+    private BigDecimal calcularDineroDisponibleParaGastos(AcademicPeriod periodo, GroupReportConfig config) {
+        List<AcademicPeriod> periodosDelAnio = gateway.obtenerPeriodosPorAnio(periodo.getAño());
+        AcademicPeriod periodo1 = periodosDelAnio.stream()
+                .filter(p -> Integer.valueOf(1).equals(p.getTagPeriodo())).findFirst().orElse(null);
+        AcademicPeriod periodo2 = periodosDelAnio.stream()
+                .filter(p -> Integer.valueOf(2).equals(p.getTagPeriodo())).findFirst().orElse(null);
+
+        List<ResumenIngresosPeriodo> resumen1 = periodo1 != null
+                ? obtenerDesglosePorGrupo(periodo1, config) : List.of();
+        List<ResumenIngresosPeriodo> resumen2 = periodo2 != null
+                ? obtenerDesglosePorGrupo(periodo2, config) : List.of();
+
+        BigDecimal ingreso1 = resumen1.stream()
+                .map(r -> r.totales.getTotalIngresos()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal ingreso2 = resumen2.stream()
+                .map(r -> r.totales.getTotalIngresos()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalIngresos = ingreso1.add(ingreso2).setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal auiPct = config.getAuiPorcentaje() != null ? config.getAuiPorcentaje() : BigDecimal.ZERO;
+        BigDecimal auiValor = totalIngresos.multiply(auiPct).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal ingresosNetos = totalIngresos.subtract(auiValor).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal excedentes = config.getExcedentesMaestria() != null ? config.getExcedentesMaestria() : BigDecimal.ZERO;
+
+        return ingresosNetos.subtract(excedentes).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
