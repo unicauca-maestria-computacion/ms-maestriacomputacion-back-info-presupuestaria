@@ -401,11 +401,32 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         return periodo;
     }
 
+    /**
+     * Resuelve la configuración de reporte por grupos del período indicado usando la misma
+     * búsqueda "año-wide" que obtenerReporteGruposInterno: la configuración es conceptualmente
+     * una sola por año (AUI%, items%, imprevistos%, excedentes), guardada en la fila de
+     * cualquiera de sus períodos. Si el período recibido no tiene fila propia (por ejemplo un
+     * período en PROYECCION agregado junto a un período ACTIVO/FINALIZADO que ya tenía config),
+     * se reutiliza la del año antes de inicializar una nueva, para no duplicar/desincronizar la
+     * configuración real del año al editarla desde un período distinto.
+     */
     private GroupReportConfig obtenerConfigOFail(Long periodoId) {
-        return gateway.obtenerConfiguracionReporteGrupos(periodoId)
+        AcademicPeriod periodo = gateway.obtenerPeriodoPorId(periodoId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "No existe configuración de reporte por grupos para el período indicado",
+                        "No existe el período académico con id: " + periodoId,
                         "ENTIDAD_NO_ENCONTRADA"));
+
+        GroupReportConfig config = gateway.obtenerConfiguracionReporteGrupos(periodoId).orElse(null);
+        if (config == null) {
+            for (AcademicPeriod p : gateway.obtenerPeriodosPorAnio(periodo.getAño())) {
+                config = gateway.obtenerConfiguracionReporteGrupos(p.getId()).orElse(null);
+                if (config != null) break;
+            }
+        }
+        if (config == null) {
+            config = inicializarConfiguracionReporteGrupos(periodo);
+        }
+        return config;
     }
 
     /**
@@ -678,10 +699,19 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
 
         ResumenIngresosPeriodo ultimo = resumen.get(resumen.size() - 1);
         FinancialCalculationService.Totales totales = ultimo.totales;
+        // El ingreso de un grupo nunca puede quedar negativo: si la diferencia de redondeo/
+        // totalización (p. ej. estudiantes sin grupo_investigacion asignado en una proyección)
+        // es mayor que lo que el último grupo aportó, se limita a 0 en vez de dejar un ingreso
+        // negativo que luego se refleja como una participación negativa (barra "invertida" en
+        // la gráfica de Participación por Año).
+        BigDecimal ingresoAjustado = totales.getTotalIngresos().add(diferencia).setScale(2, RoundingMode.HALF_UP);
+        if (ingresoAjustado.compareTo(BigDecimal.ZERO) < 0) {
+            ingresoAjustado = BigDecimal.ZERO;
+        }
         ultimo.totales = new FinancialCalculationService.Totales(
                 totales.getTotalNeto(),
                 totales.getTotalDescuentos(),
-                totales.getTotalIngresos().add(diferencia).setScale(2, RoundingMode.HALF_UP),
+                ingresoAjustado,
                 totales.getTotalDerechosComplementarios());
     }
 
@@ -815,11 +845,11 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
                     .findFirst().orElse(BigDecimal.ZERO);
 
             BigDecimal pct1 = total1.compareTo(BigDecimal.ZERO) > 0
-                    ? ingresoG1.divide(total1, 4, RoundingMode.HALF_UP)
+                    ? clamparPorcentaje(ingresoG1.divide(total1, 4, RoundingMode.HALF_UP))
                     : BigDecimal.ZERO;
 
             BigDecimal pct2 = total2.compareTo(BigDecimal.ZERO) > 0
-                    ? ingresoG2.divide(total2, 4, RoundingMode.HALF_UP)
+                    ? clamparPorcentaje(ingresoG2.divide(total2, 4, RoundingMode.HALF_UP))
                     : BigDecimal.ZERO;
 
             p.setPorcentajePrimerSemestre(pct1);
@@ -872,7 +902,24 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
         if (lastValue.compareTo(BigDecimal.ZERO) >= 0
                 && lastValue.compareTo(BigDecimal.ONE) <= 0) {
             setter.accept(participaciones.get(participaciones.size() - 1), lastValue);
+        } else {
+            // El ajuste "sumar 1" resultaría en un valor fuera de [0,1] (arrastrado por un
+            // desajuste de datos en otro grupo): no se aplica el ajuste, pero se acota el valor
+            // ya calculado para que nunca se muestre una participación negativa o mayor a 100%.
+            GroupParticipation ultimo = participaciones.get(participaciones.size() - 1);
+            BigDecimal actual = getter.apply(ultimo);
+            if (actual != null) {
+                setter.accept(ultimo, clamparPorcentaje(actual));
+            }
         }
+    }
+
+    /** Una participación/porcentaje mostrado en el reporte nunca debe ser negativo ni mayor a 100%. */
+    private static BigDecimal clamparPorcentaje(BigDecimal valor) {
+        if (valor == null) return BigDecimal.ZERO;
+        if (valor.compareTo(BigDecimal.ZERO) < 0) return BigDecimal.ZERO;
+        if (valor.compareTo(BigDecimal.ONE) > 0) return BigDecimal.ONE;
+        return valor;
     }
 
     private static class ResumenIngresosPeriodo {
