@@ -32,6 +32,7 @@ public class StudentProjectionPersistenceMapper {
             domain.setApellido(entity.getApellidoSimulado());
             domain.setIdentificacion(entity.getIdentificacionSimulada());
             domain.setGrupoInvestigacion(entity.getGrupoInvestigacion());
+            domain.setValorEnSMLV(entity.getValorEnSMLV());
         } else if (entity.getObjEstudiante() != null) {
             domain.setCodigoEstudiante(entity.getObjEstudiante().getCodigo());
             if (entity.getObjEstudiante().getObjPersona() != null) {
@@ -44,6 +45,7 @@ public class StudentProjectionPersistenceMapper {
             // Para períodos con datos reales en MF, esto se sobrescribe en construirReporte()
             // con el grupo actual de matricula-financiera.
             domain.setGrupoInvestigacion(entity.getGrupoInvestigacion());
+            domain.setValorEnSMLV(entity.getValorEnSMLV());
         }
         domain.setEstaPago(entity.getEstaPago()); // Este es el pago SIMULADO
         domain.setPorcentajeBeca(entity.getPorcentajeBeca());
@@ -57,7 +59,7 @@ public class StudentProjectionPersistenceMapper {
     }
 
     public StudentProjection toDomainFromNative(Object[] row) {
-        if (row == null || row.length < 13) {
+        if (row == null || row.length < 14) {
             return null;
         }
         StudentProjection domain = new StudentProjection();
@@ -77,6 +79,7 @@ public class StudentProjectionPersistenceMapper {
         domain.setAplicaVotacion(row[10] != null && ((Number) row[10]).intValue() == 1);
         domain.setAplicaEgresado(row[11] != null && ((Number) row[11]).intValue() == 1);
         domain.setEsSimulado(row[12] != null && (row[12] instanceof Boolean ? (Boolean) row[12] : ((Number) row[12]).intValue() == 1));
+        domain.setValorEnSMLV(row[13] != null ? ((Number) row[13]).intValue() : null);
 
         return domain;
     }
@@ -92,6 +95,7 @@ public class StudentProjectionPersistenceMapper {
         entity.setAplicaVotacion(domain.getAplicaVotacion());
         entity.setAplicaEgresado(domain.getAplicaEgresado());
         entity.setGrupoInvestigacion(domain.getGrupoInvestigacion());
+        entity.setValorEnSMLV(domain.getValorEnSMLV());
         return entity;
     }
 

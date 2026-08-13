@@ -25,6 +25,7 @@ public class ActualizarProyeccionRequest {
     @Pattern(regexp = "GTI|IDIS|GICO")
     private String grupoInvestigacion;
 
+    private Integer valorEnSMLV;
 
     public ActualizarProyeccionRequest() {
     }
@@ -41,4 +42,6 @@ public class ActualizarProyeccionRequest {
     public void setAplicaEgresado(Boolean aplicaEgresado) { this.aplicaEgresado = aplicaEgresado; }
     public String getGrupoInvestigacion() { return grupoInvestigacion; }
     public void setGrupoInvestigacion(String grupoInvestigacion) { this.grupoInvestigacion = grupoInvestigacion; }
+    public Integer getValorEnSMLV() { return valorEnSMLV; }
+    public void setValorEnSMLV(Integer valorEnSMLV) { this.valorEnSMLV = valorEnSMLV; }
 }

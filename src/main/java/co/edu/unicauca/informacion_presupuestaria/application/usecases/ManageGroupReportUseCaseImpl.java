@@ -410,6 +410,11 @@ public class ManageGroupReportUseCaseImpl implements ManageGroupReportUseCase {
      * se reutiliza la del año antes de inicializar una nueva, para no duplicar/desincronizar la
      * configuración real del año al editarla desde un período distinto.
      */
+    @Override
+    public void asegurarConfiguracionReporteGrupos(Long periodoAcademicoId) {
+        obtenerConfigOFail(periodoAcademicoId);
+    }
+
     private GroupReportConfig obtenerConfigOFail(Long periodoId) {
         AcademicPeriod periodo = gateway.obtenerPeriodoPorId(periodoId)
                 .orElseThrow(() -> new EntityNotFoundException(

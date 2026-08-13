@@ -17,6 +17,8 @@ public class CrearEstudianteSimuladoRequest {
 
     private String grupoInvestigacion;
 
+    private Integer valorEnSMLV;
+
     public CrearEstudianteSimuladoRequest() {
     }
 
@@ -30,4 +32,6 @@ public class CrearEstudianteSimuladoRequest {
     public void setIdentificacion(Long identificacion) { this.identificacion = identificacion; }
     public String getGrupoInvestigacion() { return grupoInvestigacion; }
     public void setGrupoInvestigacion(String grupoInvestigacion) { this.grupoInvestigacion = grupoInvestigacion; }
+    public Integer getValorEnSMLV() { return valorEnSMLV; }
+    public void setValorEnSMLV(Integer valorEnSMLV) { this.valorEnSMLV = valorEnSMLV; }
 }

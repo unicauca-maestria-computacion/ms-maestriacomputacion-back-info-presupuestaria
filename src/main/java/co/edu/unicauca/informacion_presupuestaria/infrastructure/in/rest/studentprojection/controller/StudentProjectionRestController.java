@@ -56,7 +56,7 @@ public class StudentProjectionRestController {
             @Valid @RequestBody CrearEstudianteSimuladoRequest request) {
         StudentFinancialReport reporte = useCase.crearEstudianteSimulado(
                 request.getPeriodoAcademicoId(), request.getNombre(), request.getApellido(),
-                request.getIdentificacion(), request.getGrupoInvestigacion());
+                request.getIdentificacion(), request.getGrupoInvestigacion(), request.getValorEnSMLV());
         return ResponseEntity.ok(mapper.toReporteResponse(reporte));
     }
 
@@ -67,7 +67,7 @@ public class StudentProjectionRestController {
         StudentFinancialReport reporte = useCase.actualizarEstudianteSimulado(
                 id, request.getNombre(), request.getApellido(), request.getIdentificacion(),
                 request.getEstaPago(), request.getAplicaVotacion(), request.getPorcentajeBeca(), request.getAplicaEgresado(),
-                request.getGrupoInvestigacion());
+                request.getGrupoInvestigacion(), request.getValorEnSMLV());
         return ResponseEntity.ok(mapper.toReporteResponse(reporte));
     }
 

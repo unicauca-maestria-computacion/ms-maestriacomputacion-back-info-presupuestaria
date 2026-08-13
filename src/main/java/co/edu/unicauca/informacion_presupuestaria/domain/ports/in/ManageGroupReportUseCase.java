@@ -114,4 +114,16 @@ public interface ManageGroupReportUseCase {
      * Retorna un período académico por su ID.
      */
     AcademicPeriod obtenerPeriodoPorId(Long periodoAcademicoId);
+
+    /**
+     * Garantiza que el año del período indicado tenga una configuración de reporte por
+     * grupos asociada (AUI%, items%, imprevistos%, excedentes, participaciones). Si el año
+     * ya tiene configuración en cualquiera de sus períodos, no crea una nueva; si no existe
+     * ninguna, la inicializa copiando el período anterior o con los valores por defecto.
+     * Se invoca al crear una proyección para que quede disponible de inmediato en vez de
+     * crearse recién en el primer acceso al reporte.
+     *
+     * @param periodoAcademicoId ID del período académico recién creado
+     */
+    void asegurarConfiguracionReporteGrupos(Long periodoAcademicoId);
 }

@@ -23,7 +23,7 @@ public interface ManageStudentProjectionUseCase {
      * si el período está en estado PROYECCION.
      */
     StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido,
-            Long identificacion, String grupoInvestigacion);
+            Long identificacion, String grupoInvestigacion, Integer valorEnSMLV);
 
     /**
      * Actualiza los datos de un estudiante simulado existente. Solo permitido si el
@@ -32,7 +32,7 @@ public interface ManageStudentProjectionUseCase {
     StudentFinancialReport actualizarEstudianteSimulado(
             Long id, String nombre, String apellido, Long identificacion,
             Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado,
-            String grupoInvestigacion);
+            String grupoInvestigacion, Integer valorEnSMLV);
 
     /**
      * Elimina un estudiante simulado. Solo permitido si el período asociado está en

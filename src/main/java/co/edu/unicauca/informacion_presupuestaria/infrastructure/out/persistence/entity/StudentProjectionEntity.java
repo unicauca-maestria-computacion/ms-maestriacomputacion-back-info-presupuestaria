@@ -51,4 +51,7 @@ public class StudentProjectionEntity {
 
     @Column(name = "grupo_investigacion")
     private String grupoInvestigacion;
+
+    @Column(name = "valor_en_smlv")
+    private Integer valorEnSMLV;
 }

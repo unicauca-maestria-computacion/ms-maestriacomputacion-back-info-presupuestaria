@@ -147,6 +147,9 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
         if (proyeccion.getGrupoInvestigacion() != null) {
             entity.setGrupoInvestigacion(proyeccion.getGrupoInvestigacion());
         }
+        if (proyeccion.getValorEnSMLV() != null) {
+            entity.setValorEnSMLV(proyeccion.getValorEnSMLV());
+        }
 
         StudentProjectionEntity saved = proyeccionRepository.save(entity);
         return proyeccionMapper.toDomain(saved);
@@ -173,7 +176,7 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
     @Override
     @Transactional
     public StudentProjection crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido,
-            Long identificacion, String grupoInvestigacion) {
+            Long identificacion, String grupoInvestigacion, Integer valorEnSMLV) {
         StudentProjectionEntity entity = new StudentProjectionEntity();
         entity.setObjPeriodoAcademico(periodoRepository.findById(periodoAcademicoId).orElse(null));
         entity.setObjEstudiante(null);
@@ -186,6 +189,7 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
         entity.setAplicaVotacion(false);
         entity.setAplicaEgresado(false);
         entity.setGrupoInvestigacion(grupoInvestigacion);
+        entity.setValorEnSMLV(valorEnSMLV != null ? valorEnSMLV : 1);
         StudentProjectionEntity saved = proyeccionRepository.save(entity);
         return proyeccionMapper.toDomain(saved);
     }
@@ -195,7 +199,7 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
     public Optional<StudentProjection> actualizarEstudianteSimulado(
             Long id, String nombre, String apellido, Long identificacion,
             Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado,
-            String grupoInvestigacion) {
+            String grupoInvestigacion, Integer valorEnSMLV) {
         return proyeccionRepository.findById(id)
                 .filter(e -> Boolean.TRUE.equals(e.getEsSimulado()))
                 .map(entity -> {
@@ -207,6 +211,9 @@ public class StudentProjectionGatewayAdapter implements StudentProjectionGateway
                     entity.setPorcentajeBeca(porcentajeBeca);
                     entity.setAplicaEgresado(aplicaEgresado);
                     entity.setGrupoInvestigacion(grupoInvestigacion);
+                    if (valorEnSMLV != null) {
+                        entity.setValorEnSMLV(valorEnSMLV);
+                    }
                     StudentProjectionEntity saved = proyeccionRepository.save(entity);
                     return proyeccionMapper.toDomain(saved);
                 });

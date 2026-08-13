@@ -27,6 +27,8 @@ public class ActualizarEstudianteSimuladoRequest {
 
     private String grupoInvestigacion;
 
+    private Integer valorEnSMLV;
+
     public ActualizarEstudianteSimuladoRequest() {
     }
 
@@ -46,4 +48,6 @@ public class ActualizarEstudianteSimuladoRequest {
     public void setAplicaEgresado(Boolean aplicaEgresado) { this.aplicaEgresado = aplicaEgresado; }
     public String getGrupoInvestigacion() { return grupoInvestigacion; }
     public void setGrupoInvestigacion(String grupoInvestigacion) { this.grupoInvestigacion = grupoInvestigacion; }
+    public Integer getValorEnSMLV() { return valorEnSMLV; }
+    public void setValorEnSMLV(Integer valorEnSMLV) { this.valorEnSMLV = valorEnSMLV; }
 }

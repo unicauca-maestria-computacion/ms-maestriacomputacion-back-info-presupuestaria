@@ -21,7 +21,7 @@ public interface StudentProjectionGatewayPort {
      * No crea ningún registro en la tabla de estudiantes reales.
      */
     StudentProjection crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido,
-            Long identificacion, String grupoInvestigacion);
+            Long identificacion, String grupoInvestigacion, Integer valorEnSMLV);
 
     /**
      * Actualiza los datos de un estudiante simulado existente. No hace nada si el id
@@ -30,7 +30,7 @@ public interface StudentProjectionGatewayPort {
     Optional<StudentProjection> actualizarEstudianteSimulado(
             Long id, String nombre, String apellido, Long identificacion,
             Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado,
-            String grupoInvestigacion);
+            String grupoInvestigacion, Integer valorEnSMLV);
 
     /**
      * Elimina un estudiante simulado. Retorna false si el id no corresponde a una fila

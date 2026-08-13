@@ -82,7 +82,7 @@ public class ProyeccionEstudianteRestMapper {
         proyeccion.setPorcentajeBeca(request.getPorcentajeBeca());
         proyeccion.setAplicaEgresado(Boolean.TRUE.equals(request.getAplicaEgresado()));
         proyeccion.setGrupoInvestigacion(request.getGrupoInvestigacion());
-
+        proyeccion.setValorEnSMLV(request.getValorEnSMLV());
 
         return proyeccion;
     }

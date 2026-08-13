@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageStudentProjectionUseCase;
+import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.ManageGroupReportUseCase;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.StudentProjectionGatewayPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnrollmentClientPort;
 import co.edu.unicauca.informacion_presupuestaria.domain.model.BecaDescuentoInfo;
@@ -24,13 +25,16 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
     private final StudentProjectionGatewayPort gateway;
     private final FinancialEnrollmentClientPort matriculaFinancieraClient;
     private final FinancialCalculationService calculationService;
+    private final ManageGroupReportUseCase groupReportUseCase;
 
     public ManageStudentProjectionUseCaseImpl(StudentProjectionGatewayPort gateway,
                                               FinancialEnrollmentClientPort matriculaFinancieraClient,
-                                              FinancialCalculationService calculationService) {
+                                              FinancialCalculationService calculationService,
+                                              ManageGroupReportUseCase groupReportUseCase) {
         this.gateway = gateway;
         this.matriculaFinancieraClient = matriculaFinancieraClient;
         this.calculationService = calculationService;
+        this.groupReportUseCase = groupReportUseCase;
     }
 
     @Override
@@ -48,7 +52,15 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             throw new BusinessRuleViolatedException(
                     "El período de proyección ha finalizado y ya no es editable");
         }
-        
+
+        // El valor en SMLV (matrícula simulada) solo se puede editar mientras el período
+        // sigue en PROYECCION; en un período ACTIVO la matrícula ya es real y viene de
+        // matricula-financiera, así que cualquier valor recibido para ese caso se ignora.
+        if (!co.edu.unicauca.informacion_presupuestaria.domain.enums.AcademicPeriodStatus.PROYECCION
+                .equals(periodo.getEstado())) {
+            proyeccion.setValorEnSMLV(null);
+        }
+
         proyeccion.setAcademicPeriod(periodo);
         gateway.guardarProyeccion(proyeccion);
         return construirReporte(periodo);
@@ -103,10 +115,13 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
 
         AcademicPeriod guardado = gateway.guardarPeriodo(nuevo);
 
-        // Grupo de investigación real de cada estudiante del período origen (viene de
-        // matricula-financiera, nunca de la proyección guardada). Se usa para que los
-        // estudiantes copiados a la nueva proyección ya aparezcan con su grupo asignado.
+        // Grupo de investigación y valor en SMLV real de cada estudiante del período
+        // origen (vienen de matricula-financiera, nunca de la proyección guardada). Se
+        // usan para que los estudiantes copiados a la nueva proyección ya aparezcan con
+        // su grupo y su matrícula financiera (SMLV cobrados) asignados, en vez de caer
+        // en el valor por defecto de 1 SMLV que usa construirReporte() cuando no hay dato.
         java.util.Map<String, String> gruposPorCodigo = new java.util.HashMap<>();
+        java.util.Map<String, Integer> smlvPorCodigo = new java.util.HashMap<>();
         List<Student> estudiantesOrigenMF;
         try {
             estudiantesOrigenMF = matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(
@@ -114,6 +129,9 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             for (Student est : estudiantesOrigenMF) {
                 if (est.getCodigo() != null && est.getGrupoNombre() != null) {
                     gruposPorCodigo.put(est.getCodigo(), est.getGrupoNombre());
+                }
+                if (est.getCodigo() != null && est.getValorEnSMLV() != null) {
+                    smlvPorCodigo.put(est.getCodigo(), est.getValorEnSMLV());
                 }
             }
         } catch (Exception ignored) {
@@ -132,6 +150,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 sp.setAplicaVotacion(false);
                 sp.setAplicaEgresado(false);
                 sp.setGrupoInvestigacion(est.getGrupoNombre());
+                sp.setValorEnSMLV(est.getValorEnSMLV());
                 sp.setAcademicPeriod(guardado);
                 gateway.guardarProyeccion(sp);
             }
@@ -150,6 +169,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                 sp.setAplicaVotacion(spOrigen.getAplicaVotacion());
                 sp.setAplicaEgresado(spOrigen.getAplicaEgresado());
                 sp.setGrupoInvestigacion(gruposPorCodigo.get(spOrigen.getCodigoEstudiante()));
+                sp.setValorEnSMLV(smlvPorCodigo.get(spOrigen.getCodigoEstudiante()));
                 sp.setAcademicPeriod(guardado);
                 try {
                     gateway.guardarProyeccion(sp);
@@ -163,26 +183,36 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
         // editables luego desde el reporte de proyección.
         if (cantidadEstudiantesNuevos != null && cantidadEstudiantesNuevos > 0) {
             for (int i = 1; i <= cantidadEstudiantesNuevos; i++) {
-                gateway.crearEstudianteSimulado(guardado.getId(), "Estudiante nuevo " + i, "", null, null);
+                gateway.crearEstudianteSimulado(guardado.getId(), "Estudiante nuevo " + i, "", null, null, null);
             }
         }
 
         // Inicializar configuración financiera para el nuevo período
         inicializarConfiguracionFinanciera(guardado);
 
+        // Asegurar que el año de la proyección tenga también configuración de reporte por
+        // grupos (AUI%, items%, imprevistos%, participaciones), en vez de dejar que se cree
+        // recién en el primer acceso al reporte por grupos.
+        try {
+            groupReportUseCase.asegurarConfiguracionReporteGrupos(guardado.getId());
+        } catch (Exception ignored) {
+            // No debe impedir la creación de la proyección si esto falla; se inicializará
+            // igualmente de forma perezosa la próxima vez que se acceda al reporte por grupos.
+        }
+
         return guardado;
     }
 
     @Override
     public StudentFinancialReport crearEstudianteSimulado(Long periodoAcademicoId, String nombre, String apellido,
-            Long identificacion, String grupoInvestigacion) {
+            Long identificacion, String grupoInvestigacion, Integer valorEnSMLV) {
         AcademicPeriod periodo = gateway.obtenerPeriodoPorId(periodoAcademicoId)
                 .orElseThrow(() -> new EntityNotFoundException("No existe el período académico"));
         validarPeriodoProyeccion(periodo);
         if (nombre == null || nombre.isBlank()) {
             throw new BusinessRuleViolatedException("El nombre del estudiante simulado es requerido");
         }
-        gateway.crearEstudianteSimulado(periodoAcademicoId, nombre, apellido, identificacion, grupoInvestigacion);
+        gateway.crearEstudianteSimulado(periodoAcademicoId, nombre, apellido, identificacion, grupoInvestigacion, valorEnSMLV);
         return construirReporte(periodo);
     }
 
@@ -190,7 +220,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
     public StudentFinancialReport actualizarEstudianteSimulado(
             Long id, String nombre, String apellido, Long identificacion,
             Boolean estaPago, Boolean aplicaVotacion, BigDecimal porcentajeBeca, Boolean aplicaEgresado,
-            String grupoInvestigacion) {
+            String grupoInvestigacion, Integer valorEnSMLV) {
         StudentProjection existente = gateway.obtenerProyeccionPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("No existe el estudiante simulado"));
         AcademicPeriod periodo = existente.getAcademicPeriod();
@@ -199,7 +229,7 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
             throw new BusinessRuleViolatedException("El nombre del estudiante simulado es requerido");
         }
         gateway.actualizarEstudianteSimulado(id, nombre, apellido, identificacion,
-                estaPago, aplicaVotacion, porcentajeBeca, aplicaEgresado, grupoInvestigacion);
+                estaPago, aplicaVotacion, porcentajeBeca, aplicaEgresado, grupoInvestigacion, valorEnSMLV);
         return construirReporte(periodo);
     }
 
@@ -280,7 +310,12 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
                     .orElseGet(() -> inicializarConfiguracionFinanciera(periodo));
 
             List<StudentProjection> enriquecidas = proyecciones.stream().map(p -> {
-                p.setValorEnSMLV(1); // default 1 SMLV
+                // El SMLV real del estudiante (copiado del período origen al crear la
+                // proyección) tiene prioridad; solo se usa 1 SMLV por defecto si nunca
+                // se pudo determinar (estudiante nuevo/simulado sin valor asignado).
+                if (p.getValorEnSMLV() == null) {
+                    p.setValorEnSMLV(1);
+                }
                 p.setEstadoMatriculaFinanciera(false);
                 return p;
             }).collect(Collectors.toList());
@@ -352,7 +387,9 @@ public class ManageStudentProjectionUseCaseImpl implements ManageStudentProjecti
         List<StudentProjection> simulados = proyecciones.stream()
                 .filter(p -> Boolean.TRUE.equals(p.getEsSimulado()))
                 .peek(p -> {
-                    p.setValorEnSMLV(1);
+                    if (p.getValorEnSMLV() == null) {
+                        p.setValorEnSMLV(1);
+                    }
                     p.setEstadoMatriculaFinanciera(false);
                 })
                 .collect(Collectors.toList());

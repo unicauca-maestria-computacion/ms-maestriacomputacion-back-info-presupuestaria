@@ -52,8 +52,10 @@ public class BeanConfig {
     public ManageStudentProjectionUseCase manageStudentProjectionUseCase(
             StudentProjectionGatewayPort gateway,
             FinancialEnrollmentClientPort financialEnrollmentClient,
-            FinancialCalculationService calculationService) {
-        return new ManageStudentProjectionUseCaseImpl(gateway, financialEnrollmentClient, calculationService);
+            FinancialCalculationService calculationService,
+            ManageGroupReportUseCase groupReportUseCase) {
+        return new ManageStudentProjectionUseCaseImpl(
+                gateway, financialEnrollmentClient, calculationService, groupReportUseCase);
     }
 
     @Bean
