@@ -1,0 +1,57 @@
+# =============================================================
+# Ejecucion del microservicio de Informacion Presupuestaria junto a su
+# base de datos.
+#
+# A diferencia de Matricula Financiera, este microservicio necesita
+# ademas alcanzar a aquel para obtener los estudiantes matriculados y su
+# valor en SMLV. La direccion se suministra mediante la variable
+# MATRICULA_FINANCIERA_BASE_URL, cuyo valor por omision apunta al equipo
+# anfitrion: asi el servicio funciona tanto si Matricula Financiera se
+# ejecuta en un contenedor con su puerto publicado como si se ejecuta
+# directamente sobre la maquina de desarrollo.
+#
+# Uso:
+#   docker compose up --build
+# =============================================================
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: info-presupuestaria-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: maestria-computacion
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # El esquema se crea la primera vez que arranca el contenedor.
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  info-presupuestaria:
+    build: .
+    container_name: ms-info-presupuestaria
+    ports:
+      - "8094:8094"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_URL: jdbc:mysql://mysql:3306/maestria-computacion
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      MATRICULA_FINANCIERA_BASE_URL: ${MATRICULA_FINANCIERA_BASE_URL:-http://host.docker.internal:8092}
+    extra_hosts:
+      # Permite resolver host.docker.internal tambien en Linux, donde no
+      # se define de forma automatica.
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
