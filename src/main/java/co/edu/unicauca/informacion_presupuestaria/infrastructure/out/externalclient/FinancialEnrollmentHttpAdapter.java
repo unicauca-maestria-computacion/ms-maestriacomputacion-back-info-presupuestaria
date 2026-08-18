@@ -7,7 +7,7 @@ import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalcli
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.dto.PeriodoAcademicoResponse;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.dto.StudentResponse;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.EntityNotFoundException;
-import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.InvalidRequestDataException;
+import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.ExternalServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -55,17 +55,17 @@ public class FinancialEnrollmentHttpAdapter implements FinancialEnrollmentClient
             }
             log.error("Error HTTP {} al obtener estudiantes por período {}-{}: {}",
                     e.getStatusCode(), tagPeriodo, anio, e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "Error al comunicarse con ms-matricula-financiera: " + e.getMessage());
         } catch (WebClientRequestException e) {
             log.error("Error de conexión al obtener estudiantes por período {}-{}: {}",
                     tagPeriodo, anio, e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "El servicio ms-matricula-financiera no está disponible: " + e.getMessage());
         } catch (Exception e) {
             log.error("Error inesperado al obtener estudiantes por período {}-{}: {}",
                     tagPeriodo, anio, e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "Error inesperado al comunicarse con ms-matricula-financiera: " + e.getMessage());
         }
     }
@@ -88,15 +88,15 @@ public class FinancialEnrollmentHttpAdapter implements FinancialEnrollmentClient
             }
             log.error("Error HTTP {} al obtener estudiante con código {}: {}",
                     e.getStatusCode(), codigo, e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "Error al comunicarse con ms-matricula-financiera: " + e.getMessage());
         } catch (WebClientRequestException e) {
             log.error("Error de conexión al obtener estudiante con código {}: {}", codigo, e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "El servicio ms-matricula-financiera no está disponible: " + e.getMessage());
         } catch (Exception e) {
             log.error("Error inesperado al obtener estudiante con código {}: {}", codigo, e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "Error inesperado al comunicarse con ms-matricula-financiera: " + e.getMessage());
         }
     }
@@ -122,15 +122,15 @@ public class FinancialEnrollmentHttpAdapter implements FinancialEnrollmentClient
             }
             log.error("Error HTTP {} al obtener períodos académicos: {}",
                     e.getStatusCode(), e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "Error al comunicarse con ms-matricula-financiera: " + e.getMessage());
         } catch (WebClientRequestException e) {
             log.error("Error de conexión al obtener períodos académicos: {}", e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "El servicio ms-matricula-financiera no está disponible: " + e.getMessage());
         } catch (Exception e) {
             log.error("Error inesperado al obtener períodos académicos: {}", e.getMessage());
-            throw new InvalidRequestDataException(
+            throw new ExternalServiceUnavailableException(
                     "Error inesperado al comunicarse con ms-matricula-financiera: " + e.getMessage());
         }
     }

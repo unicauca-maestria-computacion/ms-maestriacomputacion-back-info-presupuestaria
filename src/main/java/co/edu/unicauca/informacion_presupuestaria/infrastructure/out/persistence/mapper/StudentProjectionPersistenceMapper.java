@@ -54,17 +54,42 @@ public class StudentProjectionPersistenceMapper {
         domain.setNombre((String) row[4]);
         domain.setApellido((String) row[5]);
         
-        // Obtenemos el pago simulado
-        boolean pagoSimulado = row[6] != null && (row[6] instanceof Boolean ? (Boolean) row[6] : ((Number) row[6]).intValue() == 1);
-        
-        // Por defecto en la proyección activa mostramos el SIMULADO
-        domain.setEstaPago(pagoSimulado);
+        // Por defecto en la proyección activa mostramos el pago SIMULADO
+        domain.setEstaPago(esVerdadero(row[6]));
         domain.setGrupoInvestigacion((String) row[8]);
         domain.setPorcentajeBeca(row[9] != null ? new BigDecimal(row[9].toString()) : BigDecimal.ZERO);
-        domain.setAplicaVotacion(row[10] != null && ((Number) row[10]).intValue() == 1);
-        domain.setAplicaEgresado(row[11] != null && ((Number) row[11]).intValue() == 1);
-        
+        domain.setAplicaVotacion(esVerdadero(row[10]));
+        domain.setAplicaEgresado(esVerdadero(row[11]));
+
         return domain;
+    }
+
+    /**
+     * Interpreta como valor lógico una columna procedente de una consulta
+     * nativa.
+     *
+     * El controlador de MySQL entrega las columnas booleanas como Boolean o
+     * como número según el tipo físico con que se haya creado la tabla: un
+     * TINYINT llega como número, mientras que un BIT o un BOOLEAN llegan como
+     * Boolean. La conversión directa a Number falla en el segundo caso con un
+     * error de conversión de tipos.
+     *
+     * Este método existía de hecho de forma implícita para la columna de
+     * estado de pago, que ya contemplaba ambas posibilidades, pero no se había
+     * aplicado a las columnas de votación y de egresado. La comprobación se
+     * unifica aquí para las tres.
+     */
+    private boolean esVerdadero(Object valor) {
+        if (valor == null) {
+            return false;
+        }
+        if (valor instanceof Boolean b) {
+            return b;
+        }
+        if (valor instanceof Number n) {
+            return n.intValue() == 1;
+        }
+        return "1".equals(valor.toString()) || "true".equalsIgnoreCase(valor.toString());
     }
 
     public StudentProjectionEntity toEntity(StudentProjection domain) {
