@@ -1,4 +1,4 @@
-package co.edu.unicauca.informacion_presupuestaria.application.usecases;
+package co.edu.unicauca.informacion_presupuestaria.infrastructure.in.scheduler;
 
 import co.edu.unicauca.informacion_presupuestaria.domain.model.payment.PaymentSynchronizationResult;
 import co.edu.unicauca.informacion_presupuestaria.domain.ports.in.SynchronizePaymentsUseCase;
@@ -8,6 +8,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * Adaptador de entrada que dispara la sincronizacion de pagos de forma
+ * programada.
+ *
+ * Nota de arquitectura: esta clase residia en application.usecases, donde
+ * infringia tres de las reglas declaradas en ArchitectureTest. No es un caso de
+ * uso, sino un adaptador de entrada equivalente a un controlador REST: su
+ * responsabilidad es traducir un disparador externo, en este caso temporal, en
+ * una invocacion del puerto de entrada correspondiente. Al ubicarse en
+ * infrastructure.in puede declarar anotaciones de Spring y depender de la
+ * configuracion de infraestructura sin comprometer el aislamiento de la capa de
+ * aplicacion.
+ */
 @Component
 public class SyncScheduler {
 
