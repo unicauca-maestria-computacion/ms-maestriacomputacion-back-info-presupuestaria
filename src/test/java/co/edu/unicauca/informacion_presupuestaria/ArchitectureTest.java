@@ -119,10 +119,17 @@ class ArchitectureTest {
     // Rule 8 — use cases implement exactly one input port (Phase 3 complete)
     // Req 6.8
     // -------------------------------------------------------------------------
+    /*
+     * La regla se limita a las clases de primer nivel. Las clases anidadas que
+     * un caso de uso declara para estructurar sus resultados intermedios, como
+     * ManageGroupReportUseCaseImpl.ResumenIngresosPeriodo, son detalles de
+     * implementacion y no implementan por si mismas un puerto de entrada.
+     */
     @ArchTest
     static final ArchRule useCasesImplementOneInputPort =
             classes()
                     .that().resideInAPackage("..application.usecases..")
+                    .and().areTopLevelClasses()
                     .should().implement(
                             com.tngtech.archunit.core.domain.JavaClass.Predicates
                                     .resideInAPackage("..domain.ports.in.."))

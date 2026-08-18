@@ -1,0 +1,23 @@
+-- =============================================================
+-- Ajustes de esquema para las pruebas de integracion.
+--
+-- Hibernate genera el esquema a partir de las entidades declaradas
+-- (ddl-auto = create-drop) y este archivo se ejecuta despues, gracias a
+-- spring.jpa.defer-datasource-initialization = true.
+--
+-- Motivo: la entidad FinancialEnrollmentPaymentEntity mapea la tabla
+-- matricula_financiera pero declara solo un subconjunto de sus columnas
+-- (id, estudiante_id, periodo_id, esta_pago, fecha_pago, referencia_pago).
+-- La consulta nativa findFullProjectionsByPeriodo, definida en el mismo
+-- microservicio, necesita ademas la columna grupo_id para resolver el grupo
+-- de investigacion del estudiante:
+--
+--     LEFT JOIN matricula_financiera mf ON (...)
+--     LEFT JOIN grupo g ON mf.grupo_id = g.id
+--
+-- En produccion la tabla la crea el script del microservicio de Matricula
+-- Financiera, que si incluye esa columna, de modo que la discrepancia no se
+-- manifiesta. El defecto se documenta en la seccion 4.4.3 del Capitulo 4.
+-- =============================================================
+
+ALTER TABLE matricula_financiera ADD COLUMN grupo_id BIGINT NULL;

@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<lombok.version>1.18.38</lombok.version>
+		<springdoc.version>2.8.6</springdoc.version>
 	</properties>
 	<dependencies>
 
@@ -137,6 +138,13 @@
 			<artifactId>rest-assured</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- springdoc-openapi: generacion de la especificacion OpenAPI 3 y Swagger UI -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -167,6 +175,31 @@
 				</configuration>
 			</plugin>
 
+			<!-- Surefire: ejecuta pruebas unitarias (*Test) y excluye las de integracion (*IT) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/*IT.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- Failsafe: ejecuta las pruebas de integracion (*IT) en la fase verify -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- JaCoCo: code coverage -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -195,10 +228,26 @@
 							<rules>
 								<rule>
 									<element>PACKAGE</element>
+									<!-- Los paquetes reales del proyecto son domain y application.
+									     La configuracion anterior declaraba dominio y aplicacion,
+									     nombres inexistentes, por lo que la regla no evaluaba
+									     ninguna clase y la verificacion pasaba siempre. -->
 									<includes>
-										<include>co.edu.unicauca.informacion_presupuestaria.dominio.*</include>
-										<include>co.edu.unicauca.informacion_presupuestaria.aplicacion.*</include>
+										<include>co.edu.unicauca.informacion_presupuestaria.domain.*</include>
+										<include>co.edu.unicauca.informacion_presupuestaria.application.*</include>
 									</includes>
+									<!-- Se excluyen del umbral de cobertura de linea los paquetes
+									     que no contienen logica: las enumeraciones, cuyos metodos
+									     sinteticos values() y valueOf() rara vez se invocan, y los
+									     objetos de transporte del subsistema de pagos, formados por
+									     metodos de acceso. Medir cobertura de linea sobre ellos no
+									     informa de la calidad de la verificacion e incentiva
+									     pruebas sin valor. La regla se mantiene intacta sobre los
+									     paquetes que si concentran reglas de negocio. -->
+									<excludes>
+										<exclude>co.edu.unicauca.informacion_presupuestaria.domain.enums</exclude>
+										<exclude>co.edu.unicauca.informacion_presupuestaria.domain.model.payment</exclude>
+									</excludes>
 									<limits>
 										<limit>
 											<counter>LINE</counter>

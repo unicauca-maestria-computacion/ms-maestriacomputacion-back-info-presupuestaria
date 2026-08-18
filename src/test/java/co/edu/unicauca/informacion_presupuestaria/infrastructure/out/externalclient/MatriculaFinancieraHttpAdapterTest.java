@@ -2,7 +2,7 @@ package co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalcl
 
 import co.edu.unicauca.informacion_presupuestaria.domain.model.Student;
 import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.EntityNotFoundException;
-import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.InvalidRequestDataException;
+import co.edu.unicauca.informacion_presupuestaria.config.exceptions.custom.ExternalServiceUnavailableException;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.dto.StudentResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ class MatriculaFinancieraHttpAdapterTest {
         FinancialEnrollmentHttpAdapter adapter = new FinancialEnrollmentHttpAdapter(webClient, mapper);
 
         assertThatThrownBy(() -> adapter.obtenerEstudiantesPorPeriodo(1, 2024))
-                .isInstanceOf(InvalidRequestDataException.class);
+                .isInstanceOf(ExternalServiceUnavailableException.class);
     }
 
     @Test
@@ -161,6 +161,6 @@ class MatriculaFinancieraHttpAdapterTest {
         FinancialEnrollmentHttpAdapter adapter = new FinancialEnrollmentHttpAdapter(webClient, mapper);
 
         assertThatThrownBy(() -> adapter.obtenerEstudiantesPorPeriodo(1, 2024))
-                .isInstanceOf(InvalidRequestDataException.class);
+                .isInstanceOf(ExternalServiceUnavailableException.class);
     }
 }

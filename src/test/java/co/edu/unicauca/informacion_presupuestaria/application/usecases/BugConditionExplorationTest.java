@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +59,7 @@ class BugConditionExplorationTest {
         StudentProjection proy = buildProyeccion(1L, "EST001", true, false, new BigDecimal("0.50"), false, periodo);
 
         when(gateway.obtenerPeriodoPorTagYAnio(1, 2024)).thenReturn(Optional.of(periodo));
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
+        lenient().when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodo));
         when(gateway.obtenerConfiguracionReporteFinanciero(1L)).thenReturn(Optional.of(config));
         when(gateway.obtenerProyeccionesPorPeriodo(1L)).thenReturn(List.of(proy));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2024)).thenReturn(List.of(est));

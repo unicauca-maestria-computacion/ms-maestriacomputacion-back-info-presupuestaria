@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,9 +63,9 @@ class ManageStudentFinancialReportUseCaseImplTest {
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, valorSMLV, false, periodoAnterior, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
 
         when(gateway.obtenerPeriodoPorTagYAnio(1, 2023)).thenReturn(Optional.of(periodoAnterior));
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
+        lenient().when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
         when(gateway.obtenerConfiguracionReporteFinanciero(1L)).thenReturn(Optional.of(config));
-        when(gateway.obtenerProyeccionesPorPeriodo(1L)).thenReturn(List.of(proy1, proy2));
+        lenient().when(gateway.obtenerProyeccionesPorPeriodo(1L)).thenReturn(List.of(proy1, proy2));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2023))
                 .thenReturn(List.of(est1, est2));
         
@@ -97,9 +98,9 @@ class ManageStudentFinancialReportUseCaseImplTest {
                 1L, BigDecimal.ZERO, BigDecimal.ZERO, valorSMLV, false, periodoAnterior, new java.math.BigDecimal("0.1000"), new java.math.BigDecimal("0.0500"));
 
         when(gateway.obtenerPeriodoPorTagYAnio(1, 2023)).thenReturn(Optional.of(periodoAnterior));
-        when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
+        lenient().when(gateway.obtenerUltimoPeriodo()).thenReturn(Optional.of(periodoActual));
         when(gateway.obtenerConfiguracionReporteFinanciero(1L)).thenReturn(Optional.of(config));
-        when(gateway.obtenerProyeccionesPorPeriodo(1L)).thenReturn(List.of(proy));
+        lenient().when(gateway.obtenerProyeccionesPorPeriodo(1L)).thenReturn(List.of(proy));
         when(matriculaFinancieraClient.obtenerEstudiantesPorPeriodo(1, 2023))
                 .thenReturn(List.of(est));
         
