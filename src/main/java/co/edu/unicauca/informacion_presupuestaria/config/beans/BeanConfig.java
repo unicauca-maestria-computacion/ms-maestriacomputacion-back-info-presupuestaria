@@ -16,6 +16,7 @@ import co.edu.unicauca.informacion_presupuestaria.domain.ports.out.FinancialEnro
 import co.edu.unicauca.informacion_presupuestaria.domain.service.FinancialCalculationService;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.FinancialEnrollmentClientMapper;
 import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.FinancialEnrollmentHttpAdapter;
+import co.edu.unicauca.informacion_presupuestaria.infrastructure.out.externalclient.BearerTokenPropagationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,11 +30,20 @@ public class BeanConfig {
         return new FinancialEnrollmentClientMapper();
     }
 
+    /**
+     * El filtro de propagacion adjunta a cada llamada saliente el token del
+     * usuario que origino la peticion. Sin el, la llamada hacia Matricula
+     * Financiera viajaria sin credenciales y el servicio de destino la
+     * rechazaria bajo el perfil de produccion.
+     */
     @Bean
     public FinancialEnrollmentClientPort financialEnrollmentClientPort(
             @Value("${matricula.financiera.base-url:http://localhost:8092}") String baseUrl,
             FinancialEnrollmentClientMapper mapper) {
-        WebClient webClient = WebClient.builder().baseUrl(baseUrl).build();
+        WebClient webClient = WebClient.builder()
+                .baseUrl(baseUrl)
+                .filter(BearerTokenPropagationFilter.fromSecurityContext())
+                .build();
         return new FinancialEnrollmentHttpAdapter(webClient, mapper);
     }
 
